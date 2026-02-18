@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pine Script For Beginner — byScript.io</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root {
+  --bg: #060d18;
+  --bg2: #0a1628;
+  --bg3: #0f1d35;
+  --surface: #112040;
+  --surface2: #162848;
+  --accent: #00e676;
+  --accent2: #00c853;
+  --accent3: #69f0ae;
+  --text: #e8f0fe;
+  --text-muted: #6b84a8;
+  --border: rgba(0,230,118,0.14);
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ─── NAVBAR ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(6,13,24,0.9);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--accent);
+  background: rgba(0,230,118,0.06);
+}
+
+/* ─── PROGRESS BAR ─── */
+#progress {
+  position: fixed;
+  top: 60px; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  z-index: 101;
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 40px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,230,118,0.07) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,230,118,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,230,118,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid rgba(0,230,118,0.35);
+  border-radius: 2px;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 10vw, 120px);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.hero h1 span {
+  color: var(--accent);
+  display: block;
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 520px;
+  margin: 24px auto 40px;
+  font-weight: 300;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent);
+  color: #0a0c10;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 3px;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+
+.hero-cta:hover {
+  background: #33ff8a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,230,118,0.3);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  margin-top: 64px;
+}
+
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 40px;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ─── SECTION ─── */
+section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 100px 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+section:last-child { border-bottom: none; }
+
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #fff;
+  margin-bottom: 32px;
+}
+
+.section-title em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.section-body {
+  font-size: 16px;
+  color: #b0bbd0;
+  line-height: 1.8;
+}
+
+.section-body p { margin-bottom: 16px; }
+.section-body p:last-child { margin-bottom: 0; }
+
+/* ─── CARDS ─── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0,230,118,0.35);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.card-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.card h3 {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ─── COMPARISON TABLE ─── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.compare-table th {
+  background: var(--surface2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 16px 20px;
+  text-align: left;
+}
+
+.compare-table th:nth-child(2) { color: #ff6b6b; }
+.compare-table th:nth-child(3) { color: var(--accent3); }
+
+.compare-table td {
+  padding: 14px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: top;
+}
+
+.compare-table tr:last-child td { border-bottom: none; }
+
+.compare-table tbody tr:nth-child(odd) td {
+  background: var(--bg3);
+}
+.compare-table tbody tr:nth-child(even) td {
+  background: var(--bg2);
+}
+
+.compare-table td:first-child {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.badge-bad { color: #ff6b6b; font-weight: 600; }
+.badge-good { color: var(--accent3); font-weight: 600; }
+
+/* ─── CODE BLOCK ─── */
+.code-wrapper {
+  margin-top: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.code-header {
+  background: var(--surface2);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.code-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.code-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.code-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+.code-dots span:nth-child(1) { background: #ff5f57; }
+.code-dots span:nth-child(2) { background: #ffbd2e; }
+.code-dots span:nth-child(3) { background: #28c840; }
+
+.code-filename {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.copy-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: rgba(0,230,118,0.1);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.copy-btn:hover { background: rgba(0,230,118,0.2); }
+
+.code-wrapper pre {
+  margin: 0;
+  padding: 0;
+}
+
+.code-wrapper pre code {
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  padding: 24px 24px !important;
+  display: block;
+  overflow-x: auto;
+  background: #0d1117 !important;
+  line-height: 1.7;
+}
+
+/* ─── CODE BREAKDOWN ─── */
+.breakdown {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.breakdown-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  align-items: start;
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 6px;
+  padding: 14px 18px;
+}
+
+.breakdown-code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  background: rgba(0,230,118,0.07);
+  padding: 4px 8px;
+  border-radius: 3px;
+  word-break: break-word;
+  align-self: start;
+  margin-top: 2px;
+}
+
+.breakdown-desc {
+  font-size: 14px;
+  color: #9aafcc;
+  line-height: 1.6;
+}
+
+.breakdown-desc strong { color: var(--text); font-weight: 600; }
+
+/* ─── FLOW DIAGRAM ─── */
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flow-step {
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+  max-width: 160px;
+}
+
+.flow-circle {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 12px;
+  position: relative;
+}
+
+.flow-circle::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,230,118,0.2);
+}
+
+.flow-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.flow-arrow {
+  font-size: 20px;
+  color: var(--accent);
+  opacity: 0.4;
+  flex-shrink: 0;
+  padding: 0 8px;
+  margin-bottom: 28px;
+}
+
+/* ─── HIGHLIGHT BOX ─── */
+.highlight-box {
+  background: linear-gradient(135deg, rgba(0,230,118,0.07), rgba(0,200,83,0.04));
+  border: 1px solid rgba(0,230,118,0.22);
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-top: 24px;
+  position: relative;
+}
+
+.highlight-box::before {
+  content: '💡';
+  position: absolute;
+  top: -12px; left: 20px;
+  background: var(--bg);
+  padding: 0 8px;
+  font-size: 18px;
+}
+
+.highlight-box p {
+  font-size: 15px;
+  color: #b0cce8;
+  margin: 0;
+}
+
+/* ─── TV MOCKUP ─── */
+.tv-mockup {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 32px;
+  overflow: hidden;
+}
+
+.tv-topbar {
+  background: #1e2530;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.tv-topbar-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+
+.tv-url {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex: 1;
+  background: rgba(0,0,0,0.2);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+.tv-content {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 16px;
+  min-height: 200px;
+}
+
+.chart-area {
+  background: #141a24;
+  border-radius: 6px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── SVG CHART ─── */
+.chart-svg {
+  width: 100%;
+  height: 140px;
+}
+
+.panel-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel-item {
+  background: #141a24;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.panel-label { color: var(--text-muted); margin-bottom: 4px; }
+.panel-value { color: var(--accent3); font-weight: 700; }
+
+/* ─── STRATEGY DIAGRAM ─── */
+.strategy-flow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.sf-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.sf-box.condition { border-color: rgba(0,200,83,0.35); }
+.sf-box.action-long { border-color: rgba(0,230,118,0.4); }
+.sf-box.action-short { border-color: rgba(255,107,107,0.4); }
+
+.sf-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+.sf-box.condition .sf-label { color: var(--accent2); }
+.sf-box.action-long .sf-label { color: var(--accent3); }
+.sf-box.action-short .sf-label { color: #ff6b6b; }
+
+.sf-box h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.sf-box p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ─── BYSCRIPT SECTION ─── */
+.byscript-hero {
+  background: linear-gradient(135deg, rgba(0,230,118,0.08), rgba(0,200,83,0.04));
+  border: 1px solid rgba(0,230,118,0.25);
+  border-radius: 12px;
+  padding: 40px;
+  margin-top: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.byscript-hero::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,230,118,0.12), transparent);
+}
+
+.byscript-logo {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  margin-bottom: 12px;
+}
+
+.byscript-logo span { color: var(--accent); }
+
+.byscript-tagline {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+
+.feature-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  text-align: left;
+  margin-top: 24px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 6px;
+  padding: 14px;
+}
+
+.feature-icon { font-size: 20px; flex-shrink: 0; }
+
+.feature-text h4 {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  margin-bottom: 4px;
+  letter-spacing: 0.03em;
+}
+
+.feature-text p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ─── IMAGE PLACEHOLDER ─── */
+.img-placeholder {
+  background: var(--bg3);
+  border: 2px dashed rgba(0,230,118,0.2);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  margin-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.img-placeholder .icon { font-size: 32px; display: block; margin-bottom: 10px; }
+
+/* ─── PILL BADGE ─── */
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.pill-blue   { background: rgba(0,230,118,0.1);  color: var(--accent);  border: 1px solid rgba(0,230,118,0.3); }
+.pill-green  { background: rgba(105,240,174,0.1); color: var(--accent3); border: 1px solid rgba(105,240,174,0.3); }
+.pill-purple { background: rgba(0,200,83,0.08);   color: var(--accent2); border: 1px solid rgba(0,200,83,0.25); }
+
+/* ─── TWO COL ─── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.two-col-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px;
+}
+
+.two-col-item h3 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+}
+
+.two-col-item.indicator { border-color: rgba(0,230,118,0.3); }
+.two-col-item.strategy  { border-color: rgba(0,200,83,0.2); }
+
+.two-col-item p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.two-col-item ul {
+  list-style: none;
+  font-size: 13px;
+  color: #9ab;
+}
+
+.two-col-item.indicator h3 { color: var(--accent); }
+.two-col-item.strategy h3  { color: var(--accent3); }
+  content: '→ ';
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.two-col-item ul li { margin-bottom: 6px; }
+
+/* ─── FOOTER ─── */
+footer {
+  text-align: center;
+  padding: 60px 40px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.footer-logo {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+footer p {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.fade-up-1 { animation-delay: 0.1s; }
+.fade-up-2 { animation-delay: 0.25s; }
+.fade-up-3 { animation-delay: 0.4s; }
+.fade-up-4 { animation-delay: 0.55s; }
+.fade-up-5 { animation-delay: 0.7s; }
+
+/* ─── SCROLL REVEAL ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  section { padding: 70px 24px; }
+  .hero { padding: 100px 24px 60px; }
+  .two-col { grid-template-columns: 1fr; }
+  .strategy-flow { grid-template-columns: 1fr; }
+  .tv-content { grid-template-columns: 1fr; }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+  .breakdown-item { grid-template-columns: 1fr; }
+  .flow { gap: 8px; }
+  .flow-arrow { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS -->
+<div id="progress"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#hero" class="nav-logo">byScript.io</a>
+  <ul class="nav-links">
+    <li><a href="#s1">01 Algo</a></li>
+    <li><a href="#s2">02 TradingView</a></li>
+    <li><a href="#s3">03 Cara Kerja</a></li>
+    <li><a href="#s4">04 Indikator vs Strategy</a></li>
+    <li><a href="#s5">05 Indikator</a></li>
+    <li><a href="#s6">06 Strategy</a></li>
+    <li><a href="#s7">07 Bedah Script</a></li>
+    <li><a href="#s8">08 byScript.io</a></li>
+  </ul>
+</nav>
+
+<!-- ─────────── HERO ─────────── -->
+<div id="hero" class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div>
+    <div class="hero-eyebrow fade-up fade-up-1">Module · Pine Script For Beginner</div>
+    <h1 class="fade-up fade-up-2">
+      TRADE<br><span>SMARTER</span><br>WITH CODE
+    </h1>
+    <p class="hero-sub fade-up fade-up-3">
+      Panduan lengkap algo trading dengan Pine Script — dari nol sampai strategi otomatis berjalan di TradingView.
+    </p>
+    <a href="#s1" class="hero-cta fade-up fade-up-4">
+      MULAI BELAJAR &darr;
+    </a>
+    <div class="hero-stats fade-up fade-up-5">
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Modul</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Syarat Coding</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Praktis</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── S1: ALGO VS MANUAL ─────────── -->
+<section id="s1">
+  <div class="section-num reveal">01 — Kenapa Algo Trading?</div>
+  <h2 class="section-title reveal">Trading Manual<br><em>vs Algo Trading</em></h2>
+  <div class="section-body reveal">
+    <p>
+      Trading manual mengandalkan keputusan manusia secara real-time — kamu melihat chart, membaca sinyal, lalu eksekusi order secara manual. Terdengar simpel, tapi ada satu musuh terbesar: <strong>emosi</strong>.
+    </p>
+    <p>
+      Algo trading memindahkan proses pengambilan keputusan itu ke dalam <strong>kode program</strong>. Aturan yang sudah kamu tulis akan dieksekusi secara konsisten, tanpa takut, tanpa serakah, tanpa lelah.
+    </p>
+  </div>
+
+  <table class="compare-table reveal" style="margin-top:32px">
+    <thead>
+      <tr>
+        <th>Aspek</th>
+        <th>⚠ Trading Manual</th>
+        <th>✅ Algo Trading</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>EMOSI</td>
+        <td><span class="badge-bad">Sangat berpengaruh</span> — fear, greed, FOMO</td>
+        <td><span class="badge-good">Nol pengaruh</span> — keputusan berbasis aturan</td>
+      </tr>
+      <tr>
+        <td>KONSISTENSI</td>
+        <td><span class="badge-bad">Berubah-ubah</span> tergantung mood & kondisi</td>
+        <td><span class="badge-good">100% konsisten</span> — rule is rule</td>
+      </tr>
+      <tr>
+        <td>KECEPATAN</td>
+        <td><span class="badge-bad">Lambat</span> — proses pikiran + eksekusi manual</td>
+        <td><span class="badge-good">Milidetik</span> — langsung eksekusi</td>
+      </tr>
+      <tr>
+        <td>BACKTESTING</td>
+        <td><span class="badge-bad">Tidak bisa</span> — tidak ada cara objektif</td>
+        <td><span class="badge-good">Bisa ditest</span> ke data historis bertahun-tahun</td>
+      </tr>
+      <tr>
+        <td>WAKTU</td>
+        <td><span class="badge-bad">Harus menatap layar</span> berjam-jam</td>
+        <td><span class="badge-good">Berjalan otomatis</span> 24/7</td>
+      </tr>
+      <tr>
+        <td>MULTI-ASET</td>
+        <td><span class="badge-bad">Terbatas</span> kemampuan manusia</td>
+        <td><span class="badge-good">Bisa pantau ratusan</span> instrumen sekaligus</td>
+      </tr>
+      <tr>
+        <td>OPTIMASI</td>
+        <td><span class="badge-bad">Subjektif</span> dan tidak terukur</td>
+        <td><span class="badge-good">Berbasis data</span> dan bisa dioptimasi</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="highlight-box reveal">
+    <p>
+      Bukan berarti algo trading bebas risiko — strategi yang buruk tetap akan kalah. Tapi algo trading memastikan kamu <strong>kalah atau menang secara konsisten</strong>, sehingga bisa dianalisa dan diperbaiki.
+    </p>
+  </div>
+</section>
+
+<!-- ─────────── S2: TRADINGVIEW & PINE SCRIPT ─────────── -->
+<section id="s2">
+  <div class="section-num reveal">02 — Platform</div>
+  <h2 class="section-title reveal">TradingView &<br><em>Pine Script</em></h2>
+  <div class="section-body reveal">
+    <p>
+      <strong>TradingView</strong> adalah platform charting berbasis web yang paling populer di dunia saat ini. Jutaan trader dari seluruh dunia menggunakannya untuk menganalisa market — mulai dari saham, forex, kripto, hingga komoditas.
+    </p>
+  </div>
+
+  <!-- TV Mockup -->
+  <div class="tv-mockup reveal">
+    <div class="tv-topbar">
+      <div class="tv-topbar-dot"></div>
+      <div class="tv-topbar-dot"></div>
+      <div class="tv-topbar-dot"></div>
+      <div class="tv-url">tradingview.com/chart</div>
+    </div>
+    <div class="tv-content">
+      <div class="chart-area">
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-bottom:10px;letter-spacing:0.08em;">BTCUSD · 1H · Binance</div>
+        <svg class="chart-svg" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Candlesticks -->
+          <line x1="20" y1="60" x2="20" y2="40" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="16" y="44" width="8" height="12" fill="#22d3a0" rx="1"/>
+          <line x1="40" y1="55" x2="40" y2="30" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="36" y="35" width="8" height="16" fill="#22d3a0" rx="1"/>
+          <line x1="60" y1="70" x2="60" y2="45" stroke="#ff6b6b" stroke-width="1"/>
+          <rect x="56" y="48" width="8" height="18" fill="#ff6b6b" rx="1"/>
+          <line x1="80" y1="65" x2="80" y2="40" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="76" y="44" width="8" height="14" fill="#22d3a0" rx="1"/>
+          <line x1="100" y1="58" x2="100" y2="32" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="96" y="36" width="8" height="14" fill="#22d3a0" rx="1"/>
+          <line x1="120" y1="72" x2="120" y2="50" stroke="#ff6b6b" stroke-width="1"/>
+          <rect x="116" y="54" width="8" height="14" fill="#ff6b6b" rx="1"/>
+          <line x1="140" y1="48" x2="140" y2="22" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="136" y="26" width="8" height="14" fill="#22d3a0" rx="1"/>
+          <line x1="160" y1="55" x2="160" y2="30" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="156" y="34" width="8" height="14" fill="#22d3a0" rx="1"/>
+          <line x1="180" y1="65" x2="180" y2="45" stroke="#ff6b6b" stroke-width="1"/>
+          <rect x="176" y="48" width="8" height="14" fill="#ff6b6b" rx="1"/>
+          <line x1="200" y1="52" x2="200" y2="30" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="196" y="34" width="8" height="12" fill="#22d3a0" rx="1"/>
+          <line x1="220" y1="46" x2="220" y2="24" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="216" y="28" width="8" height="12" fill="#22d3a0" rx="1"/>
+          <line x1="240" y1="58" x2="240" y2="38" stroke="#ff6b6b" stroke-width="1"/>
+          <rect x="236" y="42" width="8" height="12" fill="#ff6b6b" rx="1"/>
+          <line x1="260" y1="44" x2="260" y2="22" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="256" y="26" width="8" height="12" fill="#22d3a0" rx="1"/>
+          <line x1="280" y1="38" x2="280" y2="18" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="276" y="22" width="8" height="12" fill="#22d3a0" rx="1"/>
+          <line x1="300" y1="50" x2="300" y2="28" stroke="#ff6b6b" stroke-width="1"/>
+          <rect x="296" y="32" width="8" height="14" fill="#ff6b6b" rx="1"/>
+          <line x1="320" y1="42" x2="320" y2="22" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="316" y="26" width="8" height="12" fill="#22d3a0" rx="1"/>
+          <line x1="340" y1="35" x2="340" y2="14" stroke="#22d3a0" stroke-width="1"/>
+          <rect x="336" y="18" width="8" height="12" fill="#22d3a0" rx="1"/>
+          <line x1="360" y1="48" x2="360" y2="28" stroke="#ff6b6b" stroke-width="1"/>
+          <rect x="356" y="32" width="8" height="12" fill="#ff6b6b" rx="1"/>
+          <!-- EMA 9 line -->
+          <polyline points="20,52 40,46 60,57 80,50 100,44 120,56 140,40 160,38 180,48 200,42 220,36 240,46 260,36 280,30 300,38 320,34 340,26 360,38" fill="none" stroke="#00e676" stroke-width="1.5" stroke-dasharray="0"/>
+          <!-- EMA 21 line -->
+          <polyline points="20,62 40,58 60,62 80,58 100,52 120,58 140,50 160,46 180,52 200,46 220,42 240,48 260,42 280,36 300,42 320,38 340,32 360,42" fill="none" stroke="#00e676" stroke-width="1.5"/>
+          <!-- Buy signal -->
+          <polygon points="148,85 152,78 156,85" fill="#22d3a0"/>
+          <line x1="152" y1="78" x2="152" y2="40" stroke="#22d3a0" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          <text x="148" y="98" fill="#22d3a0" font-size="8" font-family="monospace">BUY</text>
+          <!-- Labels -->
+          <text x="260" y="30" fill="#00e676" font-size="8" font-family="monospace">EMA 9</text>
+          <text x="260" y="52" fill="#69f0ae" font-size="8" font-family="monospace">EMA 21</text>
+        </svg>
+      </div>
+      <div class="panel-area">
+        <div class="panel-item">
+          <div class="panel-label">SYMBOL</div>
+          <div class="panel-value">BTC/USD</div>
+        </div>
+        <div class="panel-item">
+          <div class="panel-label">EMA 9</div>
+          <div class="panel-value" style="color:var(--accent);">67,420</div>
+        </div>
+        <div class="panel-item">
+          <div class="panel-label">EMA 21</div>
+          <div class="panel-value" style="color:#69f0ae;">66,890</div>
+        </div>
+        <div class="panel-item">
+          <div class="panel-label">SIGNAL</div>
+          <div class="panel-value">LONG ↑</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid reveal" style="margin-top:32px">
+    <div class="card">
+      <span class="card-icon">📊</span>
+      <h3>TradingView</h3>
+      <p>Platform charting online terpopuler. Bisa akses gratis, tersedia di browser maupun aplikasi. Mendukung ribuan instrumen global.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🌲</span>
+      <h3>Pine Script</h3>
+      <p>Bahasa pemrograman khusus untuk TradingView. Didesain sederhana agar trader bisa membuat indikator & strategi sendiri tanpa background coding yang dalam.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">⚡</span>
+      <h3>Kenapa Pine Script?</h3>
+      <p>Terintegrasi langsung dengan TradingView. Bisa langsung backtest, real-time signal, bahkan connect ke broker untuk auto-execute order.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── S3: ALGO TRADING ─────────── -->
+<section id="s3">
+  <div class="section-num reveal">03 — Cara Kerja</div>
+  <h2 class="section-title reveal">Bagaimana<br><em>Algo Trading</em> Bekerja?</h2>
+  <div class="section-body reveal">
+    <p>
+      Algo trading adalah proses trading di mana <strong>keputusan beli dan jual</strong> dibuat secara otomatis oleh program komputer berdasarkan aturan yang kamu tentukan sendiri.
+    </p>
+    <p>
+      Kamu cukup mendefinisikan: <em>kapan beli, kapan jual, berapa lot, dimana stop loss</em> — lalu biarkan program yang mengeksekusi.
+    </p>
+  </div>
+
+  <div class="flow reveal">
+    <div class="flow-step">
+      <div class="flow-circle">📈</div>
+      <div class="flow-label">Data<br>Market</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-circle">🔍</div>
+      <div class="flow-label">Analisa<br>Script</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-circle">⚡</div>
+      <div class="flow-label">Sinyal<br>Terbentuk</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-circle">🤖</div>
+      <div class="flow-label">Order<br>Eksekusi</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-circle">💰</div>
+      <div class="flow-label">Profit /<br>Loss</div>
+    </div>
+  </div>
+
+  <div class="card-grid reveal" style="margin-top:32px">
+    <div class="card">
+      <span class="card-icon">📝</span>
+      <h3>1. Buat Strategi</h3>
+      <p>Kamu tulis aturan trading dalam Pine Script — misalnya: "beli jika EMA 9 memotong EMA 21 dari bawah".</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🕰️</span>
+      <h3>2. Backtest</h3>
+      <p>Script otomatis ditest ke data historis. Kamu bisa lihat performa strategi tanpa perlu risiko modal nyata.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🚀</span>
+      <h3>3. Live Trading</h3>
+      <p>Setelah backtest memuaskan, jalankan ke live market. Platform seperti byScript.io menghubungkan script ke broker otomatis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── S4: INDIKATOR VS STRATEGY ─────────── -->
+<section id="s4">
+  <div class="section-num reveal">04 — Konsep Dasar</div>
+  <h2 class="section-title reveal"><em>Indikator</em> vs<br>Strategy</h2>
+  <div class="section-body reveal">
+    <p>Di Pine Script, ada dua jenis script yang bisa kamu buat. Penting untuk memahami perbedaan keduanya sejak awal.</p>
+  </div>
+
+  <div class="two-col reveal">
+    <div class="two-col-item indicator">
+      <h3>📊 INDIKATOR</h3>
+      <p>Script yang <strong>menampilkan informasi visual</strong> di atas chart. Tidak bisa eksekusi order — hanya memberikan sinyal atau informasi untuk trader.</p>
+      <ul>
+        <li>Menggambar garis, plot, label</li>
+        <li>Mengkalkulasi nilai matematis</li>
+        <li>Memberi sinyal beli/jual visual</li>
+        <li>Bisa ditambah ke chart manapun</li>
+        <li>Contoh: EMA, RSI, Bollinger Bands</li>
+      </ul>
+      <div style="margin-top:16px">
+        <span class="pill pill-blue">indicator()</span>
+      </div>
+    </div>
+    <div class="two-col-item strategy">
+      <h3>⚙️ STRATEGY</h3>
+      <p>Script yang <strong>mensimulasikan & mengeksekusi</strong> order trading. Bisa backtest ke data historis dan auto-trade ke broker.</p>
+      <ul>
+        <li>Bisa buka & tutup posisi</li>
+        <li>Ada laporan backtesting</li>
+        <li>Bisa set stop loss & take profit</li>
+        <li>Bisa dihubungkan ke broker</li>
+        <li>Contoh: EMA Crossover Strategy</li>
+      </ul>
+      <div style="margin-top:16px">
+        <span class="pill pill-purple">strategy()</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box reveal">
+    <p>
+      <strong>Analogi mudah:</strong> Indikator = <em>GPS yang kasih arahan</em>. Strategy = <em>autopilot yang nyetir sendiri</em> berdasarkan arahan GPS tersebut.
+    </p>
+  </div>
+</section>
+
+<!-- ─────────── S5: CONTOH INDIKATOR ─────────── -->
+<section id="s5">
+  <div class="section-num reveal">05 — Praktik</div>
+  <h2 class="section-title reveal">Contoh<br><em>Indikator</em> Pine Script</h2>
+  <div class="section-body reveal">
+    <p>Mari buat indikator sederhana — menampilkan dua garis EMA (9 dan 21) di atas chart, plus label sinyal ketika keduanya bersilangan.</p>
+  </div>
+
+  <div class="code-wrapper reveal">
+    <div class="code-header">
+      <div class="code-header-left">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">ema_indicator.pine</div>
+      </div>
+      <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+    </div>
+    <pre><code class="language-javascript" id="code-indicator">// @version=5
+indicator("EMA Crossover Signal", overlay=true)
+
+// ─── Input ───────────────────────────────
+fastLen  = input.int(9,  title="EMA Cepat",   minval=1)
+slowLen  = input.int(21, title="EMA Lambat",  minval=1)
+
+// ─── Hitung EMA ──────────────────────────
+emaFast = ta.ema(close, fastLen)
+emaSlow = ta.ema(close, slowLen)
+
+// ─── Plot ke Chart ───────────────────────
+plot(emaFast, color=color.new(#00e676, 0), linewidth=2, title="EMA 9")
+plot(emaSlow, color=color.new(#00c853, 0), linewidth=2, title="EMA 21")
+
+// ─── Deteksi Crossover ───────────────────
+bullish = ta.crossover(emaFast, emaSlow)
+bearish = ta.crossunder(emaFast, emaSlow)
+
+// ─── Tampilkan Sinyal ────────────────────
+plotshape(bullish, style=shape.triangleup,
+         location=location.belowbar,
+         color=color.new(color.lime, 0), size=size.small,
+         title="BUY Signal")
+
+plotshape(bearish, style=shape.triangledown,
+         location=location.abovebar,
+         color=color.new(color.red, 0), size=size.small,
+         title="SELL Signal")
+
+// ─── Alert ───────────────────────────────
+alertcondition(bullish, "EMA BUY",  "EMA 9 crossed above EMA 21")
+alertcondition(bearish, "EMA SELL", "EMA 9 crossed below EMA 21")</code></pre>
+  </div>
+
+  <div class="breakdown reveal">
+    <div class="breakdown-item">
+      <div class="breakdown-code">// @version=5</div>
+      <div class="breakdown-desc"><strong>Deklarasi versi</strong> — selalu tulis ini di baris pertama. Version 5 adalah versi terbaru Pine Script.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">indicator(..., overlay=true)</div>
+      <div class="breakdown-desc"><strong>Deklarasi tipe script.</strong> <code>overlay=true</code> berarti indikator ditampilkan di atas chart candlestick, bukan di panel terpisah.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">input.int(9, title="...")</div>
+      <div class="breakdown-desc"><strong>Input dari user</strong> — membuat parameter yang bisa diubah dari Settings panel TradingView tanpa harus edit kode.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">ta.ema(close, fastLen)</div>
+      <div class="breakdown-desc"><strong>Fungsi built-in EMA.</strong> <code>ta</code> adalah library teknikal analisis Pine Script. <code>close</code> = harga penutupan tiap candle.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">plot(emaFast, color=...)</div>
+      <div class="breakdown-desc"><strong>Gambar garis ke chart.</strong> Setiap nilai EMA di setiap candle akan tersambung menjadi garis yang terlihat di chart.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">ta.crossover(emaFast, emaSlow)</div>
+      <div class="breakdown-desc"><strong>Deteksi persilangan.</strong> Mengembalikan <code>true</code> hanya pada candle di mana EMA cepat memotong EMA lambat dari bawah ke atas (sinyal bullish).</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">plotshape(bullish, ...)</div>
+      <div class="breakdown-desc"><strong>Gambar ikon/marker</strong> di chart. Pada candle di mana <code>bullish = true</code>, akan muncul segitiga hijau di bawah candle.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">alertcondition(...)</div>
+      <div class="breakdown-desc"><strong>Buat kondisi alert.</strong> Pengguna bisa set alert di TradingView agar mendapat notifikasi email/webhook saat sinyal muncul.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── S6: CONTOH STRATEGY ─────────── -->
+<section id="s6">
+  <div class="section-num reveal">06 — Praktik</div>
+  <h2 class="section-title reveal">Contoh<br><em>Strategy</em> Pine Script</h2>
+  <div class="section-body reveal">
+    <p>Sekarang kita ubah indikator tadi menjadi strategy — script yang bisa backtest dan auto-trade. Perubahan kunci ada di deklarasi dan perintah order.</p>
+  </div>
+
+  <div class="code-wrapper reveal">
+    <div class="code-header">
+      <div class="code-header-left">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">ema_strategy.pine</div>
+      </div>
+      <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+    </div>
+    <pre><code class="language-javascript" id="code-strategy">// @version=5
+strategy("EMA Crossover Strategy",
+         overlay           = true,
+         initial_capital   = 10000,
+         default_qty_type  = strategy.percent_of_equity,
+         default_qty_value = 10,
+         commission_type   = strategy.commission.percent,
+         commission_value  = 0.1)
+
+// ─── Input ───────────────────────────────
+fastLen  = input.int(9,  title="EMA Cepat",  minval=1)
+slowLen  = input.int(21, title="EMA Lambat", minval=1)
+slPct    = input.float(2.0, title="Stop Loss %",   step=0.1)
+tpPct    = input.float(4.0, title="Take Profit %", step=0.1)
+
+// ─── Hitung EMA ──────────────────────────
+emaFast = ta.ema(close, fastLen)
+emaSlow = ta.ema(close, slowLen)
+
+// ─── Plot ke Chart ───────────────────────
+plot(emaFast, color=color.new(#00e676, 0), linewidth=2, title="EMA 9")
+plot(emaSlow, color=color.new(#00c853, 0), linewidth=2, title="EMA 21")
+
+// ─── Kondisi Entry ───────────────────────
+longCondition  = ta.crossover(emaFast, emaSlow)
+shortCondition = ta.crossunder(emaFast, emaSlow)
+
+// ─── Eksekusi Order ──────────────────────
+if longCondition
+    strategy.entry("LONG", strategy.long)
+    strategy.exit("TP/SL LONG",
+                  stop   = strategy.position_avg_price * (1 - slPct / 100),
+                  limit  = strategy.position_avg_price * (1 + tpPct / 100))
+
+if shortCondition
+    strategy.close("LONG")   // Tutup posisi long jika ada</code></pre>
+  </div>
+
+  <div class="breakdown reveal">
+    <div class="breakdown-item">
+      <div class="breakdown-code">strategy("...", initial_capital=10000)</div>
+      <div class="breakdown-desc"><strong>Deklarasi strategy</strong> beserta parameter backtest — modal awal, komisi broker, dan ukuran order default.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">default_qty_value = 10</div>
+      <div class="breakdown-desc"><strong>Ukuran posisi 10%</strong> dari equity setiap kali entry. Ini adalah money management dasar yang sudah built-in.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">commission_value = 0.1</div>
+      <div class="breakdown-desc"><strong>Simulasi komisi 0.1%</strong> per trade seperti di exchange sungguhan, agar hasil backtest lebih realistis.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">strategy.entry("LONG", strategy.long)</div>
+      <div class="breakdown-desc"><strong>Buka posisi beli.</strong> "LONG" adalah nama trade untuk referensi. <code>strategy.long</code> = arah posisi beli.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">strategy.exit("TP/SL LONG", stop=..., limit=...)</div>
+      <div class="breakdown-desc"><strong>Pasang Stop Loss & Take Profit otomatis.</strong> Dihitung dari harga rata-rata entry posisi yang sedang berjalan.</div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-code">strategy.close("LONG")</div>
+      <div class="breakdown-desc"><strong>Tutup posisi</strong> dengan nama "LONG". Dieksekusi ketika EMA 9 memotong ke bawah — sinyal bearish.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── S7: BEDAH SCRIPT ─────────── -->
+<section id="s7">
+  <div class="section-num reveal">07 — Deep Dive</div>
+  <h2 class="section-title reveal">Bedah Struktur<br><em>Script Strategy</em></h2>
+  <div class="section-body reveal">
+    <p>
+      Setiap strategy Pine Script selalu punya <strong>4 blok utama</strong> yang berurutan. Memahami struktur ini akan membuat kamu bisa membaca & menulis script apapun dengan lebih mudah.
+    </p>
+  </div>
+
+  <div class="strategy-flow reveal">
+    <div class="sf-box condition">
+      <div class="sf-label">Blok 1</div>
+      <h4>🎛️ Deklarasi & Config</h4>
+      <p>Baris pertama script. Tentukan nama, modal, komisi, ukuran lot.</p>
+    </div>
+    <div class="sf-box condition">
+      <div class="sf-label">Blok 2</div>
+      <h4>📐 Kalkulasi</h4>
+      <p>Hitung semua nilai yang dibutuhkan: EMA, RSI, ATR, dan sebagainya.</p>
+    </div>
+    <div class="sf-box condition">
+      <div class="sf-label">Blok 3</div>
+      <h4>🔍 Kondisi</h4>
+      <p>Definisikan kapan sinyal terbentuk — crossover, breakout, dsb.</p>
+    </div>
+    <div class="sf-box action-long">
+      <div class="sf-label">Blok 4</div>
+      <h4>📤 Eksekusi Order</h4>
+      <p>Berikan perintah beli/jual berdasarkan kondisi yang sudah dibuat.</p>
+    </div>
+    <div class="sf-box action-long">
+      <div class="sf-label">Blok 5</div>
+      <h4>📊 Visualisasi</h4>
+      <p>Plot garis, marker, label agar mudah dibaca di chart.</p>
+    </div>
+    <div class="sf-box action-short">
+      <div class="sf-label">Blok 6</div>
+      <h4>🔔 Alert</h4>
+      <p>Definisikan kondisi notifikasi untuk webhook atau email.</p>
+    </div>
+  </div>
+
+  <div class="code-wrapper reveal" style="margin-top:32px">
+    <div class="code-header">
+      <div class="code-header-left">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">full_structure_example.pine</div>
+      </div>
+      <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+    </div>
+    <pre><code class="language-javascript" id="code-full">// @version=5
+
+// ═══════════════════════════════════════
+// BLOK 1 · DEKLARASI & KONFIGURASI
+// ═══════════════════════════════════════
+strategy("EMA 9/21 — byScript.io Template",
+         overlay           = true,
+         initial_capital   = 10000,
+         default_qty_type  = strategy.percent_of_equity,
+         default_qty_value = 10,
+         commission_type   = strategy.commission.percent,
+         commission_value  = 0.1)
+
+// Input parameter
+fastLen = input.int(9,   "EMA Cepat",   minval=1, group="EMA Settings")
+slowLen = input.int(21,  "EMA Lambat",  minval=1, group="EMA Settings")
+slPct   = input.float(2, "Stop Loss %", step=0.1, group="Risk Management")
+tpPct   = input.float(4, "TP %",        step=0.1, group="Risk Management")
+
+// ═══════════════════════════════════════
+// BLOK 2 · KALKULASI
+// ═══════════════════════════════════════
+emaFast = ta.ema(close, fastLen)
+emaSlow = ta.ema(close, slowLen)
+trend   = emaFast > emaSlow  // true = uptrend
+
+// ═══════════════════════════════════════
+// BLOK 3 · KONDISI SINYAL
+// ═══════════════════════════════════════
+longEntry  = ta.crossover(emaFast, emaSlow)   // EMA 9 potong atas EMA 21
+longExit   = ta.crossunder(emaFast, emaSlow)  // EMA 9 potong bawah EMA 21
+
+// ═══════════════════════════════════════
+// BLOK 4 · EKSEKUSI ORDER
+// ═══════════════════════════════════════
+if longEntry
+    strategy.entry("LONG", strategy.long,
+                   comment="EMA Crossover ↑")
+    strategy.exit("TP/SL",
+                  from_entry = "LONG",
+                  stop       = close * (1 - slPct / 100),
+                  limit      = close * (1 + tpPct / 100),
+                  comment    = "Auto Exit")
+
+if longExit
+    strategy.close("LONG", comment="EMA Cross Down ↓")
+
+// ═══════════════════════════════════════
+// BLOK 5 · VISUALISASI
+// ═══════════════════════════════════════
+plot(emaFast, "EMA 9",  color.new(#00e676, 0), linewidth=2)
+plot(emaSlow, "EMA 21", color.new(#00c853, 0), linewidth=2)
+
+bgcolor(trend ? color.new(color.green, 95) :
+               color.new(color.red, 95))
+
+plotshape(longEntry, "BUY",  shape.triangleup,
+          location.belowbar, color.lime, size=size.small)
+plotshape(longExit,  "SELL", shape.triangledown,
+          location.abovebar, color.red,  size=size.small)
+
+// ═══════════════════════════════════════
+// BLOK 6 · ALERT
+// ═══════════════════════════════════════
+alertcondition(longEntry, "BUY Signal",
+               "EMA 9 crossed above EMA 21 — Potential LONG")
+alertcondition(longExit,  "SELL Signal",
+               "EMA 9 crossed below EMA 21 — Close LONG")</code></pre>
+  </div>
+
+  <div class="highlight-box reveal" style="margin-top:24px">
+    <p>
+      💡 <strong>Tips:</strong> Kamu tidak perlu menulis semua blok dari nol. Template ini bisa kamu jadikan <strong>kerangka dasar</strong> — cukup ganti kalkulasi di Blok 2 dan kondisi di Blok 3 sesuai strategi yang kamu inginkan.
+    </p>
+  </div>
+</section>
+
+<!-- ─────────── S8: BYSCRIPT.IO ─────────── -->
+<section id="s8">
+  <div class="section-num reveal">08 — Platform</div>
+  <h2 class="section-title reveal">Mengenal<br><em>byScript.io</em></h2>
+  <div class="section-body reveal">
+    <p>
+      Kamu sudah bisa menulis Pine Script — tapi bagaimana agar script tersebut bisa berjalan <strong>secara otomatis 24 jam</strong> dan langsung eksekusi ke broker tanpa kamu harus menatap layar?
+    </p>
+    <p>
+      Di sinilah peran <strong>byScript.io</strong>.
+    </p>
+  </div>
+
+  <div class="byscript-hero reveal">
+    <div class="byscript-logo">by<span>Script</span>.io</div>
+    <p class="byscript-tagline">Algo Trading Platform — dari sinyal ke eksekusi, otomatis.</p>
+
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-text">
+          <h4>Connect ke Broker</h4>
+          <p>Hubungkan Pine Script strategy kamu ke broker pilihan secara langsung.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-text">
+          <h4>Auto Execute</h4>
+          <p>Sinyal dari TradingView langsung diteruskan sebagai order ke broker — dalam hitungan detik.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🕐</div>
+        <div class="feature-text">
+          <h4>24/7 Running</h4>
+          <p>Sistem berjalan terus tanpa kamu harus buka laptop. Mau tidur, kerja, jalan-jalan — algo tetap trading.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <div class="feature-text">
+          <h4>Dashboard Monitor</h4>
+          <p>Pantau semua posisi, performa, dan log eksekusi dari satu dashboard yang bersih.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-text">
+          <h4>Notifikasi Real-time</h4>
+          <p>Dapatkan notifikasi setiap kali order masuk, take profit, atau stop loss terpicu.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-text">
+          <h4>Risk Control</h4>
+          <p>Atur batas maksimal drawdown, ukuran lot, dan parameter risiko langsung dari platform.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder untuk screenshot byScript.io -->
+  <div class="img-placeholder reveal">
+    <span class="icon">🖼️</span>
+    PLACEHOLDER — Screenshot Dashboard byScript.io<br>
+    <span style="opacity:0.5;font-size:10px;">(Upload logo & screenshot setelah tersedia)</span>
+  </div>
+
+  <!-- Flow bagaimana byScript bekerja -->
+  <div style="margin-top:40px" class="reveal">
+    <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:20px;opacity:0.8;">Cara Kerja byScript.io</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#00e676;font-size:18px;">📝</div>
+        <div class="flow-label">Tulis Strategy<br>di TradingView</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#00e676;font-size:18px;">🔗</div>
+        <div class="flow-label">Connect<br>byScript.io</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#00e676;font-size:18px;">⚙️</div>
+        <div class="flow-label">Setup<br>Parameter</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#00e676;font-size:18px;">🤖</div>
+        <div class="flow-label">Algo Jalan<br>Otomatis</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#00e676;font-size:18px;">💸</div>
+        <div class="flow-label">Pantau<br>& Profit</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box reveal" style="margin-top:32px;border-color:rgba(124,58,237,0.3);">
+    <p>
+      byScript.io dirancang untuk semua level — dari yang baru belajar Pine Script hingga trader profesional yang ingin mengotomasi strategi kompleks. <strong>Kamu fokus pada strategi, byScript.io yang handle eksekusinya.</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ─────────── FOOTER ─────────── -->
+<footer>
+  <div class="footer-logo">byScript.io</div>
+  <p style="margin-bottom:8px;">Pine Script For Beginner — Module v1.0</p>
+  <p style="opacity:0.4;">© 2024 byScript.io · All rights reserved</p>
+</footer>
+
+<script>
+// ─── HIGHLIGHT.JS ───────────────────────
+hljs.highlightAll();
+
+// ─── PROGRESS BAR ───────────────────────
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progress');
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  el.style.width = (scrollTop / docHeight * 100) + '%';
+});
+
+// ─── SCROLL REVEAL ──────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── ACTIVE NAV ──────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) {
+      current = s.getAttribute('id');
+    }
+  });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) {
+      a.classList.add('active');
+    }
+  });
+});
+
+// ─── COPY CODE ──────────────────────────
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrapper').querySelector('pre code');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'COPIED ✓';
+    btn.style.color = 'var(--accent3)';
+    setTimeout(() => {
+      btn.textContent = 'COPY';
+      btn.style.color = '';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
