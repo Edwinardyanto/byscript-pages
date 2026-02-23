@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Class — Algo Trading by byScript.io</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0A0A0A;
+    --off-black: #111111;
+    --dark: #161616;
+    --card: #1A1A1A;
+    --border: rgba(255,255,255,0.08);
+    --gold: #C9A84C;
+    --gold-light: #E8C96E;
+    --gold-dim: rgba(201,168,76,0.15);
+    --white: #F5F2EC;
+    --muted: rgba(245,242,236,0.45);
+    --mono: 'DM Mono', monospace;
+    --serif: 'Playfair Display', serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── noise texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 4rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .nav-cta {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--black);
+    background: var(--gold);
+    padding: 0.6rem 1.4rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 8rem 4rem 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(201,168,76,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+  }
+
+  .hero-grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+  }
+
+  .hero-inner {
+    position: relative;
+    max-width: 900px;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 580px;
+    margin: 0 auto 3rem;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .badge.gold {
+    border-color: rgba(201,168,76,0.4);
+    color: var(--gold);
+  }
+
+  .hero-cta-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.85s forwards;
+  }
+
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 1rem 2.5rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.3); }
+
+  .btn-secondary {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: transparent;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all 0.25s;
+    display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  .hero-price-tag {
+    position: absolute;
+    right: 4rem;
+    bottom: 4rem;
+    text-align: right;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+
+  .hero-price-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .hero-price-value {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  .section-desc {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 560px;
+    line-height: 1.8;
+  }
+
+  /* ── PAIN SECTION ── */
+  .pain {
+    padding: 7rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .pain-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .pain-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .pain-item {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    padding: 1.4rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    transition: border-color 0.3s;
+  }
+
+  .pain-item:hover { border-color: rgba(201,168,76,0.3); }
+
+  .pain-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .pain-text {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .pain-text strong {
+    display: block;
+    color: var(--white);
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    font-size: 0.95rem;
+  }
+
+  /* ── FOR WHO ── */
+  .forWho {
+    padding: 7rem 0;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .forWho-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    margin-top: 4rem;
+    background: var(--border);
+  }
+
+  .forWho-card {
+    background: var(--card);
+    padding: 2.5rem;
+    transition: background 0.3s;
+  }
+
+  .forWho-card:hover { background: #1f1f1f; }
+
+  .forWho-number {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .forWho-card h3 {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .forWho-card p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── MODULES ── */
+  .modules {
+    padding: 8rem 0;
+  }
+
+  .modules-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+    margin-bottom: 5rem;
+  }
+
+  .module-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .module-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    transition: border-color 0.3s;
+    cursor: pointer;
+  }
+
+  .module-item:hover { border-color: rgba(201,168,76,0.3); }
+
+  .module-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 2.5rem;
+  }
+
+  .module-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    flex-shrink: 0;
+    width: 3.5rem;
+  }
+
+  .module-title-wrap { flex: 1; }
+
+  .module-title {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .module-subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+  }
+
+  .module-arrow {
+    color: var(--gold);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .module-item.active .module-arrow { transform: rotate(90deg); }
+
+  .module-body {
+    display: none;
+    padding: 0 2.5rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .module-item.active .module-body { display: block; }
+
+  .module-benefits {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+  }
+
+  .module-benefit {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .module-benefit::before {
+    content: '—';
+    color: var(--gold);
+    font-family: var(--mono);
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  /* ── DELIVERABLES ── */
+  .deliverables {
+    padding: 7rem 0;
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .deliverables-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5px;
+    margin-top: 4rem;
+    background: var(--border);
+  }
+
+  .del-card {
+    background: var(--card);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .del-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .del-card:hover { background: #1f1f1f; }
+  .del-card:hover::before { opacity: 1; }
+
+  .del-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .del-title {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .del-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    padding: 5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stats-inner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .stat {
+    background: var(--black);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── ROI JUSTIFICATION ── */
+  .roi-justification {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 3px;
+    background: var(--border);
+    margin-bottom: 4rem;
+  }
+
+  .roi-just-body {
+    background: var(--card);
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .roi-just-body p {
+    font-size: 0.97rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .roi-just-body p strong { color: var(--white); font-weight: 500; }
+
+  .roi-just-callout {
+    background: var(--gold-dim);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .roi-just-q {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .roi-just-q2 {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .roi-just-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0.8rem 0;
+  }
+
+  .roi-just-a {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .roi-just-a2 {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--gold);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .roi-just-sub {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .roi-justification { grid-template-columns: 1fr; }
+  }
+
+  /* ── ROI SECTION ── */
+  .roi {
+    padding: 8rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .roi-header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .roi-header .section-desc {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .roi-streams {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--border);
+    margin-bottom: 4rem;
+  }
+
+  .roi-stream {
+    background: var(--card);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .roi-stream::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .roi-stream-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .roi-stream h3 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .roi-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .roi-table tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .roi-table tr:last-child { border-bottom: none; }
+
+  .roi-table td {
+    padding: 0.55rem 0;
+    font-size: 0.82rem;
+    vertical-align: top;
+  }
+
+  .roi-table td:first-child {
+    color: var(--muted);
+    padding-right: 1rem;
+    width: 55%;
+  }
+
+  .roi-table td:last-child {
+    color: var(--white);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    text-align: right;
+  }
+
+  .roi-table td:last-child.gold {
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  .roi-summary {
+    background: var(--gold-dim);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 3rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .roi-summary-text h3 {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .roi-summary-text p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  .roi-summary-numbers {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .roi-summary-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .roi-summary-value {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .roi-summary-sub {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 768px) {
+    .roi-streams { grid-template-columns: 1fr; }
+    .roi-summary { grid-template-columns: 1fr; padding: 2rem; }
+    .roi-summary-numbers { text-align: left; }
+  }
+
+  /* ── PRICING ── */
+  .pricing {
+    padding: 8rem 0;
+  }
+
+  .pricing-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.06), transparent);
+    pointer-events: none;
+  }
+
+  .pricing-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-dim);
+    padding: 0.35rem 0.8rem;
+    display: inline-block;
+    margin-bottom: 2rem;
+  }
+
+  .pricing-amount {
+    font-family: var(--serif);
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .pricing-amount span {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--muted);
+    font-family: var(--sans);
+  }
+
+  .pricing-note {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 2.5rem;
+    display: block;
+  }
+
+  .pricing-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 2rem 0;
+  }
+
+  .pricing-includes {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .pricing-includes li {
+    display: flex;
+    gap: 0.9rem;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .pricing-includes li::before {
+    content: '✓';
+    color: var(--gold);
+    font-family: var(--mono);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .pricing-cta {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 1.1rem;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+
+  .pricing-cta:hover { background: var(--gold-light); }
+
+  .pricing-note-bottom {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 1rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── FINAL CTA ── */
+  .finalCta {
+    padding: 8rem 0;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .finalCta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(201,168,76,0.05), transparent);
+    pointer-events: none;
+  }
+
+  .finalCta-title {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+    position: relative;
+  }
+
+  .finalCta-title em { font-style: italic; color: var(--gold); }
+
+  .finalCta-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto 3rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2.5rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .container { padding: 0 1.5rem; }
+    .hero { padding: 7rem 1.5rem 5rem; }
+    .hero-price-tag { display: none; }
+    .pain-layout { grid-template-columns: 1fr; gap: 3rem; }
+    .forWho-grid { grid-template-columns: 1fr; }
+    .deliverables-grid { grid-template-columns: 1fr 1fr; }
+    .stats-inner { grid-template-columns: 1fr 1fr; }
+    .modules-header { grid-template-columns: 1fr; gap: 2rem; }
+    .pricing-inner { grid-template-columns: 1fr; gap: 3rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">byScript.io</span>
+  <a href="checkout.html" class="nav-cta">Daftar Sekarang</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-inner">
+    <span class="hero-eyebrow">Private Class · byScript.io · 4 Pertemuan Eksklusif</span>
+    <h1 class="hero-title">
+      Dari Trader Manual<br>
+      jadi <em>Algo Trader</em><br>
+      dalam 16 Jam.
+    </h1>
+    <p class="hero-subtitle">
+      Kamu sudah punya strategi. Sekarang saatnya strategi itu bekerja sendiri — 24 jam, tanpa emosi, tanpa FOMO. Kami bantu sampai bot kamu beneran running dengan uang asli.
+    </p>
+    <div class="hero-badges">
+      <span class="badge gold">1-on-1 Private</span>
+      <span class="badge">4 × 4 Jam Tatap Muka</span>
+      <span class="badge">Lifetime Support</span>
+      <span class="badge">Bot Live di Akhir Kelas</span>
+    </div>
+    <div class="hero-cta-group">
+      <a href="checkout.html" class="btn-primary">Mulai Perjalanan Ini</a>
+      <a href="#modul" class="btn-secondary">Lihat Isi Kelas</a>
+    </div>
+  </div>
+  <div class="hero-price-tag">
+    <span class="hero-price-label">Investasi</span>
+    <span class="hero-price-value">Rp 19.000.000</span>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="container">
+    <div class="pain-layout">
+      <div>
+        <span class="section-label reveal">Keresahan yang Kita Kenal Bersama</span>
+        <h2 class="section-title reveal">Trading manual itu <em>melelahkan.</em></h2>
+        <p class="section-desc reveal">
+          Kamu udah cukup lama di sini. Udah paham chart, udah baca ratusan analisis. Tapi ada satu masalah yang terus berulang — dan bukan strateginya yang salah.
+        </p>
+      </div>
+      <ul class="pain-list">
+        <li class="pain-item reveal">
+          <span class="pain-icon">😮‍💨</span>
+          <div class="pain-text">
+            <strong>Capek mantengin chart tiap hari</strong>
+            Crypto jalan 24 jam. Kamu tidak. Dan satu momen yang kelewatan bisa berarti entry yang terlambat atau posisi kena stop loss.
+          </div>
+        </li>
+        <li class="pain-item reveal">
+          <span class="pain-icon">🧠</span>
+          <div class="pain-text">
+            <strong>Strategi bagus, eksekusi berantakan</strong>
+            Udah tau harus gimana — tapi pas live, emosi mengalahkan logika. FOMO masuk, fear bikin exit terlalu cepat. Berulang terus.
+          </div>
+        </li>
+        <li class="pain-item reveal">
+          <span class="pain-icon">📉</span>
+          <div class="pain-text">
+            <strong>Ikut sinyal orang lain, hasilnya tetap rugi</strong>
+            Yang untung cuma yang jual sinyalnya. Tanpa sistem sendiri, kamu selalu jadi bagian dari rencana orang lain.
+          </div>
+        </li>
+        <li class="pain-item reveal">
+          <span class="pain-icon">🔄</span>
+          <div class="pain-text">
+            <strong>Belajar bertahun-tahun, hasilnya gitu-gitu aja</strong>
+            Masalahnya bukan kurang ilmu. Tapi selama eksekusinya masih manual — faktor manusia akan selalu mengganggu hasilnya.
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHO -->
+<section class="forWho">
+  <div class="container">
+    <span class="section-label reveal">Kelas Ini Untuk Siapa</span>
+    <h2 class="section-title reveal">Kamu yang sudah <em>siap naik level.</em></h2>
+    <div class="forWho-grid">
+      <div class="forWho-card reveal">
+        <span class="forWho-number">01</span>
+        <h3>Trader yang sudah punya strategi</h3>
+        <p>Kamu tidak mulai dari nol. Kamu sudah punya strategi yang ingin dikonversi jadi algoritma yang berjalan otomatis.</p>
+      </div>
+      <div class="forWho-card reveal">
+        <span class="forWho-number">02</span>
+        <h3>Familiar dengan TradingView</h3>
+        <p>Kamu sudah pakai TradingView untuk analisis. Sekarang waktunya manfaatkan platform itu sampai ke level yang lebih dalam.</p>
+      </div>
+      <div class="forWho-card reveal">
+        <span class="forWho-number">03</span>
+        <h3>Serius soal bull market berikutnya</h3>
+        <p>Halving berikutnya April 2028. Bull market puncaknya sekitar 2029. Kamu mau masuk sudah siap — bukan masih belajar setup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-bar">
+  <div class="container">
+    <div class="stats-inner">
+      <div class="stat reveal">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Pertemuan Tatap Muka</span>
+      </div>
+      <div class="stat reveal">
+        <span class="stat-num">16</span>
+        <span class="stat-label">Jam Pembelajaran</span>
+      </div>
+      <div class="stat reveal">
+        <span class="stat-num">1:1</span>
+        <span class="stat-label">Perhatian Penuh</span>
+      </div>
+      <div class="stat reveal">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Akses Support</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="modules" id="modul">
+  <div class="container">
+    <div class="modules-header">
+      <div>
+        <span class="section-label reveal">Isi Kelas</span>
+        <h2 class="section-title reveal">4 Pertemuan yang <em>mengubah cara</em> kamu trading.</h2>
+      </div>
+      <p class="section-desc reveal">
+        Setiap pertemuan dirancang dengan satu output konkret. Bukan sekadar teori — kamu keluar dari tiap sesi dengan sesuatu yang bisa langsung dipakai.
+      </p>
+    </div>
+
+    <div class="module-list reveal">
+
+      <div class="module-item active">
+        <div class="module-header" onclick="toggleModule(this)">
+          <span class="module-num">SESI 01</span>
+          <div class="module-title-wrap">
+            <div class="module-title">Strategi Kamu Jadi Kode</div>
+            <div class="module-subtitle">Pine Script · Logika Algoritma · Indikator Pertama</div>
+          </div>
+          <span class="module-arrow">›</span>
+        </div>
+        <div class="module-body">
+          <ul class="module-benefits">
+            <li class="module-benefit">Paham struktur Pine Script tanpa harus jadi programmer — dikaitkan langsung ke konsep trading yang sudah kamu kenal</li>
+            <li class="module-benefit">Bisa membaca dan memodifikasi Pine Script yang sudah tersedia di library TradingView</li>
+            <li class="module-benefit">Strategi trading kamu sendiri sudah diterjemahkan ke dalam kode yang berjalan di chart</li>
+            <li class="module-benefit">Tahu cara debug dan baca error message — bukan panik, tapi problem-solve</li>
+            <li class="module-benefit">Indikator pertamamu sudah terpasang dan menampilkan sinyal entry-exit di chart live</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <span class="module-num">SESI 02</span>
+          <div class="module-title-wrap">
+            <div class="module-title">Strategi yang Teruji, Bukan yang Terasa Bagus</div>
+            <div class="module-subtitle">Backtesting · Optimasi · Filter Noise</div>
+          </div>
+          <span class="module-arrow">›</span>
+        </div>
+        <div class="module-body">
+          <ul class="module-benefits">
+            <li class="module-benefit">Bisa membaca hasil Strategy Tester dengan benar — tahu metrik mana yang penting dan mana yang bisa menipu</li>
+            <li class="module-benefit">Tahu cara mendeteksi overfitting sebelum terjebak live dengan strategi yang hanya bagus di atas kertas</li>
+            <li class="module-benefit">Bisa menambahkan filter untuk menghilangkan sinyal palsu di kondisi market sideways</li>
+            <li class="module-benefit">Berhasil mengecilkan drawdown maksimal tanpa mengorbankan profit secara signifikan</li>
+            <li class="module-benefit">Profit factor strategi kamu meningkat setelah proses iterasi dan optimasi bersama</li>
+            <li class="module-benefit">Punya checklist validasi pribadi sebelum berani live dengan strategi apapun</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <span class="module-num">SESI 03</span>
+          <div class="module-title-wrap">
+            <div class="module-title">Sistem Otomatisasi Terpasang</div>
+            <div class="module-subtitle">byScript.io · API Exchange · Webhook · End-to-End Test</div>
+          </div>
+          <span class="module-arrow">›</span>
+        </div>
+        <div class="module-body">
+          <ul class="module-benefits">
+            <li class="module-benefit">Menguasai seluruh fitur byScript.io — dari manajemen bot, order setting, hingga log history untuk evaluasi performa</li>
+            <li class="module-benefit">Exchange sudah terhubung ke byScript via API dengan permission yang benar dan aman</li>
+            <li class="module-benefit">Alert TradingView sudah dikonfigurasi dan berhasil mengirim sinyal ke bot secara otomatis</li>
+            <li class="module-benefit">End-to-end test berhasil: sinyal dari chart → byScript → order masuk exchange dalam hitungan detik</li>
+            <li class="module-benefit">Akses dan bisa menggunakan algo library eksklusif byScript.io untuk referensi atau langsung dipakai</li>
+            <li class="module-benefit">Siap mental dan teknikal untuk go live di sesi berikutnya</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module-item">
+        <div class="module-header" onclick="toggleModule(this)">
+          <span class="module-num">SESI 04</span>
+          <div class="module-title-wrap">
+            <div class="module-title">Bot Kamu Berjalan. Dengan Uang Asli.</div>
+            <div class="module-subtitle">Go Live · Interpretasi Hasil · Monitoring Mandiri</div>
+          </div>
+          <span class="module-arrow">›</span>
+        </div>
+        <div class="module-body">
+          <ul class="module-benefits">
+            <li class="module-benefit">Bot algo trading kamu resmi live — kapital masuk, strategi aktif, order tereksekusi otomatis</li>
+            <li class="module-benefit">Bisa membaca dan menginterpretasi log order live: timing, slippage, presisi eksekusi</li>
+            <li class="module-benefit">Memahami mengapa hasil live bisa berbeda dari backtest — dan cara menyesuaikannya</li>
+            <li class="module-benefit">Punya sistem monitoring mandiri: tahu kapan harus intervensi dan kapan biarkan bot jalan</li>
+            <li class="module-benefit">Punya trading journal dan framework evaluasi bulanan yang bisa dipakai sendiri ke depannya</li>
+            <li class="module-benefit">Tahu roadmap pengembangan strategi selanjutnya — bukan berhenti di sini</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERABLES -->
+<section class="deliverables">
+  <div class="container">
+    <span class="section-label reveal">Yang Kamu Bawa Pulang</span>
+    <h2 class="section-title reveal">Bukan sekadar ilmu. <em>Sistem yang bisa dimonetisasi.</em></h2>
+    <div class="deliverables-grid">
+      <div class="del-card reveal">
+        <span class="del-icon">📜</span>
+        <div class="del-title">Pine Script Strategi Kamu</div>
+        <p class="del-desc">Strategi trading kamu sendiri, sudah ditulis dalam Pine Script, sudah dioptimasi, sudah divalidasi — siap pakai dan bisa dikembangkan terus.</p>
+      </div>
+      <div class="del-card reveal">
+        <span class="del-icon">🤖</span>
+        <div class="del-title">Bot yang Sudah Running Live</div>
+        <p class="del-desc">Kamu keluar dari kelas dengan bot yang sudah aktif di exchange menggunakan uang asli. Bukan demo, bukan simulasi.</p>
+      </div>
+      <div class="del-card reveal">
+        <span class="del-icon">📡</span>
+        <div class="del-title">Sinyal Otomatis ke Telegram / Discord</div>
+        <p class="del-desc">Setup lengkap untuk broadcast sinyal trading kamu ke channel Telegram atau Discord atas nama brand kamu sendiri — siap dikomersialkan sebagai layanan sinyal berbayar.</p>
+      </div>
+      <div class="del-card reveal">
+        <span class="del-icon">🏷️</span>
+        <div class="del-title">Script Terpublish di TradingView</div>
+        <p class="del-desc">Pine Script kamu dipublish ke akun TradingView dengan nama brand kamu — bisa dijual sebagai invite-only script dan jadi passive income stream tersendiri.</p>
+      </div>
+      <div class="del-card reveal">
+        <span class="del-icon">🔐</span>
+        <div class="del-title">Akses Algo Library byScript</div>
+        <p class="del-desc">Akses ke koleksi algo yang sudah byScript.io kembangkan — bisa dipelajari, dimodifikasi, atau langsung dipakai sebagai referensi strategi.</p>
+      </div>
+      <div class="del-card reveal">
+        <span class="del-icon">📚</span>
+        <div class="del-title">Class Modules Lengkap</div>
+        <p class="del-desc">Dokumentasi lengkap semua materi 4 pertemuan — bisa dijadikan referensi kapanpun kamu butuh mengulang atau mengembangkan lebih jauh.</p>
+      </div>
+      <div class="del-card reveal">
+        <span class="del-icon">💬</span>
+        <div class="del-title">Lifetime Support & Diskusi</div>
+        <p class="del-desc">Kelas selesai bukan berarti perjalanan selesai. Kamu bisa terus bertanya dan berdiskusi — selamanya, tanpa batas waktu.</p>
+      </div>
+      <div class="del-card reveal">
+        <span class="del-icon">📍</span>
+        <div class="del-title">Lokasi Fleksibel</div>
+        <p class="del-desc">Lokasi pertemuan didiskusikan bersama sesuai kenyamanan kamu. Kelas ini hadir untuk kamu, bukan sebaliknya.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI KOMERSIAL -->
+<section class="roi">
+  <div class="container">
+    <div class="roi-header">
+      <span class="section-label reveal">Potensi Komersial</span>
+      <h2 class="section-title reveal">Di titik ini, kamu sudah punya <em>aset yang sangat berharga.</em></h2>
+    </div>
+
+    <div class="roi-justification reveal">
+      <div class="roi-just-body">
+        <p>Algo yang kamu bangun di kelas ini bukan sekadar bot trading pribadi. Ia sudah teruji di data historis, sudah dioptimasi, sudah terbukti jalan di market nyata — dengan strategi yang kamu rancang sendiri.</p>
+        <p>Kebanyakan orang berhenti di sini. Pakai untuk trading sendiri, dan itu sudah luar biasa.</p>
+        <p><strong>Tapi coba pikirkan ini:</strong> trader lain di luar sana masih membeli sinyal dari orang yang bahkan tidak punya sistem seketat punyamu. Mereka bayar untuk sesuatu yang kualitasnya lebih rendah dari apa yang kamu miliki sekarang.</p>
+        <p>Sinyal yang bot kamu hasilkan setiap hari, Pine Script yang kamu tulis, strategi yang sudah divalidasi — <strong>itu semua adalah produk.</strong> Dan produk yang bagus bisa dijual.</p>
+      </div>
+      <div class="roi-just-callout">
+        <span class="roi-just-q">Pertanyaannya bukan</span>
+        <span class="roi-just-q2">"apakah aku bisa komersialisasi ini?"</span>
+        <div class="roi-just-divider"></div>
+        <span class="roi-just-a">Tapi —</span>
+        <span class="roi-just-a2">"kenapa belum?"</span>
+        <span class="roi-just-sub">Berikut potensi yang bisa kamu capai.</span>
+      </div>
+    </div>
+
+    <div class="roi-streams">
+      <div class="roi-stream reveal">
+        <span class="roi-stream-label">Stream 01</span>
+        <h3>Layanan Sinyal Telegram / Discord</h3>
+        <table class="roi-table">
+          <tr><td>Harga langganan</td><td>Rp 300–500rb/bln</td></tr>
+          <tr><td>Subscriber awal</td><td>20 orang</td></tr>
+          <tr><td>Revenue bulan pertama</td><td class="gold">Rp 6–10 juta/bln</td></tr>
+          <tr><td>Subscriber 6 bulan</td><td>50–100 orang</td></tr>
+          <tr><td>Revenue potensial</td><td class="gold">Rp 15–50 juta/bln</td></tr>
+          <tr><td>Modal tambahan</td><td>Rp 0</td></tr>
+        </table>
+      </div>
+
+      <div class="roi-stream reveal">
+        <span class="roi-stream-label">Stream 02</span>
+        <h3>Publish Script di TradingView</h3>
+        <table class="roi-table">
+          <tr><td>Harga akses script</td><td>Rp 200–800rb/bln</td></tr>
+          <tr><td>User awal</td><td>15 orang</td></tr>
+          <tr><td>Revenue per bulan</td><td class="gold">Rp 3–12 juta/bln</td></tr>
+          <tr><td>Effort setelah setup</td><td>Hampir nol</td></tr>
+          <tr><td>Skalabilitas</td><td>Tidak ada batas</td></tr>
+          <tr><td>Nama yang muncul</td><td>Brand kamu</td></tr>
+        </table>
+      </div>
+
+      <div class="roi-stream reveal">
+        <span class="roi-stream-label">Stream 03</span>
+        <h3>Auto-Trade Pribadi</h3>
+        <table class="roi-table">
+          <tr><td>Bot jalan 24 jam</td><td>✓</td></tr>
+          <tr><td>Tanpa emosi</td><td>✓</td></tr>
+          <tr><td>Tanpa mantengin chart</td><td>✓</td></tr>
+          <tr><td>Bisa multi-pair</td><td>✓</td></tr>
+          <tr><td>Bisa dikembangkan terus</td><td>✓</td></tr>
+          <tr><td>Potensi return</td><td class="gold">Variabel</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="roi-summary reveal">
+      <div class="roi-summary-text">
+        <h3>Skenario konservatif 6 bulan setelah kelas</h3>
+        <p>Dengan hanya Stream 01 dan 02 aktif — tanpa mempertimbangkan return dari auto-trade pribadi — investasi kelas ini sudah bisa balik modal dalam 1 bulan pertama. Sisanya? Profit murni.</p>
+      </div>
+      <div class="roi-summary-numbers">
+        <span class="roi-summary-label">Potensi / bulan</span>
+        <span class="roi-summary-value">Rp 19 jt+</span>
+        <span class="roi-summary-sub">dari 2 stream komersial saja</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="daftar">
+  <div class="container">
+    <div class="pricing-inner">
+      <div>
+        <span class="section-label reveal">Investasi</span>
+        <h2 class="section-title reveal">Kelas paling<br><em>premium</em> dari byScript.io.</h2>
+        <p class="section-desc reveal" style="margin-bottom: 2rem;">
+          Ini bukan kursus online yang kamu beli lalu ditinggal. Ini adalah pengalaman 1-on-1 yang dirancang untuk satu tujuan: kamu keluar sebagai algo trader yang beneran bisa jalan sendiri.
+        </p>
+        <p class="section-desc reveal">
+          Bull market berikutnya tidak menunggu. Kamu punya waktu 2–3 tahun untuk membangun sistem yang solid — dan perjalanan itu dimulai di sini.
+        </p>
+      </div>
+      <div class="pricing-card reveal">
+        <span class="pricing-tag">Private Class · Paling Premium</span>
+        <div class="pricing-amount"><span>Rp </span>19.000.000</div>
+        <span class="pricing-note">Investasi sekali, sistem seumur hidup</span>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-includes">
+          <li>4 pertemuan × 4 jam tatap muka 1-on-1</li>
+          <li>Pine Script strategi kamu sendiri, siap pakai</li>
+          <li>Bot live running di exchange dengan uang asli</li>
+          <li>Setup sinyal otomatis ke Telegram / Discord</li>
+          <li>Script dipublish di TradingView atas nama brand kamu</li>
+          <li>Class modules lengkap semua materi</li>
+          <li>Akses eksklusif algo library byScript.io</li>
+          <li>Lifetime support & diskusi tanpa batas</li>
+          <li>Lokasi pertemuan fleksibel sesuai kesepakatan</li>
+        </ul>
+        <a href="checkout.html" class="pricing-cta" target="_blank">Hubungi untuk Daftar</a>
+        <p class="pricing-note-bottom">Slot terbatas · Diskusi jadwal setelah pendaftaran</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="finalCta">
+  <div class="container">
+    <h2 class="finalCta-title reveal">
+      Strategimu sudah ada.<br>
+      Sekarang biarkan <em>sistem</em> yang<br>
+      menjalankannya.
+    </h2>
+    <p class="finalCta-sub reveal">
+      16 jam bersama. Bot jalan. Sistem siap. Kamu tidak perlu mantengin chart lagi.
+    </p>
+    <div class="reveal">
+      <a href="checkout.html" class="btn-primary" target="_blank">Daftar Sekarang</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">byScript.io</span>
+  <span class="footer-text">Private Class · Algo Trading · 2026</span>
+</footer>
+
+<script>
+  // accordion
+  function toggleModule(header) {
+    const item = header.parentElement;
+    const allItems = document.querySelectorAll('.module-item');
+    allItems.forEach(i => { if (i !== item) i.classList.remove('active'); });
+    item.classList.toggle('active');
+  }
+
+  // scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
