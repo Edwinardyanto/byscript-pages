@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Starter · Webinar Algo Trading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #060912;
+    --navy:    #0c1528;
+    --card:    #0e1a2e;
+    --teal:    #00e5c3;
+    --gold:    #f5c518;
+    --white:   #f0f6ff;
+    --muted:   #6a7fa0;
+    --border:  rgba(0,229,195,0.15);
+    --accent:  #cd7f32; /* bronze for starter */
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* noise */
+  body::before {
+    content:'';position:fixed;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events:none;z-index:0;opacity:0.5;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 5%;
+    background: rgba(6,9,18,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,229,195,0.08);
+  }
+  .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; color:var(--teal); letter-spacing:0.05em; text-transform:uppercase; }
+  .nav-logo span { color:var(--white); }
+  .nav-back { font-size:0.82rem; color:var(--muted); text-decoration:none; display:flex; align-items:center; gap:0.4rem; transition:color 0.2s; }
+  .nav-back:hover { color:var(--white); }
+
+  .page-wrap {
+    position: relative; z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 5% 6rem;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {}
+
+  .package-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(205,127,50,0.12);
+    border: 1px solid rgba(205,127,50,0.3);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.3rem 0.9rem; border-radius: 100px;
+    margin-bottom: 1.2rem;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.02em; margin-bottom: 0.5rem;
+  }
+  h1 em { font-style:normal; color:var(--accent); }
+
+  .price-row {
+    display: flex; align-items: baseline; gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .price-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem; font-weight: 800; color: var(--accent);
+  }
+  .price-label { font-size: 0.85rem; color: var(--muted); }
+
+  /* benefits */
+  .benefits-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1rem;
+  }
+
+  .benefit-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .benefit-list li {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    font-size: 0.92rem; line-height: 1.5;
+  }
+  .benefit-list li .check {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(0,229,195,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 0.1rem;
+    font-size: 0.65rem; color: var(--teal); font-weight: 700;
+  }
+  .benefit-list li.not-included { color: var(--muted); }
+  .benefit-list li.not-included .check {
+    background: rgba(106,127,160,0.1);
+    color: rgba(106,127,160,0.4);
+  }
+
+  /* divider */
+  .divider {
+    height: 1px; background: rgba(255,255,255,0.06);
+    margin: 2rem 0;
+  }
+
+  /* trust signals */
+  .trust-row {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+  }
+  .trust-item {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-size: 0.82rem; color: var(--muted);
+  }
+  .trust-item .icon {
+    font-size: 1.1rem;
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    position: sticky; top: 90px;
+  }
+
+  .checkout-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+
+  .checkout-card-header {
+    background: linear-gradient(135deg, rgba(205,127,50,0.2) 0%, rgba(205,127,50,0.05) 100%);
+    border-bottom: 1px solid rgba(205,127,50,0.2);
+    padding: 1.5rem;
+  }
+  .checkout-card-header .tier-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 0.4rem;
+  }
+  .checkout-card-header .amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 800; color: var(--white);
+  }
+  .checkout-card-header .amount span {
+    font-size: 1rem; color: var(--muted); font-weight: 400;
+  }
+
+  .checkout-card-body { padding: 1.5rem; }
+
+  .form-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1rem;
+    display: block;
+  }
+
+  /* OrderOnline embed wrapper */
+  .oo-wrapper {
+    min-height: 120px;
+    position: relative;
+  }
+
+  /* Security note */
+  .security-note {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; color: var(--muted);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* upgrade nudge */
+  .upgrade-nudge {
+    margin-top: 1rem;
+    background: rgba(0,229,195,0.05);
+    border: 1px solid rgba(0,229,195,0.15);
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .upgrade-nudge strong { color: var(--teal); }
+  .upgrade-nudge a {
+    color: var(--teal);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+  .upgrade-nudge a:hover { text-decoration: underline; }
+
+  @media (max-width: 860px) {
+    .page-wrap { grid-template-columns: 1fr; }
+    .right-panel { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Algo<span>School</span></div>
+  <a href="landing-page-webinar.html" class="nav-back">
+    ← Kembali ke halaman utama
+  </a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="package-badge">🥉 Paket Starter</div>
+    <h1>Webinar Algo Trading<br>dengan <em>Pine Script & AI</em></h1>
+
+    <div class="price-row">
+      <span class="price-big">Rp 99.000</span>
+      <span class="price-label">/ sekali bayar</span>
+    </div>
+
+    <p class="benefits-title">Yang Lo Dapat</p>
+    <ul class="benefit-list">
+      <li><span class="check">✓</span> Akses live webinar 3–4 jam</li>
+      <li><span class="check">✓</span> Slide presentasi PDF</li>
+      <li><span class="check">✓</span> Q&A live session</li>
+      <li><span class="check">✓</span> Akses Pine Script Generator</li>
+      <li class="not-included"><span class="check">✗</span> Rekaman video webinar</li>
+      <li class="not-included"><span class="check">✗</span> Checklist strategi sebelum live</li>
+      <li class="not-included"><span class="check">✗</span> Strategy ready-to-use script</li>
+      <li class="not-included"><span class="check">✗</span> Video pembelajaran terstruktur</li>
+      <li class="not-included"><span class="check">✗</span> Grup komunitas eksklusif</li>
+    </ul>
+
+    <div class="divider"></div>
+
+    <p class="benefits-title">Detail Event</p>
+    <ul class="benefit-list">
+      <li><span class="check">📅</span> Tanggal: <strong style="color:var(--white);margin-left:0.3rem">[Tanggal Webinar]</strong></li>
+      <li><span class="check">⏰</span> Jam: <strong style="color:var(--white);margin-left:0.3rem">[Jam mulai] WIB</strong></li>
+      <li><span class="check">🖥️</span> Platform: <strong style="color:var(--white);margin-left:0.3rem">Discord (link dikirim via email)</strong></li>
+      <li><span class="check">📩</span> Konfirmasi dikirim ke email lo setelah pembayaran</li>
+    </ul>
+
+    <div class="divider"></div>
+
+    <div class="trust-row">
+      <div class="trust-item"><span class="icon">🔒</span> Pembayaran aman & terenkripsi</div>
+      <div class="trust-item"><span class="icon">⭐</span> Garansi uang kembali 7 hari</div>
+      <div class="trust-item"><span class="icon">📩</span> Konfirmasi instan via email</div>
+      <div class="trust-item"><span class="icon">🇮🇩</span> Pembayaran lokal tersedia</div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="checkout-card">
+      <div class="checkout-card-header">
+        <div class="tier-name">🥉 Starter — Ringkasan Pesanan</div>
+        <div class="amount">Rp 99.000 <span>/ sekali bayar</span></div>
+      </div>
+      <div class="checkout-card-body">
+        <span class="form-label">Isi Data & Lanjutkan Pembayaran</span>
+
+        <div class="oo-wrapper">
+          <!-- OrderOnline Embed — Starter -->
+          <div class="ooef">
+            <form class="orderonline-embed-form"
+              data-username="winbiz"
+              data-product-slug="webinar-algo-trading-using-ai-from-byscriptio-starter"
+              data-product-id="699beb71468502d47a006dee"
+              id="oo-embed-form-starter"
+              data-origin="orderonline">
+              <div class="ooef-loader">
+                <style>.ooef-loader{visibility:hidden;opacity:0;position:absolute;left:0;right:0;top:0;bottom:0;display:flex;justify-content:center;align-items:center;flex-direction:column;animation:ooLoadingIn 10s ease;animation-fill-mode:forwards;overflow:hidden}@keyframes ooLoadingIn{0%{visibility:hidden;opacity:0}20%{visibility:visible;opacity:0}100%{visibility:visible;opacity:1}}.ooef-loader>div{border-radius:50%;width:2.5rem;height:2.5rem;font-size:10px;position:relative;text-indent:-9999em;border:.25rem solid #f5f5f5;border-left:.25rem solid #55c4cf;animation:ooLoading 1.1s infinite linear}@keyframes ooLoading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}</style>
+                <div aria-live="polite" role="status"><div>Loading...</div></div>
+              </div>
+            </form>
+          </div>
+          <script>
+            if(typeof xLogError!='function'){var xLogError=function(e){var r=new XMLHttpRequest(),p=JSON.stringify({url:document.location.href,line:e.line,stack:e.stack}),q='message='+encodeURIComponent(e.name)+'&payload='+encodeURIComponent(p)+'&type=embed&level=error';r.open('POST','https://api.orderonline.id/log',true);r.setRequestHeader('Content-type','application/x-www-form-urlencoded');r.send(q);};}
+            try{
+              if(typeof xEmbedScript!='function'){var xEmbedScript=function(){!function(w,d,e,v,id,t,s){if(d.getElementById(id))return;t=d.createElement(e);t.async=!0;t.src=v;t.id=id;s=d.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);}(window,document,'script','https://cdn.orderonline.id/js/embed-v2-slim.min.js?v=8.0.2','oo-embed-js');};}
+              if(typeof xEmbedInit!='function'){var xEmbedInit=function(w,n){if(w.ooe)return;n=w.ooe=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!w._ooe)w._ooe=n;n.push=n;n.loaded=!0;n.version='8.0.2';n.queue=[];};}
+              xEmbedInit(window);
+              ooe('setup','redirect','https://winbiz.orderonline.id');
+              ooe('init','63bedb5f983fd6d05d01448a','699beb71468502d47a006dee','699beb71468502d47a006def','oo-embed-form-starter',{"mode":"inline","action":"Pesan Sekarang","title":"Form Pemesanan","triggerPixel":true,"triggerGtm":true});
+              if(!window.jQuery){!function(w,d,e,v,id,t,s){if(d.getElementById(id))return;t=d.createElement(e);t.async=!0;t.src=v;t.id=id;t.addEventListener('load',xEmbedScript);s=d.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);}(window,document,'script','https://cdn.orderonline.id/js/vendor/jquery.min.js','oo-embed-jquery');}else{xEmbedScript();}
+            }catch(e){xLogError(e);throw e;}
+          </script>
+        </div>
+
+        <div class="security-note">
+          🔒 Pembayaran diproses secara aman oleh OrderOnline.id
+        </div>
+
+        <!-- Upgrade nudge -->
+        <div class="upgrade-nudge">
+          💡 <strong>Mau lebih?</strong> Upgrade ke Silver (+Rp 300K) dan dapat rekaman + strategy script, atau Gold (+Rp 400K) untuk akses video pembelajaran selamanya + komunitas.
+          <br>
+          <a href="checkout-gold.html">Lihat paket Gold →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
