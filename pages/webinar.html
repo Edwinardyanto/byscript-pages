@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algo Trading × AI — Webinar Eksklusif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #060912;
+    --navy:      #0c1528;
+    --card:      #0e1a2e;
+    --teal:      #00e5c3;
+    --teal-dim:  #00b89c;
+    --gold:      #f5c518;
+    --red:       #ff4e6a;
+    --white:     #f0f6ff;
+    --muted:     #6a7fa0;
+    --border:    rgba(0,229,195,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ─── GLOWS ─── */
+  .glow-teal {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,195,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 5%;
+    backdrop-filter: blur(16px);
+    background: rgba(6,9,18,0.7);
+    border-bottom: 1px solid rgba(0,229,195,0.08);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    color: var(--teal);
+    text-transform: uppercase;
+  }
+  .nav-logo span { color: var(--white); }
+
+  nav a.cta-nav {
+    background: var(--teal);
+    color: var(--bg);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.55rem 1.4rem;
+    border-radius: 4px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  nav a.cta-nav:hover { background: var(--teal-dim); transform: translateY(-1px); }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 9rem 5% 5rem;
+    overflow: hidden;
+  }
+
+  #hero .glow-teal {
+    width: 700px; height: 700px;
+    top: -150px; right: -200px;
+    opacity: 0.7;
+    animation: pulseGlow 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseGlow {
+    from { transform: scale(1); opacity: 0.6; }
+    to   { transform: scale(1.1); opacity: 0.9; }
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0,229,195,0.1);
+    border: 1px solid rgba(0,229,195,0.3);
+    color: var(--teal);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; } 50% { opacity: 0.2; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.4rem;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--teal);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 500px;
+    margin-bottom: 2.2rem;
+    font-weight: 300;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--teal);
+    color: var(--bg);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    padding: 1rem 2.2rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    box-shadow: 0 0 30px rgba(0,229,195,0.3);
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary:hover {
+    background: #00ffd5;
+    transform: translateY(-2px);
+    box-shadow: 0 0 50px rgba(0,229,195,0.5);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  .btn-ghost:hover { color: var(--white); }
+  .btn-ghost svg { transition: transform 0.2s; }
+  .btn-ghost:hover svg { transform: translateX(3px); }
+
+  /* Hero right — code card */
+  .hero-code-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    animation: fadeUp 0.8s 0.25s ease both;
+    position: relative;
+  }
+
+  .code-header {
+    background: #0a1525;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .code-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .code-dot.r { background: #ff5f57; }
+  .code-dot.y { background: #febc2e; }
+  .code-dot.g { background: #28c840; }
+  .code-filename {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  pre {
+    padding: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .c-comment { color: #4a6b4a; }
+  .c-keyword  { color: #c792ea; }
+  .c-fn       { color: #82aaff; }
+  .c-str      { color: #c3e88d; }
+  .c-var      { color: #89ddff; }
+  .c-num      { color: var(--teal); }
+  .c-white    { color: var(--white); }
+
+  .ai-bubble {
+    margin: 0 1rem 1rem;
+    background: rgba(0,229,195,0.07);
+    border: 1px solid rgba(0,229,195,0.2);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 0.78rem;
+    color: var(--teal);
+    font-family: 'DM Mono', monospace;
+    position: relative;
+  }
+  .ai-bubble::before {
+    content: '🤖 AI';
+    display: block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  /* ─── TICKER STRIP ─── */
+  .ticker-wrap {
+    background: var(--teal);
+    overflow: hidden;
+    padding: 0.6rem 0;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 4rem;
+    white-space: nowrap;
+    animation: ticker 25s linear infinite;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .ticker-item {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+  .ticker-item span { opacity: 0.5; }
+
+  /* ─── SECTIONS COMMON ─── */
+  section {
+    position: relative;
+    padding: 6rem 5%;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.8rem;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 560px;
+    font-weight: 300;
+    margin-bottom: 3.5rem;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* ─── PAIN POINTS ─── */
+  #pain {
+    background: linear-gradient(180deg, var(--bg) 0%, var(--navy) 100%);
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .pain-card {
+    background: rgba(255,78,106,0.05);
+    border: 1px solid rgba(255,78,106,0.18);
+    border-radius: 10px;
+    padding: 1.8rem;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .pain-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,78,106,0.4);
+  }
+  .pain-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+  .pain-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: #ff8fa0;
+  }
+  .pain-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* ─── WHAT YOU'LL LEARN ─── */
+  #learn { background: var(--navy); }
+
+  .learn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .learn-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .learn-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--teal);
+    border-radius: 3px 0 0 3px;
+  }
+  .learn-item:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0,229,195,0.3);
+  }
+
+  .learn-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--teal);
+    background: rgba(0,229,195,0.1);
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+
+  .learn-item h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .learn-item p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ─── AGENDA ─── */
+  #agenda { background: var(--bg); }
+
+  .agenda-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 750px;
+  }
+
+  .agenda-item {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+  }
+  .agenda-item:first-child { padding-top: 0; }
+
+  .agenda-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    min-width: 60px;
+    padding-top: 0.2rem;
+  }
+
+  .agenda-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 2px solid var(--bg);
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--teal);
+  }
+
+  .agenda-item::after {
+    content: '';
+    position: absolute;
+    left: calc(60px + 2rem + 5px);
+    top: 2.5rem;
+    width: 2px;
+    height: calc(100% - 0.5rem);
+    background: rgba(0,229,195,0.15);
+  }
+  .agenda-item:last-child::after { display: none; }
+
+  .agenda-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .agenda-content p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  .agenda-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    background: rgba(0,229,195,0.08);
+    border: 1px solid rgba(0,229,195,0.2);
+    color: var(--teal);
+  }
+
+  /* ─── INSTRUCTOR ─── */
+  #instructor { background: var(--navy); }
+
+  .instructor-wrap {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  /* Avatar card */
+  .avatar-card {
+    display: flex; flex-direction: column; align-items: center; gap: 1.2rem;
+  }
+  .avatar-frame {
+    width: 220px; height: 220px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0e2235 0%, var(--card) 100%);
+    border: 1px solid rgba(0,229,195,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5.5rem;
+    position: relative; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .avatar-frame::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,195,0.08) 0%, transparent 60%);
+  }
+  .social-badges {
+    display: flex; flex-direction: column; gap: 0.6rem; width: 100%;
+  }
+  .social-badge {
+    display: flex; align-items: center; gap: 0.7rem;
+    background: rgba(0,229,195,0.06);
+    border: 1px solid rgba(0,229,195,0.12);
+    border-radius: 8px; padding: 0.6rem 0.9rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; color: var(--teal);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .social-badge:hover {
+    background: rgba(0,229,195,0.1);
+    border-color: rgba(0,229,195,0.3);
+  }
+  .social-badge .s-icon { font-size: 1rem; }
+
+  .instructor-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem; font-weight: 800;
+    letter-spacing: -0.02em; margin-bottom: 0.3rem;
+  }
+  .instructor-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--teal);
+    margin-bottom: 1.6rem;
+  }
+  .bio-text {
+    font-size: 1rem; line-height: 1.8;
+    color: #c0cfe0; font-weight: 300;
+    margin-bottom: 2rem; max-width: 600px;
+  }
+  .bio-text strong { color: var(--white); font-weight: 500; }
+
+  /* Stats row */
+  .stats-row {
+    display: flex; gap: 0; margin-bottom: 2.2rem;
+    border: 1px solid rgba(0,229,195,0.12);
+    border-radius: 12px; overflow: hidden;
+  }
+  .stat-item {
+    flex: 1; padding: 1.2rem 1rem;
+    text-align: center;
+    border-right: 1px solid rgba(0,229,195,0.08);
+    background: rgba(0,229,195,0.03);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem; font-weight: 800;
+    color: var(--teal); display: block; line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--muted); line-height: 1.3; }
+
+  .creds { display: flex; flex-direction: column; gap: 0.8rem; }
+  .cred {
+    display: flex; align-items: center; gap: 0.9rem;
+    font-size: 0.9rem; color: var(--white);
+  }
+  .cred-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: rgba(0,229,195,0.08);
+    border: 1px solid rgba(0,229,195,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+  }
+
+  /* ─── VIZ SECTION ─── */
+  #viz { padding: 6rem 5%; background: var(--bg); }
+  #viz h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800;
+    letter-spacing: -0.02em; margin-bottom: 0.6rem;
+  }
+  #viz .sub {
+    color: var(--muted); font-size: 0.95rem;
+    margin-bottom: 3rem; font-weight: 300;
+  }
+  .viz-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .viz-card {
+    background: var(--card);
+    border: 1px solid rgba(0,229,195,0.12);
+    border-radius: 14px; padding: 1.5rem;
+    position: relative; overflow: hidden;
+  }
+  .viz-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--teal);
+    margin-bottom: 1rem;
+  }
+  .equity-svg { width: 100%; height: 180px; }
+  .donut-wrap { display: flex; align-items: center; gap: 2rem; }
+  .donut-svg { width: 150px; height: 150px; flex-shrink: 0; }
+  .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 0.8rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.7rem; font-size: 0.85rem; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .bar-svg { width: 100%; height: 160px; }
+  .compare-table { width: 100%; border-collapse: collapse; }
+  .compare-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); text-align: left; padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .compare-table td {
+    font-size: 0.83rem; padding: 0.55rem 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--white);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .badge-good {
+    display: inline-block; padding: 0.15rem 0.5rem;
+    border-radius: 4px; font-size: 0.7rem; font-weight: 600;
+    background: rgba(0,229,195,0.12); color: var(--teal);
+  }
+  .badge-ok {
+    display: inline-block; padding: 0.15rem 0.5rem;
+    border-radius: 4px; font-size: 0.7rem; font-weight: 600;
+    background: rgba(245,197,24,0.12); color: var(--gold);
+  }
+  .badge-bad {
+    display: inline-block; padding: 0.15rem 0.5rem;
+    border-radius: 4px; font-size: 0.7rem; font-weight: 600;
+    background: rgba(255,78,106,0.12); color: #ff7a8a;
+  }
+  .viz-card.full { grid-column: 1 / -1; }
+  .candle-svg { width: 100%; height: 200px; }
+
+  /* ─── PRICING ─── */
+  #pricing {
+    background: var(--bg);
+    text-align: center;
+  }
+
+  .pricing-cards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 3.5rem;
+  }
+
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 320px;
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .pricing-card:hover { transform: translateY(-5px); }
+
+  .pricing-card.featured {
+    border-color: var(--teal);
+    background: linear-gradient(160deg, #0e2032 0%, var(--card) 60%);
+    box-shadow: 0 0 60px rgba(0,229,195,0.15);
+  }
+
+  .featured-label {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--teal);
+    color: var(--bg);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 1rem;
+    border-radius: 100px;
+  }
+
+  .plan-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+  }
+
+  .price-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .price-currency {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--muted);
+    padding-top: 0.5rem;
+  }
+  .price-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--white);
+  }
+  .pricing-card.featured .price-amount { color: var(--teal); }
+
+  .price-original {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: line-through;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .plan-features {
+    list-style: none;
+    margin-bottom: 2rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .plan-features li {
+    font-size: 0.88rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    line-height: 1.5;
+  }
+  .plan-features li::before {
+    content: '✓';
+    color: var(--teal);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+  .plan-features li.muted-feat { color: var(--muted); }
+  .plan-features li.muted-feat::before { color: rgba(106,127,160,0.4); }
+
+  .btn-buy {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+    text-align: center;
+  }
+  .btn-buy.primary {
+    background: var(--teal);
+    color: var(--bg);
+    box-shadow: 0 0 25px rgba(0,229,195,0.3);
+  }
+  .btn-buy.primary:hover {
+    background: #00ffd5;
+    box-shadow: 0 0 40px rgba(0,229,195,0.5);
+    transform: translateY(-2px);
+  }
+  .btn-buy.outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-buy.outline:hover { border-color: rgba(255,255,255,0.4); }
+
+  .guarantee {
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    color: var(--muted);
+    font-size: 0.83rem;
+  }
+  .guarantee span { color: var(--gold); font-size: 1.3rem; }
+
+  /* ─── FAQ ─── */
+  #faq { background: var(--navy); }
+
+  .faq-list {
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    padding: 1.4rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    gap: 1rem;
+    transition: color 0.2s;
+  }
+  .faq-q:hover { color: var(--teal); }
+  .faq-q .arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    color: var(--teal);
+  }
+  .faq-item.open .faq-q .arrow { transform: rotate(45deg); }
+
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.3s;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.75;
+  }
+  .faq-item.open .faq-a {
+    max-height: 300px;
+    padding-bottom: 1.4rem;
+  }
+
+  /* ─── FINAL CTA ─── */
+  #final-cta {
+    background: linear-gradient(160deg, #0c1f2f 0%, var(--bg) 60%);
+    text-align: center;
+    padding: 8rem 5%;
+    position: relative;
+    overflow: hidden;
+  }
+  #final-cta .glow-teal {
+    width: 600px; height: 600px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.4;
+  }
+
+  #final-cta h2 { max-width: 700px; margin: 0 auto 1.2rem; }
+  #final-cta p {
+    color: var(--muted);
+    margin: 0 auto 2.5rem;
+    max-width: 520px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .countdown-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2.5rem auto;
+    flex-wrap: wrap;
+  }
+
+  .countdown-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    min-width: 90px;
+    text-align: center;
+  }
+  .countdown-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--teal);
+    line-height: 1;
+    display: block;
+  }
+  .countdown-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #03050c;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 2rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  footer .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--teal);
+    letter-spacing: 0.05em;
+  }
+  footer p { font-size: 0.78rem; color: var(--muted); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1100px) {
+    .pricing-cards { flex-wrap: wrap; }
+    .pricing-card { width: calc(50% - 1rem); min-width: 260px; }
+    .pricing-card.featured { order: -1; width: 100%; max-width: 480px; margin: 0 auto; }
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-code-card { display: none; }
+    .instructor-wrap { grid-template-columns: 1fr; }
+    .avatar-card { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+    .avatar-frame { width: 140px; height: 140px; font-size: 3.5rem; }
+    .viz-grid { grid-template-columns: 1fr; }
+    .viz-card.full { grid-column: 1; }
+    .stats-row { flex-wrap: wrap; }
+    .stat-item { min-width: 45%; }
+  }
+
+  @media (max-width: 600px) {
+    .pricing-cards { flex-direction: column; align-items: center; }
+    .pricing-card { width: 100%; max-width: 380px; }
+    nav a.cta-nav { display: none; }
+    .agenda-item { flex-direction: column; gap: 0.8rem; }
+    .agenda-item::after { display: none; }
+  }
+
+  /* Scroll reveal stagger */
+  .stagger > * { transition-delay: calc(var(--i, 0) * 0.08s); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">byScript.io<span> Academy</span></div>
+  <a href="#pricing" class="cta-nav">Daftar Sekarang →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="glow-teal"></div>
+  <div class="hero-grid">
+
+    <div class="hero-left">
+      <div class="badge"><span class="dot"></span> Live Webinar · 8 Maret 2025</div>
+
+      <h1>Bikin Algo<br>Trading dengan<br><em>Pine Script & AI</em></h1>
+
+      <p class="hero-sub">
+        Dari nol hingga strategi otomatis yang bisa di-backtest — khusus untuk trader Indonesia yang mau naik level tanpa harus jadi programmer.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#pricing" class="btn-primary">Ambil Tempat Sekarang</a>
+        <a href="#agenda" class="btn-ghost">
+          Lihat Agenda
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+
+      <div style="margin-top:2.5rem; display:flex; gap:2rem; flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--teal)">3–4 Jam</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.1rem">Durasi Live Session</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.07)"></div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--teal)">All Level</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.1rem">Cocok Semua Level</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.07)"></div>
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--teal)">Rekaman</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.1rem">Replay 30 Hari</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code card -->
+    <div class="hero-code-card">
+      <div class="code-header">
+        <div class="code-dot r"></div>
+        <div class="code-dot y"></div>
+        <div class="code-dot g"></div>
+        <span class="code-filename">ai_strategy.pine</span>
+      </div>
+      <pre>
+<span class="c-comment">// 🤖 Generated by AI in 10 seconds</span>
+<span class="c-keyword">//@version=</span><span class="c-num">5</span>
+<span class="c-fn">strategy</span>(<span class="c-str">"EMA + RSI Strategy"</span>,
+  overlay=<span class="c-keyword">true</span>)
+
+<span class="c-comment">// ── Inputs ──────────────────</span>
+<span class="c-var">len</span>  = <span class="c-fn">input.int</span>(<span class="c-num">20</span>,   <span class="c-str">"EMA Length"</span>)
+<span class="c-var">rsiL</span> = <span class="c-fn">input.int</span>(<span class="c-num">14</span>,   <span class="c-str">"RSI Period"</span>)
+<span class="c-var">sl</span>   = <span class="c-fn">input.float</span>(<span class="c-num">1.5</span>, <span class="c-str">"Stop Loss %"</span>)
+<span class="c-var">tp</span>   = <span class="c-fn">input.float</span>(<span class="c-num">3.0</span>, <span class="c-str">"Take Profit %"</span>)
+
+<span class="c-comment">// ── Indicators ──────────────</span>
+<span class="c-var">ema</span>  = <span class="c-fn">ta.ema</span>(close, len)
+<span class="c-var">rsi</span>  = <span class="c-fn">ta.rsi</span>(close, rsiL)
+
+<span class="c-comment">// ── Entry Logic ─────────────</span>
+<span class="c-var">longOK</span> = <span class="c-fn">ta.crossover</span>(close, ema)
+       <span class="c-keyword">and</span> rsi &lt; <span class="c-num">60</span>
+
+<span class="c-keyword">if</span> longOK
+  <span class="c-fn">strategy.entry</span>(<span class="c-str">"Long"</span>, strategy.long)
+  <span class="c-fn">strategy.exit</span>(<span class="c-str">"Exit"</span>, stop=close*(<span class="c-num">1</span>-sl/<span class="c-num">100</span>),
+    limit=close*(<span class="c-num">1</span>+tp/<span class="c-num">100</span>))</pre>
+      <div class="ai-bubble">Strategi siap! Win rate backtest: 58.3% · Profit Factor: 1.84</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item">Pine Script v6 <span>✦</span></div>
+    <div class="ticker-item">ChatGPT <span>✦</span></div>
+    <div class="ticker-item">Backtest Otomatis <span>✦</span></div>
+    <div class="ticker-item">EMA RSI MACD <span>✦</span></div>
+    <div class="ticker-item">Webhook Automation <span>✦</span></div>
+    <div class="ticker-item">TradingView <span>✦</span></div>
+    <div class="ticker-item">Risk Management <span>✦</span></div>
+    <div class="ticker-item">Live Coding <span>✦</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item">Pine Script v5 <span>✦</span></div>
+    <div class="ticker-item">ChatGPT + Claude <span>✦</span></div>
+    <div class="ticker-item">Backtest Otomatis <span>✦</span></div>
+    <div class="ticker-item">EMA RSI MACD <span>✦</span></div>
+    <div class="ticker-item">Webhook Automation <span>✦</span></div>
+    <div class="ticker-item">TradingView <span>✦</span></div>
+    <div class="ticker-item">Risk Management <span>✦</span></div>
+    <div class="ticker-item">Live Coding <span>✦</span></div>
+  </div>
+</div>
+
+<!-- PAIN POINTS -->
+<section id="pain">
+  <div class="container">
+    <p class="section-label reveal">// Masalah yang Sering Terjadi</p>
+    <h2 class="reveal">Apakah Lo Pernah Ngerasain Ini?</h2>
+    <p class="section-sub reveal">Trading manual itu melelahkan dan penuh bias emosi. Tapi bikin algo trading kedengarannya ribet dan butuh skill coding tinggi.</p>
+
+    <div class="pain-grid stagger">
+      <div class="pain-card reveal" style="--i:0">
+        <div class="icon">😤</div>
+        <h3>FOMO & Panik saat Open Posisi</h3>
+        <p>Keputusan trading sering dipengaruhi emosi, bukan logika. Hasilnya inconsistent dan frustrating.</p>
+      </div>
+      <div class="pain-card reveal" style="--i:1">
+        <div class="icon">😴</div>
+        <h3>Kelewatan Sinyal Bagus</h3>
+        <p>Nggak mungkin mantau market 24 jam. Sinyal terbaik sering muncul waktu lo tidur atau kerja.</p>
+      </div>
+      <div class="pain-card reveal" style="--i:2">
+        <div class="icon">😕</div>
+        <h3>Nggak Tau Cara Coding</h3>
+        <p>Pengen bikin algo tapi ngerasa Pine Script terlalu teknis dan butuh background programmer.</p>
+      </div>
+      <div class="pain-card reveal" style="--i:3">
+        <div class="icon">📉</div>
+        <h3>Strategi yang Nggak Teruji</h3>
+        <p>Pakai strategi dari YouTube tanpa tau apakah itu actually profitable secara historis.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU'LL LEARN -->
+<section id="learn">
+  <div class="container">
+    <p class="section-label reveal">// Yang Lo Dapat</p>
+    <h2 class="reveal">Lo Akan Bisa Ngapain<br>Setelah Webinar Ini?</h2>
+    <p class="section-sub reveal">Bukan cuma teori. Lo akan langsung coding bareng dan pulang dengan strategi yang bisa langsung di-test.</p>
+
+    <div class="learn-grid">
+      <div class="learn-item reveal" style="--i:0">
+        <span class="learn-num">01</span>
+        <div>
+          <h3>Bikin Indikator Custom di TradingView</h3>
+          <p>Paham syntax Pine Script v5 dan bisa modifikasi atau buat indikator sendiri dari nol.</p>
+        </div>
+      </div>
+      <div class="learn-item reveal" style="--i:1">
+        <span class="learn-num">02</span>
+        <div>
+          <h3>Prompt AI untuk Generate Kode</h3>
+          <p>Teknik prompting spesifik untuk Claude & ChatGPT supaya hasilkan Pine Script yang langsung jalan.</p>
+        </div>
+      </div>
+      <div class="learn-item reveal" style="--i:2">
+        <span class="learn-num">03</span>
+        <div>
+          <h3>Backtest & Analisis Performa</h3>
+          <p>Baca Strategy Tester TradingView: win rate, profit factor, drawdown, dan metrik penting lainnya.</p>
+        </div>
+      </div>
+      <div class="learn-item reveal" style="--i:3">
+        <span class="learn-num">04</span>
+        <div>
+          <h3>Build Strategy End-to-End</h3>
+          <p>Dari ide → kode → backtest → optimasi. Satu siklus penuh yang bisa lo ulangi sendiri setelah webinar.</p>
+        </div>
+      </div>
+      <div class="learn-item reveal" style="--i:4">
+        <span class="learn-num">05</span>
+        <div>
+          <h3>Debug Error dengan AI</h3>
+          <p>Cara efisien troubleshoot error Pine Script menggunakan AI tanpa perlu Stack Overflow.</p>
+        </div>
+      </div>
+      <div class="learn-item reveal" style="--i:5">
+        <span class="learn-num">06</span>
+        <div>
+          <h3>Preview: Automation via Webhook</h3>
+          <p>Gambaran besar cara koneksikan TradingView Alert ke broker untuk eksekusi otomatis penuh.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDA -->
+<section id="agenda">
+  <div class="container">
+    <p class="section-label reveal">// Jadwal Acara</p>
+    <h2 class="reveal">Agenda Webinar</h2>
+    <p class="section-sub reveal">3–4 jam sesi live yang padat dan actionable. Setiap sesi ada praktik langsung.</p>
+
+    <div class="agenda-list">
+      <div class="agenda-item reveal">
+        <span class="agenda-time">~30 min</span>
+        <div class="agenda-dot"></div>
+        <div class="agenda-content">
+          <h3>Sesi 1 — Fondasi Algo Trading</h3>
+          <p>Manual vs algo trading, mindset yang benar, konsep backtest, dan kenapa robot lebih konsisten dari manusia.</p>
+          <div class="agenda-tags">
+            <span class="tag">Konsep</span>
+            <span class="tag">Mindset</span>
+            <span class="tag">Tanpa Coding</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agenda-item reveal">
+        <span class="agenda-time">~50 min</span>
+        <div class="agenda-dot"></div>
+        <div class="agenda-content">
+          <h3>Sesi 2 — Dasar-Dasar Pine Script v5</h3>
+          <p>Struktur script, built-in functions (EMA, RSI, MACD, ATR), input parameters, dan cara plot indikator ke chart.</p>
+          <div class="agenda-tags">
+            <span class="tag">Live Coding</span>
+            <span class="tag">Pine Script</span>
+            <span class="tag">TradingView</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agenda-item reveal">
+        <span class="agenda-time">~50 min</span>
+        <div class="agenda-dot"></div>
+        <div class="agenda-content">
+          <h3>Sesi 3 — AI sebagai Coding Partner</h3>
+          <p>Framework prompt yang efektif, cara debug error, iterasi strategi dengan AI, dan workflow yang bisa langsung lo terapkan.</p>
+          <div class="agenda-tags">
+            <span class="tag">ChatGPT</span>
+            <span class="tag">Prompting</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agenda-item reveal">
+        <span class="agenda-time">~60 min</span>
+        <div class="agenda-dot"></div>
+        <div class="agenda-content">
+          <h3>Sesi 4 — Build Strategy End-to-End</h3>
+          <p>Live coding strategi sesuai request saat live dari nol, backtest, baca hasilnya, optimasi, dan pembahasan common mistakes.</p>
+          <div class="agenda-tags">
+            <span class="tag">Live Demo</span>
+            <span class="tag">Backtest</span>
+            <span class="tag">Q&A</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTRUCTOR -->
+<section id="instructor">
+  <div class="container">
+    <p class="section-label reveal">// Tentang Pembicara</p>
+
+    <div class="instructor-wrap">
+
+      <!-- Avatar + social -->
+      <div class="avatar-card reveal">
+        <div class="avatar-frame">👨‍💻</div>
+        <div class="social-badges">
+          <a href="#" class="social-badge">
+            <span class="s-icon">🐦</span> @edwinardyanto
+          </a>
+          <a href="#" class="social-badge">
+            <span class="s-icon">📺</span> byScript.io Academy
+          </a>
+          <a href="#" class="social-badge">
+            <span class="s-icon">💬</span> Komunitas Discord
+          </a>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="instructor-info reveal">
+        <div class="instructor-name">Edwin Ardyanto</div>
+        <div class="instructor-title">Algo Trader · Pine Script Developer · Educator</div>
+
+        <p class="bio-text">
+          Edwin mulai trading secara manual di pasar crypto sejak 2019 — dan seperti kebanyakan trader, sempat mengalami loss besar karena keputusan yang dipengaruhi emosi. Frustrasi dengan inkonsistensi itu yang akhirnya mendorong Edwin belajar <strong>algo trading dan Pine Script</strong>, supaya strategi bisa dijalankan dengan disiplin penuh tanpa intervensi emosi.
+          <br><br>
+          Sekarang Edwin telah membangun <strong>100+ strategi otomatis</strong> yang aktif berjalan di market crypto, dan aktif berbagi ilmu lewat <strong>byScript.io</strong> — komunitas yang fokus membantu trader Indonesia naik level lewat automation dan data-driven approach.
+        </p>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-num">4+</span>
+            <span class="stat-label">Tahun<br>di market crypto</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">100+</span>
+            <span class="stat-label">Strategi algo<br>yang di-build</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">500+</span>
+            <span class="stat-label">Trader yang<br>sudah diajari</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">byScript</span>
+            <span class="stat-label">Komunitas aktif<br>yang dibangun</span>
+          </div>
+        </div>
+
+        <!-- Creds -->
+        <div class="creds">
+          <div class="cred">
+            <div class="cred-icon">📊</div>
+            4+ tahun aktif trading di pasar crypto & aset digital
+          </div>
+          <div class="cred">
+            <div class="cred-icon">🤖</div>
+            Build 100+ strategi algo yang berjalan di live market
+          </div>
+          <div class="cred">
+            <div class="cred-icon">🎓</div>
+            Mengajar 500+ trader secara online & offline
+          </div>
+          <div class="cred">
+            <div class="cred-icon">💬</div>
+            Founder komunitas byScript.io — algo trading untuk semua
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- VISUALISASI ALGO TRADING -->
+<section id="viz">
+  <div class="container">
+    <p class="section-label reveal">// Data Berbicara</p>
+    <h2 class="reveal">Kenapa Algo Trading <span style="color:var(--teal)">Lebih Unggul</span>?</h2>
+    <p class="sub reveal">Angka dari backtest strategi EMA + RSI yang akan kita build bareng di webinar ini.</p>
+
+    <div class="viz-grid">
+
+      <!-- CARD 1: Equity Curve -->
+      <div class="viz-card reveal">
+        <div class="viz-card-title">📈 Equity Curve — 12 Bulan Backtest</div>
+        <svg class="equity-svg" viewBox="0 0 500 180" preserveAspectRatio="none">
+          <line x1="0" y1="40"  x2="500" y2="40"  stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <line x1="0" y1="80"  x2="500" y2="80"  stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <line x1="0" y1="120" x2="500" y2="120" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <line x1="0" y1="160" x2="500" y2="160" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+          <defs>
+            <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#00e5c3" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#00e5c3" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,160 L30,155 L60,148 L90,140 L110,145 L130,135 L160,120 L190,110 L210,115 L230,105 L260,90 L290,80 L310,88 L330,75 L360,60 L390,50 L420,42 L450,35 L480,25 L500,18 L500,180 L0,180 Z"
+                fill="url(#equityGrad)"/>
+          <path d="M0,160 L30,155 L60,148 L90,140 L110,145 L130,135 L160,120 L190,110 L210,115 L230,105 L260,90 L290,80 L310,88 L330,75 L360,60 L390,50 L420,42 L450,35 L480,25 L500,18"
+                fill="none" stroke="#00e5c3" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M90,140 L110,145 L130,135" fill="rgba(255,78,106,0.08)" stroke="none"/>
+          <path d="M190,110 L210,115 L230,105" fill="rgba(255,78,106,0.08)" stroke="none"/>
+          <path d="M290,80 L310,88 L330,75"   fill="rgba(255,78,106,0.08)" stroke="none"/>
+          <text x="5"   y="175" font-family="monospace" font-size="9" fill="#6a7fa0">Jan</text>
+          <text x="460" y="175" font-family="monospace" font-size="9" fill="#6a7fa0">Des</text>
+          <rect x="370" y="4" width="122" height="22" rx="4" fill="rgba(0,229,195,0.15)"/>
+          <text x="378" y="18" font-family="monospace" font-size="10" fill="#00e5c3" font-weight="600">+184% Net Profit</text>
+        </svg>
+      </div>
+
+      <!-- CARD 2: Win Rate donut -->
+      <div class="viz-card reveal">
+        <div class="viz-card-title">🎯 Distribusi Trade — 847 Total Trades</div>
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 150 150">
+            <circle cx="75" cy="75" r="55" fill="none" stroke="#0e1a2e" stroke-width="22"/>
+            <circle cx="75" cy="75" r="55" fill="none"
+              stroke="#00e5c3" stroke-width="22"
+              stroke-dasharray="201 148"
+              stroke-dashoffset="0"
+              transform="rotate(-90 75 75)"/>
+            <circle cx="75" cy="75" r="55" fill="none"
+              stroke="#ff4e6a" stroke-width="22"
+              stroke-dasharray="98 251"
+              stroke-dashoffset="-201"
+              transform="rotate(-90 75 75)"/>
+            <circle cx="75" cy="75" r="55" fill="none"
+              stroke="#f5c518" stroke-width="22"
+              stroke-dasharray="46 303"
+              stroke-dashoffset="-299"
+              transform="rotate(-90 75 75)"/>
+            <text x="75" y="70" text-anchor="middle" font-family="'Syne',sans-serif" font-size="18" fill="#f0f6ff" font-weight="800">58.3%</text>
+            <text x="75" y="86" text-anchor="middle" font-family="monospace" font-size="9" fill="#6a7fa0">Win Rate</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#00e5c3"></div>
+              <div>
+                <div style="font-weight:600;color:var(--white)">Win — 58.3%</div>
+                <div style="font-size:0.75rem;color:var(--muted)">494 trades</div>
+              </div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#ff4e6a"></div>
+              <div>
+                <div style="font-weight:600;color:var(--white)">Loss — 28.5%</div>
+                <div style="font-size:0.75rem;color:var(--muted)">241 trades</div>
+              </div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#f5c518"></div>
+              <div>
+                <div style="font-weight:600;color:var(--white)">Break-even — 13.2%</div>
+                <div style="font-size:0.75rem;color:var(--muted)">112 trades</div>
+              </div>
+            </div>
+            <div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.06);font-size:0.78rem;color:var(--muted)">
+              Profit Factor: <strong style="color:var(--teal)">1.84</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: Monthly Returns -->
+      <div class="viz-card reveal">
+        <div class="viz-card-title">📊 Monthly Return (%) — 2024</div>
+        <svg class="bar-svg" viewBox="0 0 500 160" preserveAspectRatio="none">
+          <line x1="20" y1="110" x2="490" y2="110" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <rect x="25"  y="76"  width="28" height="34" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="65"  y="62"  width="28" height="48" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="105" y="85"  width="28" height="25" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="185" y="55"  width="28" height="55" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="225" y="70"  width="28" height="40" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="305" y="48"  width="28" height="62" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="345" y="65"  width="28" height="45" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="385" y="40"  width="28" height="70" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="425" y="58"  width="28" height="52" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="465" y="72"  width="28" height="38" rx="3" fill="#00e5c3" opacity="0.85"/>
+          <rect x="145" y="110" width="28" height="18" rx="3" fill="#ff4e6a" opacity="0.8"/>
+          <rect x="265" y="110" width="28" height="12" rx="3" fill="#ff4e6a" opacity="0.8"/>
+          <text x="39"  y="72"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+5.2</text>
+          <text x="79"  y="58"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+7.1</text>
+          <text x="119" y="81"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+3.7</text>
+          <text x="159" y="136" font-family="monospace" font-size="8" fill="#ff4e6a" text-anchor="middle">-2.7</text>
+          <text x="199" y="51"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+8.1</text>
+          <text x="239" y="66"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+5.9</text>
+          <text x="279" y="130" font-family="monospace" font-size="8" fill="#ff4e6a" text-anchor="middle">-1.8</text>
+          <text x="319" y="44"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+9.2</text>
+          <text x="359" y="61"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+6.6</text>
+          <text x="399" y="36"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+10.3</text>
+          <text x="439" y="54"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+7.7</text>
+          <text x="479" y="68"  font-family="monospace" font-size="8" fill="#00e5c3" text-anchor="middle">+5.6</text>
+          <text x="39"  y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Jan</text>
+          <text x="79"  y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Feb</text>
+          <text x="119" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Mar</text>
+          <text x="159" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Apr</text>
+          <text x="199" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Mei</text>
+          <text x="239" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Jun</text>
+          <text x="279" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Jul</text>
+          <text x="319" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Agt</text>
+          <text x="359" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Sep</text>
+          <text x="399" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Okt</text>
+          <text x="439" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Nov</text>
+          <text x="479" y="152" font-family="monospace" font-size="8" fill="#6a7fa0" text-anchor="middle">Des</text>
+        </svg>
+      </div>
+
+      <!-- CARD 4: Key Metrics Comparison -->
+      <div class="viz-card reveal">
+        <div class="viz-card-title">⚡ Perbandingan Metrik Strategi</div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Metrik</th>
+              <th>Manual Trading</th>
+              <th>Algo (EMA+RSI)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Win Rate</td>
+              <td><span class="badge-bad">~35–40%</span></td>
+              <td><span class="badge-good">58.3%</span></td>
+            </tr>
+            <tr>
+              <td>Profit Factor</td>
+              <td><span class="badge-bad">0.9–1.1</span></td>
+              <td><span class="badge-good">1.84</span></td>
+            </tr>
+            <tr>
+              <td>Max Drawdown</td>
+              <td><span class="badge-bad">>30%</span></td>
+              <td><span class="badge-good">8.7%</span></td>
+            </tr>
+            <tr>
+              <td>Konsistensi</td>
+              <td><span class="badge-bad">Sangat rendah</span></td>
+              <td><span class="badge-good">Selalu sama</span></td>
+            </tr>
+            <tr>
+              <td>Jam aktif</td>
+              <td><span class="badge-ok">Terbatas</span></td>
+              <td><span class="badge-good">24/7</span></td>
+            </tr>
+            <tr>
+              <td>Pengaruh emosi</td>
+              <td><span class="badge-bad">Tinggi</span></td>
+              <td><span class="badge-good">Nol</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:0.8rem;font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace;">
+          * Data dari backtest BTC/USDT 1H · Jan–Des 2024
+        </div>
+      </div>
+
+      <!-- CARD 5: Candlestick chart full width -->
+      <div class="viz-card full reveal">
+        <div class="viz-card-title">🕯️ Sinyal Entry/Exit — BTC/USDT 1H (Contoh Backtest)</div>
+        <svg class="candle-svg" viewBox="0 0 900 200" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="emaGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#00e5c3" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#00e5c3" stop-opacity="1"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="50"  x2="900" y2="50"  stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <line x1="0" y1="100" x2="900" y2="100" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <line x1="0" y1="150" x2="900" y2="150" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <g fill="#00e5c3" stroke="#00e5c3">
+            <line x1="30"  y1="85"  x2="30"  y2="120" stroke-width="1.5"/><rect x="25"  y="95"  width="10" height="18" rx="1"/>
+            <line x1="60"  y1="80"  x2="60"  y2="118" stroke-width="1.5"/><rect x="55"  y="88"  width="10" height="22" rx="1"/>
+            <line x1="120" y1="72"  x2="120" y2="110" stroke-width="1.5"/><rect x="115" y="80"  width="10" height="22" rx="1"/>
+            <line x1="150" y1="68"  x2="150" y2="105" stroke-width="1.5"/><rect x="145" y="76"  width="10" height="22" rx="1"/>
+            <line x1="240" y1="62"  x2="240" y2="98"  stroke-width="1.5"/><rect x="235" y="70"  width="10" height="22" rx="1"/>
+            <line x1="270" y1="55"  x2="270" y2="92"  stroke-width="1.5"/><rect x="265" y="63"  width="10" height="22" rx="1"/>
+            <line x1="330" y1="52"  x2="330" y2="88"  stroke-width="1.5"/><rect x="325" y="60"  width="10" height="20" rx="1"/>
+            <line x1="390" y1="48"  x2="390" y2="85"  stroke-width="1.5"/><rect x="385" y="56"  width="10" height="20" rx="1"/>
+            <line x1="450" y1="44"  x2="450" y2="80"  stroke-width="1.5"/><rect x="445" y="52"  width="10" height="20" rx="1"/>
+            <line x1="510" y1="40"  x2="510" y2="78"  stroke-width="1.5"/><rect x="505" y="48"  width="10" height="22" rx="1"/>
+            <line x1="600" y1="55"  x2="600" y2="90"  stroke-width="1.5"/><rect x="595" y="63"  width="10" height="20" rx="1"/>
+            <line x1="660" y1="50"  x2="660" y2="85"  stroke-width="1.5"/><rect x="655" y="58"  width="10" height="20" rx="1"/>
+            <line x1="720" y1="44"  x2="720" y2="80"  stroke-width="1.5"/><rect x="715" y="52"  width="10" height="20" rx="1"/>
+            <line x1="780" y1="38"  x2="780" y2="74"  stroke-width="1.5"/><rect x="775" y="46"  width="10" height="20" rx="1"/>
+            <line x1="840" y1="32"  x2="840" y2="68"  stroke-width="1.5"/><rect x="835" y="40"  width="10" height="20" rx="1"/>
+          </g>
+          <g fill="#ff4e6a" stroke="#ff4e6a">
+            <line x1="90"  y1="88"  x2="90"  y2="125" stroke-width="1.5"/><rect x="85"  y="95"  width="10" height="22" rx="1"/>
+            <line x1="180" y1="75"  x2="180" y2="112" stroke-width="1.5"/><rect x="175" y="82"  width="10" height="22" rx="1"/>
+            <line x1="210" y1="70"  x2="210" y2="108" stroke-width="1.5"/><rect x="205" y="78"  width="10" height="22" rx="1"/>
+            <line x1="300" y1="60"  x2="300" y2="96"  stroke-width="1.5"/><rect x="295" y="68"  width="10" height="20" rx="1"/>
+            <line x1="360" y1="55"  x2="360" y2="90"  stroke-width="1.5"/><rect x="355" y="62"  width="10" height="20" rx="1"/>
+            <line x1="420" y1="50"  x2="420" y2="86"  stroke-width="1.5"/><rect x="415" y="58"  width="10" height="20" rx="1"/>
+            <line x1="480" y1="46"  x2="480" y2="82"  stroke-width="1.5"/><rect x="475" y="54"  width="10" height="20" rx="1"/>
+            <line x1="540" y1="42"  x2="540" y2="78"  stroke-width="1.5"/><rect x="535" y="50"  width="10" height="20" rx="1"/>
+            <line x1="570" y1="58"  x2="570" y2="94"  stroke-width="1.5"/><rect x="565" y="66"  width="10" height="20" rx="1"/>
+            <line x1="630" y1="52"  x2="630" y2="88"  stroke-width="1.5"/><rect x="625" y="60"  width="10" height="20" rx="1"/>
+            <line x1="690" y1="46"  x2="690" y2="82"  stroke-width="1.5"/><rect x="685" y="54"  width="10" height="20" rx="1"/>
+            <line x1="750" y1="40"  x2="750" y2="76"  stroke-width="1.5"/><rect x="745" y="48"  width="10" height="20" rx="1"/>
+            <line x1="810" y1="34"  x2="810" y2="70"  stroke-width="1.5"/><rect x="805" y="42"  width="10" height="20" rx="1"/>
+            <line x1="870" y1="36"  x2="870" y2="72"  stroke-width="1.5"/><rect x="865" y="44"  width="10" height="20" rx="1"/>
+          </g>
+          <path d="M10,115 L40,112 L70,108 L100,105 L130,100 L160,97 L190,94 L220,90 L250,87 L280,83 L310,79 L340,76 L370,72 L400,68 L430,65 L460,62 L490,58 L520,55 L550,52 L580,58 L610,55 L640,52 L670,49 L700,46 L730,43 L760,40 L790,37 L820,34 L850,31 L880,28"
+                fill="none" stroke="#00e5c3" stroke-width="1.5" stroke-dasharray="4 2" opacity="0.6"/>
+          <g>
+            <polygon points="150,130 143,145 157,145" fill="#00e5c3" opacity="0.9"/>
+            <text x="150" y="158" font-family="monospace" font-size="9" fill="#00e5c3" text-anchor="middle">BUY</text>
+            <polygon points="390,108 383,123 397,123" fill="#00e5c3" opacity="0.9"/>
+            <text x="390" y="136" font-family="monospace" font-size="9" fill="#00e5c3" text-anchor="middle">BUY</text>
+            <polygon points="660,108 653,123 667,123" fill="#00e5c3" opacity="0.9"/>
+            <text x="660" y="136" font-family="monospace" font-size="9" fill="#00e5c3" text-anchor="middle">BUY</text>
+          </g>
+          <g>
+            <polygon points="300,48 293,33 307,33" fill="#ff4e6a" opacity="0.9"/>
+            <text x="300" y="28" font-family="monospace" font-size="9" fill="#ff4e6a" text-anchor="middle">SELL</text>
+            <polygon points="540,32 533,17 547,17" fill="#ff4e6a" opacity="0.9"/>
+            <text x="540" y="12" font-family="monospace" font-size="9" fill="#ff4e6a" text-anchor="middle">SELL</text>
+            <polygon points="810,22 803,7 817,7" fill="#ff4e6a" opacity="0.9"/>
+            <text x="810" y="5" font-family="monospace" font-size="9" fill="#ff4e6a" text-anchor="middle">SELL</text>
+          </g>
+          <text x="892" y="54"  font-family="monospace" font-size="8" fill="#6a7fa0">$68K</text>
+          <text x="892" y="104" font-family="monospace" font-size="8" fill="#6a7fa0">$65K</text>
+          <text x="892" y="154" font-family="monospace" font-size="8" fill="#6a7fa0">$62K</text>
+        </svg>
+        <div style="display:flex;gap:1.5rem;margin-top:0.8rem;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--muted);">
+            <div style="width:20px;height:2px;background:#00e5c3;opacity:0.6;border-top:2px dashed #00e5c3;"></div> EMA Line
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--muted);">
+            <span style="color:#00e5c3;font-size:0.9rem;">▲</span> Sinyal BUY (Entry)
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--muted);">
+            <span style="color:#ff4e6a;font-size:0.9rem;">▲</span> Sinyal SELL (Exit / Short)
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--muted);">
+            <div style="width:10px;height:10px;background:#00e5c3;border-radius:1px;"></div> Candle Bullish
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--muted);">
+            <div style="width:10px;height:10px;background:#ff4e6a;border-radius:1px;"></div> Candle Bearish
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="margin-top:2rem;font-size:0.75rem;color:var(--muted);font-family:'DM Mono',monospace;text-align:center;">
+      * Semua data adalah hasil backtest historis. Past performance bukan jaminan hasil di masa depan. Webinar ini bersifat edukatif.
+    </p>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <p class="section-label reveal">// Pilih Paket</p>
+    <h2 class="reveal">Investasi yang Sepadan</h2>
+    <p class="section-sub reveal" style="margin:0 auto 0; text-align:center">Satu strategi yang profit bisa balik modal berkali-kali lipat dari harga tiket ini.</p>
+
+    <!-- Comparison hint -->
+    <div class="reveal" style="text-align:center;margin:1.5rem auto 0;max-width:560px;">
+      <span style="background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.3);color:var(--gold);font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.4rem 1rem;border-radius:100px;">
+        💡 Gold cuma beda 100K dari Silver — tapi dapat jauh lebih banyak
+      </span>
+    </div>
+
+    <div class="pricing-cards" style="align-items:stretch;">
+
+      <!-- STARTER -->
+      <div class="pricing-card reveal" style="display:flex;flex-direction:column;">
+        <div class="plan-name">🥉 Starter</div>
+        <div class="price-wrap">
+          <span class="price-currency">Rp</span>
+          <span class="price-amount">99K</span>
+        </div>
+        <div class="price-original">&nbsp;</div>
+        <div class="price-desc">Entry point terbaik. Hadir live, langsung coding bareng dari nol.</div>
+        <ul class="plan-features" style="flex:1">
+          <li>Akses live webinar 3–4 jam</li>
+          <li>Slide presentasi PDF</li>
+          <li>Q&A live session</li>
+          <li>Akses Pine Script Generator</li>
+          <li class="muted-feat">Rekaman video webinar</li>
+          <li class="muted-feat">Checklist strategi sebelum live</li>
+          <li class="muted-feat">Strategy ready-to-use script</li>
+          <li class="muted-feat">Video pembelajaran terstruktur</li>
+          <li class="muted-feat">Grup komunitas eksklusif</li>
+        </ul>
+        <a href="webinar-starter.html" class="btn-buy outline" style="margin-top:auto">Pilih Starter →</a>
+      </div>
+
+      <!-- SILVER -->
+      <div class="pricing-card reveal" style="display:flex;flex-direction:column;">
+        <div class="plan-name">🥈 Silver</div>
+        <div class="price-wrap">
+          <span class="price-currency">Rp</span>
+          <span class="price-amount">399K</span>
+        </div>
+        <div class="price-original">&nbsp;</div>
+        <div class="price-desc">Live + rekaman + strategy script. Buat yang serius tapi belum butuh semua fitur.</div>
+        <ul class="plan-features" style="flex:1">
+          <li>Akses live webinar 3–4 jam</li>
+          <li>Slide presentasi PDF</li>
+          <li>Q&A live session</li>
+          <li>Akses Pine Script Generator</li>
+          <li><strong>Rekaman video webinar (60 hari)</strong></li>
+          <li><strong>Checklist strategi sebelum live</strong></li>
+          <li><strong>✨ 1 Strategy ready-to-use script</strong></li>
+          <li class="muted-feat">Video pembelajaran terstruktur</li>
+          <li class="muted-feat">Grup komunitas eksklusif</li>
+        </ul>
+        <a href="webinar-silver.html" class="btn-buy outline" style="margin-top:auto">Pilih Silver →</a>
+      </div>
+
+      <!-- GOLD (FEATURED) -->
+      <div class="pricing-card featured reveal" style="display:flex;flex-direction:column;">
+        <div class="featured-label">Best Value</div>
+        <div class="plan-name">🥇 Gold</div>
+        <div class="price-wrap">
+          <span class="price-currency">Rp</span>
+          <span class="price-amount">499K</span>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--teal);margin-bottom:1rem;text-align:center;">
+          cuma +100K dari Silver ↑
+        </div>
+        <div class="price-desc">Paket paling lengkap. Video pembelajaran terstruktur + komunitas selamanya.</div>
+        <ul class="plan-features" style="flex:1">
+          <li>Akses live webinar 3–4 jam</li>
+          <li>Slide presentasi PDF</li>
+          <li>Q&A live session</li>
+          <li>Akses Pine Script Generator</li>
+          <li><strong>Rekaman video webinar (60 hari)</strong></li>
+          <li><strong>Checklist strategi sebelum live</strong></li>
+          <li><strong>✨ 1 Strategy ready-to-use script</strong></li>
+          <li><strong>✨ Video pembelajaran terstruktur (selamanya)</strong></li>
+          <li><strong>✨ Grup komunitas eksklusif</strong></li>
+        </ul>
+        <a href="webinar-gold.html" class="btn-buy primary" style="margin-top:auto">Ambil Gold Sekarang →</a>
+      </div>
+
+    </div>
+
+    <!-- Value callout -->
+    <div class="reveal" style="max-width:700px;margin:2.5rem auto 0;background:rgba(0,229,195,0.05);border:1px solid rgba(0,229,195,0.15);border-radius:12px;padding:1.5rem 2rem;display:flex;gap:1rem;align-items:flex-start;">
+      <span style="font-size:1.8rem;flex-shrink:0;">🧠</span>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.4rem;">Kenapa Gold worth it?</div>
+        <p style="font-size:0.88rem;color:var(--muted);line-height:1.7;">Silver dan Gold cuma beda Rp 100.000 — tapi Gold dapat video pembelajaran terstruktur selamanya dan akses komunitas eksklusif. Kalau lo serius mau nguasain algo trading, Gold adalah pilihan yang paling masuk akal secara value.</p>
+      </div>
+    </div>
+
+    <div class="guarantee reveal">
+      <span>⭐</span>
+      <span>Garansi uang kembali 100% dalam 7 hari jika lo merasa tidak dapat value apapun.</span>
+    </div>
+  </div>
+</section>
+
+<!-- OrderOnline: hidden embed forms + shared script, triggered by buttons -->
+<div style="display:none">
+  <!-- Starter form -->
+  <div class="ooef">
+    <form class="orderonline-embed-form"
+      data-username="winbiz"
+      data-product-slug="webinar-algo-trading-using-ai-from-byscriptio-starter"
+      data-product-id="699beb71468502d47a006dee"
+      id="oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-starter-3000"
+      data-origin="orderonline">
+    </form>
+  </div>
+  <!-- Silver form -->
+  <div class="ooef">
+    <form class="orderonline-embed-form"
+      data-username="winbiz"
+      data-product-slug="webinar-algo-trading-using-ai-from-byscriptio-Silver"
+      data-product-id="699c8f9c38c3462972092e99"
+      id="oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-Silver-6276"
+      data-origin="orderonline">
+    </form>
+  </div>
+  <!-- Gold form -->
+  <div class="ooef">
+    <form class="orderonline-embed-form"
+      data-username="winbiz"
+      data-product-slug="webinar-algo-trading-using-ai-from-byscriptio-gold"
+      data-product-id="699c9155dabe4f3ade0bf2e4"
+      id="oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-gold-8891"
+      data-origin="orderonline">
+    </form>
+  </div>
+</div>
+
+<script>
+// OrderOnline init
+if (typeof xLogError != 'function') {
+  var xLogError = function(error) {
+    var req = new XMLHttpRequest();
+    var payload = JSON.stringify({ url: document.location.href, line: error.line, stack: error.stack });
+    var params = 'message=' + encodeURIComponent(error.name) + '&payload=' + encodeURIComponent(payload) + '&type=embed&level=error';
+    req.open('POST', 'https://api.orderonline.id/log', true);
+    req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    req.send(params);
+  };
+}
+
+try {
+  if (typeof xEmbedScript != 'function') {
+    var xEmbedScript = function() {
+      !function(w,d,e,v,id,t,s){if(d.getElementById(id))return;t=d.createElement(e);t.async=!0;t.src=v;t.id=id;s=d.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);}
+      (window,document,'script','https://cdn.orderonline.id/js/embed-v2-slim.min.js?v=8.0.2','oo-embed-js');
+    };
+  }
+  if (typeof xEmbedInit != 'function') {
+    var xEmbedInit = function(w,n) {
+      if(w.ooe)return;n=w.ooe=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!w._ooe)w._ooe=n;n.push=n;n.loaded=!0;n.version='8.0.2';n.queue=[];
+    };
+  }
+  xEmbedInit(window);
+  ooe('setup', 'redirect', 'https://winbiz.orderonline.id');
+
+  // Init all three products
+  ooe('init', '63bedb5f983fd6d05d01448a', '699beb71468502d47a006dee', '699beb71468502d47a006def',
+    'oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-starter-3000',
+    {"mode":"page","action":"Klik untuk pemesanan","title":"Form Pemesanan","triggerPixel":true,"triggerGtm":true});
+
+  ooe('init', '63bedb5f983fd6d05d01448a', '699c8f9c38c3462972092e99', '699c8f9c38c3462972092e9a',
+    'oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-Silver-6276',
+    {"mode":"page","action":"Klik untuk pemesanan","title":"Form Pemesanan","triggerPixel":true,"triggerGtm":true});
+
+  ooe('init', '63bedb5f983fd6d05d01448a', '699c9155dabe4f3ade0bf2e4', '699c9155dabe4f3ade0bf2e5',
+    'oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-gold-8891',
+    {"mode":"page","action":"Klik untuk pemesanan","title":"Form Pemesanan","triggerPixel":true,"triggerGtm":true});
+
+  if (!window.jQuery) {
+    !function(w,d,e,v,id,t,s){if(d.getElementById(id))return;t=d.createElement(e);t.async=!0;t.src=v;t.id=id;
+    t.addEventListener('load',xEmbedScript);s=d.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);}
+    (window,document,'script','https://cdn.orderonline.id/js/vendor/jquery.min.js','oo-embed-jquery');
+  } else { xEmbedScript(); }
+
+} catch(e) { xLogError(e); throw e; }
+
+// Trigger checkout per tier
+var ooFormIds = {
+  starter: 'oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-starter-3000',
+  silver:  'oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-Silver-6276',
+  gold:    'oo-embed-form-webinar-algo-trading-using-ai-from-byscriptio-gold-8891'
+};
+
+function ooBuy(tier) {
+  var formId = ooFormIds[tier];
+  if (!formId) return;
+  // Find the submit button injected by OrderOnline inside the form and click it
+  var form = document.getElementById(formId);
+  if (form) {
+    var btn = form.querySelector('button, input[type="submit"], [type="submit"]');
+    if (btn) { btn.click(); return; }
+    // Fallback: submit the form directly
+    form.submit();
+  }
+}
+</script>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <p class="section-label reveal">// Pertanyaan Umum</p>
+    <h2 class="reveal">FAQ</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">
+          Apakah saya harus punya background coding dulu?
+          <span class="arrow">+</span>
+        </button>
+        <div class="faq-a">Tidak sama sekali. Webinar ini dirancang untuk trader dari semua level, termasuk yang belum pernah coding sekalipun. Kita akan belajar Pine Script dari nol dengan bantuan AI, jadi prosesnya jauh lebih mudah dari yang lo bayangkan.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          Saya sudah bisa coding, apakah masih relevan untuk saya?
+          <span class="arrow">+</span>
+        </button>
+        <div class="faq-a">Sangat relevan! Sesi tentang cara pakai AI sebagai coding partner untuk Pine Script, workflow dari ide ke backtest, dan pembahasan common mistakes akan tetap berguna meskipun lo sudah familiar dengan pemrograman umum.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          Software apa yang perlu disiapkan sebelum webinar?
+          <span class="arrow">+</span>
+        </button>
+        <div class="faq-a">Hanya butuh akun TradingView (gratis sudah cukup untuk webinar ini) dan akun AI ChatGPT. Tidak perlu install apapun — semua berbasis browser.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          Apakah ada rekaman jika saya tidak bisa hadir live?
+          <span class="arrow">+</span>
+        </button>
+        <div class="faq-a">Rekaman tersedia untuk paket Silver (399K) dan Gold (499K) selama 60 hari setelah webinar. Untuk paket Starter (99K), lo wajib hadir live. Kami rekomendasikan hadir live karena ada sesi Q&A interaktif yang tidak bisa digantikan rekaman.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          Apakah strategi yang dibahas sudah pasti profit?
+          <span class="arrow">+</span>
+        </button>
+        <div class="faq-a">Tidak ada strategi yang guaranteed profit. Yang akan lo pelajari adalah framework dan kemampuan untuk build, test, dan validasi strategi sendiri — sehingga lo bisa menilai secara objektif apakah suatu strategi layak dipakai atau tidak, berdasarkan data historis.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          Bagaimana cara pembayarannya?
+          <span class="arrow">+</span>
+        </button>
+        <div class="faq-a">Pembayaran bisa melalui transfer bank, GoPay, OVO, DANA, atau kartu kredit/debit. Setelah pembayaran terkonfirmasi, lo akan langsung menerima email konfirmasi berisi link akses webinar.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final-cta">
+  <div class="glow-teal"></div>
+  <div style="position:relative;z-index:1">
+    <p class="section-label" style="justify-content:center;display:flex">// Sekarang atau Nunggu Kapan?</p>
+    <h2>Tempat Terbatas.<br>Jangan Sampai Kehabisan.</h2>
+    <p>Harga early bird ini hanya berlaku sampai kuota penuh atau waktu habis. Setelah itu harga naik ke harga normal.</p>
+
+    <div class="countdown-wrap" id="countdown">
+      <div class="countdown-box">
+        <span class="countdown-num" id="cd-days">03</span>
+        <div class="countdown-label">Hari</div>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-num" id="cd-hours">14</span>
+        <div class="countdown-label">Jam</div>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-num" id="cd-mins">22</span>
+        <div class="countdown-label">Menit</div>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-num" id="cd-secs">00</span>
+        <div class="countdown-label">Detik</div>
+      </div>
+    </div>
+
+    <a href="#pricing" class="btn-primary" style="font-size:1.05rem;padding:1.1rem 2.8rem">
+      Pilih Paket & Daftar Sekarang →
+    </a>
+
+    <p style="margin-top:1.2rem;font-size:0.82rem;color:var(--muted)">
+      ⭐ Garansi 7 hari uang kembali · 🔒 Pembayaran aman · 📩 Konfirmasi instan
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">byScript.io Academy</div>
+  <p>© 2025 byScript.io All Rights Reserve.</p>
+  <p style="font-size:0.72rem;color:var(--muted)">Hasil trading bervariasi. Webinar ini bersifat edukatif.</p>
+</footer>
+
+<script>
+  // ─── Scroll Reveal ───
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // ─── Stagger delays ───
+  document.querySelectorAll('.stagger > *').forEach((el, i) => {
+    el.style.setProperty('--i', i);
+  });
+
+  // ─── FAQ Accordion ───
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // ─── Countdown Timer ───
+  // Set target to 3 days 14 hours from now (for demo; replace with actual date)
+  const target = new Date();
+  target.setDate(target.getDate() + 3);
+  target.setHours(target.getHours() + 14);
+  target.setMinutes(target.getMinutes() + 22);
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = Math.max(0, target - now);
+    const days  = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins  = Math.floor((diff % 3600000) / 60000);
+    const secs  = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('cd-days').textContent  = pad(days);
+    document.getElementById('cd-hours').textContent = pad(hours);
+    document.getElementById('cd-mins').textContent  = pad(mins);
+    document.getElementById('cd-secs').textContent  = pad(secs);
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // ─── Nav active on scroll ───
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.borderBottomColor = window.scrollY > 50
+      ? 'rgba(0,229,195,0.12)'
+      : 'rgba(0,229,195,0.05)';
+  });
+</script>
+</body>
+</html>
