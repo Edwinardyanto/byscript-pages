@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#0a0c0f;color:#f0f2f5">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>byScript Academy — Algorithmic Trading Mastery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.development.js"><\/script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"><\/script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"><\/script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;--bg1:#0f1215;--bg2:#141820;--bg3:#1a1f28;--bg4:#202633;
+  --b:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.10);
+  --t1:#f0f2f5;--t2:#8b95a8;--t3:#556070;
+  --ac:#22c55e;--acd:rgba(34,197,94,0.12);--acb:rgba(34,197,94,0.25);
+  --sw:280px;--r:10px;--rl:14px;
+  font-family:'DM Sans',sans-serif;
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+input{font-family:inherit}
+svg{display:block}
+.app{display:flex;min-height:100vh}
+.sbw{width:var(--sw);min-height:100vh;flex-shrink:0}
+.mw{flex:1;min-width:0;display:flex;flex-direction:column}
+/* Sidebar */
+.sb{width:var(--sw);height:100vh;background:var(--bg1);border-right:1px solid var(--b);display:flex;flex-direction:column;overflow:hidden;position:fixed;top:0;left:0}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:20px 18px 16px;border-bottom:1px solid var(--b);flex-shrink:0;cursor:pointer}
+.sb-logo{width:36px;height:36px;background:var(--ac);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;color:#000;flex-shrink:0}
+.sb-bname{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--t1);line-height:1.2}
+.sb-bsub{font-size:11px;color:var(--t3);letter-spacing:.04em;text-transform:uppercase}
+.sb-srch{margin:12px 12px 8px;position:relative;flex-shrink:0}
+.sb-si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex}
+.sb-sinp{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:8px 32px 8px 32px;font-size:12.5px;color:var(--t1);outline:none;transition:border-color .2s}
+.sb-sinp::placeholder{color:var(--t3)}
+.sb-sinp:focus{border-color:var(--acb)}
+.sb-sx{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--t3);display:flex;transition:color .2s;padding:2px}
+.sb-sx:hover{color:var(--t1)}
+.sb-lbl{padding:8px 18px 6px;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);flex-shrink:0}
+.sb-nav{flex:1;overflow-y:auto;padding:4px 8px 8px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent}
+.sb-nav::-webkit-scrollbar{width:4px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+.mg{margin-bottom:2px}
+.mh{width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px 10px;border-radius:7px;text-align:left;transition:background .15s;gap:8px;background:none}
+.mh:hover{background:var(--bg3)}
+.mhl{display:flex;align-items:flex-start;gap:6px;flex:1;min-width:0}
+.mhc{color:var(--t3);flex-shrink:0;margin-top:3px;display:flex}
+.mhid{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);line-height:1.2}
+.mht{font-size:12px;font-weight:500;color:var(--t2);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.mpill{font-size:10px;font-weight:600;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.cs-badge{font-size:9.5px;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.ll{padding:2px 0 4px 18px;display:flex;flex-direction:column;gap:1px}
+.li{width:100%;display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border-radius:6px;text-align:left;transition:background .15s;border:1px solid transparent;background:none;cursor:pointer}
+.li:hover{background:var(--bg3)}
+.li-a{background:var(--acd)!important;border-color:var(--acb)!important}
+.lic{flex-shrink:0;padding-top:2px;display:flex}
+.ic-done{color:var(--ac)}
+.ic-empty{color:var(--t3)}
+.lin{flex:1;min-width:0}
+.li-id{font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;line-height:1.2}
+.li-tt{font-size:12px;font-weight:500;color:var(--t2);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.li-a .li-tt{color:var(--t1)}
+.li-done .li-tt{color:var(--t3)}
+.li-dur{font-size:10.5px;color:var(--t3);margin-top:2px}
+.sb-foot{display:flex;align-items:center;gap:6px;padding:12px 18px;border-top:1px solid var(--b);font-size:11.5px;color:var(--t3);flex-shrink:0}
+/* Mobile */
+.mob-hdr{display:none;align-items:center;gap:12px;padding:12px 16px;background:var(--bg1);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:50}
+.mob-mbtn{color:var(--t2);display:flex;align-items:center;padding:4px;transition:color .2s}
+.mob-mbtn:hover{color:var(--t1)}
+.mob-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--t1)}
+.mob-brand span{color:var(--t3)}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90}
+/* Dashboard */
+.dash{max-width:1000px;margin:0 auto;padding:40px 32px 80px}
+.dh{margin-bottom:32px}
+.dh-ey{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.dh-badge{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:100px;padding:3px 10px}
+.dh-lv{font-size:12px;color:var(--t3)}
+.dh-title{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,36px);font-weight:800;color:var(--t1);line-height:1.15;margin-bottom:12px;letter-spacing:-.02em}
+.dh-desc{font-size:15px;color:var(--t2);max-width:580px;line-height:1.65;margin-bottom:24px}
+.dh-acts{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:var(--ac);color:#000;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;transition:opacity .15s,transform .15s}
+.btn-p:hover{opacity:.88;transform:translateY(-1px)}
+.dh-res{font-size:13px;color:var(--t3);max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar{display:flex;align-items:center;background:var(--bg2);border:1px solid var(--b);border-radius:var(--rl);padding:16px 20px;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+.si{display:flex;align-items:center;gap:10px}
+.siw{color:var(--ac);display:flex}
+.sv{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--t1);line-height:1}
+.sl{font-size:11px;color:var(--t3);margin-top:2px}
+.sdiv{width:1px;height:36px;background:var(--b)}
+.sp{flex:1;min-width:120px}
+.spb{height:6px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.spf{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+.ds-sec{margin-bottom:32px}
+.ds-w{position:relative;max-width:520px}
+.ds-i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex}
+.ds-inp{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:12px 40px 12px 42px;font-size:14px;color:var(--t1);outline:none;transition:border-color .2s}
+.ds-inp::placeholder{color:var(--t3)}
+.ds-inp:focus{border-color:var(--acb)}
+.ds-clr{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--t3);display:flex;padding:2px}
+.sh{display:flex;align-items:baseline;gap:10px;margin-bottom:20px}
+.st{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--t1);letter-spacing:-.01em}
+.ss{font-size:12px;color:var(--t3)}
+.rc{font-size:14px;color:var(--t3);font-weight:400}
+.srs{margin-bottom:40px}
+.srl{display:flex;flex-direction:column;gap:4px}
+.sri{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:14px 16px;text-align:left;transition:border-color .15s,background .15s;width:100%;cursor:pointer}
+.sri:hover{border-color:var(--b2);background:var(--bg3)}
+.sri-id{font-size:10px;font-weight:700;color:var(--ac);background:var(--acd);border-radius:4px;padding:2px 7px;flex-shrink:0;letter-spacing:.05em}
+.sri-c{flex:1;min-width:0}
+.sri-t{font-weight:500;font-size:14px;color:var(--t1)}
+.sri-m{font-size:12px;color:var(--t3);margin-top:2px}
+.empty{display:flex;flex-direction:column;align-items:center;gap:12px;padding:48px;color:var(--t3);font-size:14px}
+.mcs{margin-bottom:40px}
+.mcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.mc{background:var(--bg2);border:1px solid var(--b);border-radius:var(--rl);padding:20px;cursor:pointer;transition:border-color .2s,transform .15s,background .2s;text-align:left;display:flex;flex-direction:column;gap:10px}
+.mc:hover:not(.mc-lk){border-color:var(--b2);background:var(--bg3);transform:translateY(-2px)}
+.mc-lk{cursor:default;opacity:.6}
+.mc-hd{display:flex;align-items:center;justify-content:space-between}
+.mc-id{font-size:10px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:5px;padding:2px 8px;letter-spacing:.06em}
+.mc-cs{font-size:10.5px;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:100px;padding:2px 8px}
+.mc-done{display:flex;align-items:center;gap:4px;font-size:10.5px;color:var(--ac);background:var(--acd);border-radius:100px;padding:2px 8px}
+.mc-tit{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t1);line-height:1.3;letter-spacing:-.01em}
+.mc-ov{font-size:12.5px;color:var(--t3);line-height:1.55}
+.mc-st{display:flex;gap:12px;flex-wrap:wrap}
+.mc-s{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t3)}
+.mc-pb{height:4px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.mc-pf{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+.mc-pl{font-size:11px;color:var(--t3)}
+.mc-ct{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ac);margin-top:2px}
+.os{margin-bottom:40px}
+.og{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.oi{display:flex;align-items:flex-start;gap:10px;background:var(--bg2);border:1px solid var(--b);border-radius:var(--r);padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.5}
+.ock{color:var(--ac);font-weight:700;flex-shrink:0}
+/* Module */
+.mp{max-width:860px;margin:0 auto;padding:36px 32px 80px}
+.bc{display:flex;align-items:center;gap:6px;margin-bottom:24px;flex-wrap:wrap}
+.bcl{font-size:12.5px;color:var(--t3);transition:color .15s;background:none;border:none;cursor:pointer;padding:0}
+.bcl:hover{color:var(--t2)}
+.bcs{color:var(--t3);flex-shrink:0;display:flex}
+.bcc{font-size:12.5px;color:var(--t2);font-weight:500}
+.mid-pill{display:inline-block;font-size:10px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:5px;padding:3px 10px;letter-spacing:.08em;margin-bottom:12px}
+.mp-title{font-family:'Syne',sans-serif;font-size:clamp(22px,3.5vw,30px);font-weight:800;color:var(--t1);line-height:1.2;letter-spacing:-.02em;margin-bottom:12px}
+.mp-ov{font-size:14.5px;color:var(--t2);line-height:1.65;max-width:640px;margin-bottom:18px}
+.mp-mr{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.mmc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t3);background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:4px 10px}
+.mpb-w{display:flex;align-items:center;gap:10px;max-width:480px}
+.mpb{flex:1;height:6px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.mpbf{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+.mpp{font-size:12px;font-weight:600;color:var(--ac);min-width:36px;text-align:right}
+.mout{background:var(--bg2);border:1px solid var(--b);border-radius:var(--rl);padding:20px;margin:28px 0}
+.mout-h{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.mout-h h2{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t1)}
+.outl{display:flex;flex-direction:column;gap:10px}
+.outr{display:flex;align-items:flex-start;gap:12px}
+.outn{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--ac);flex-shrink:0;min-width:24px;margin-top:1px}
+.outr p{font-size:13.5px;color:var(--t2);line-height:1.55}
+.lss-t{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--t1);margin-bottom:16px;margin-top:28px}
+.lsl{display:flex;flex-direction:column;gap:8px}
+.lsc{display:flex;align-items:center;gap:16px;background:var(--bg2);border:1px solid var(--b);border-radius:var(--rl);padding:16px 18px;text-align:left;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;width:100%}
+.lsc:hover{border-color:var(--b2);background:var(--bg3);transform:translateY(-1px)}
+.lsc-done{opacity:.7}
+.lsc-n{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--bg4);min-width:36px;flex-shrink:0}
+.lsc-pb{width:36px;height:36px;background:var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;transition:transform .15s;flex-shrink:0}
+.lsc:hover .lsc-pb{transform:scale(1.1)}
+.lsc-di{color:var(--ac);display:flex;flex-shrink:0}
+.lsc-c{flex:1;min-width:0}
+.lsc-id{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.lsc-t{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:4px;line-height:1.3}
+.lsc-s{font-size:12.5px;color:var(--t3);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lsc-r{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+.lsc-dur{font-size:12px;color:var(--t3);white-space:nowrap}
+.lsc-ch{color:var(--t3);display:flex}
+/* Lesson */
+.lp{max-width:860px;margin:0 auto;padding:36px 32px 80px}
+.lp-hd{margin-bottom:20px}
+.lp-ir{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.lp-mb{font-size:10px;font-weight:700;letter-spacing:.06em;border-radius:5px;padding:3px 8px;color:var(--ac);background:var(--acd);border:1px solid var(--acb)}
+.lp-vb{font-size:10px;font-weight:700;letter-spacing:.06em;border-radius:5px;padding:3px 8px;color:var(--t3);background:var(--bg3);border:1px solid var(--b)}
+.lp-db{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:100px;padding:3px 9px}
+.lp-tit{font-family:'Syne',sans-serif;font-size:clamp(20px,3vw,26px);font-weight:800;color:var(--t1);line-height:1.2;letter-spacing:-.02em;margin-bottom:12px}
+.lp-meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.lmc{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t3);background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:5px 10px}
+.lmc-a{transition:color .15s,border-color .15s}
+.lmc-a:hover{color:var(--t2);border-color:var(--b2)}
+.vc{position:relative;width:100%;padding-bottom:56.25%;background:var(--bg2);border-radius:var(--rl);overflow:hidden;border:1px solid var(--b);margin-bottom:16px}
+.vif{position:absolute;inset:0;width:100%;height:100%;border:none}
+.lcr{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.mcb{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;padding:9px 16px;border-radius:8px;border:1px solid var(--b);background:var(--bg2);color:var(--t2);transition:all .2s;cursor:pointer}
+.mcb:hover{border-color:var(--acb);color:var(--ac);background:var(--acd)}
+.mcb-d{background:var(--acd)!important;border-color:var(--acb)!important;color:var(--ac)!important}
+.lni{display:flex;gap:8px}
+.nib{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--t3);padding:8px 12px;border-radius:7px;border:1px solid var(--b);background:var(--bg2);transition:all .15s;cursor:pointer}
+.nib:hover{color:var(--t1);border-color:var(--b2)}
+.nib-n{color:var(--ac);border-color:var(--acb);background:var(--acd)}
+.ctabs{display:flex;gap:4px;border-bottom:1px solid var(--b);margin-bottom:24px;overflow-x:auto;scrollbar-width:none}
+.ctabs::-webkit-scrollbar{display:none}
+.ctab{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--t3);padding:10px 14px;border-radius:8px 8px 0 0;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;cursor:pointer}
+.ctab:hover{color:var(--t2)}
+.ctab-a{color:var(--ac)!important;border-bottom:2px solid var(--ac)!important}
+.tp{display:flex;flex-direction:column;gap:24px}
+.cb{background:var(--bg2);border:1px solid var(--b);border-radius:var(--rl);padding:20px 22px}
+.cbt{display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--ac);margin-bottom:14px}
+.ls-sum{font-size:14.5px;color:var(--t2);line-height:1.7;font-style:italic}
+.ls-dsc{font-size:14px;color:var(--t2);line-height:1.7}
+.tkl{list-style:none;display:flex;flex-direction:column;gap:10px}
+.tki{display:flex;align-items:flex-start;gap:12px;font-size:13.5px;color:var(--t2);line-height:1.6}
+.tkn{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--ac);flex-shrink:0;min-width:22px;margin-top:1px}
+.ext{display:flex;flex-direction:column;gap:14px}
+.exp{font-size:14px;color:var(--t2);line-height:1.75}
+.tsl{display:flex;flex-direction:column;gap:4px}
+.tsi{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:7px;border:1px solid transparent;transition:background .15s,border-color .15s;cursor:pointer;text-decoration:none}
+.tsi:hover{background:var(--bg3);border-color:var(--b)}
+.tst{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--ac);min-width:40px;flex-shrink:0}
+.tsl2{font-size:13.5px;color:var(--t2);flex:1}
+.tse{color:var(--t3);display:flex}
+.trt{display:flex;flex-direction:column;gap:12px}
+.trp{font-size:14px;color:var(--t2);line-height:1.8}
+.trf{margin-top:8px;padding:12px;text-align:center}
+.trt2{font-size:12.5px;color:var(--t3);font-style:italic}
+.lnb{display:flex;justify-content:space-between;gap:12px;margin-top:40px;padding-top:24px;border-top:1px solid var(--b)}
+.lnbp,.lnbn{flex:1}
+.lnbn{display:flex;justify-content:flex-end}
+.nbb{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--b);border-radius:var(--rl);padding:14px 18px;cursor:pointer;transition:all .2s;max-width:280px;text-align:left}
+.nbb:hover{border-color:var(--b2);background:var(--bg3)}
+.nbb-n{flex-direction:row-reverse;text-align:right}
+.nbb-c{border-color:var(--acb);background:var(--acd)}
+.nbl{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:2px}
+.nbt{font-size:13px;font-weight:600;color:var(--t2);line-height:1.35}
+/* AI */
+.fab{position:fixed;bottom:24px;right:24px;display:flex;align-items:center;gap:8px;background:var(--ac);color:#000;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13.5px;padding:12px 18px;border-radius:100px;box-shadow:0 4px 24px rgba(34,197,94,.3);z-index:80;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none}
+.fab:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 32px rgba(34,197,94,.45)}
+.mb{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:flex-end;justify-content:flex-end;padding:80px 24px 24px}
+.aim{width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--b2);border-radius:18px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.6);animation:mup .25s ease}
+@keyframes mup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.aim-h{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--b)}
+.aim-ic{width:40px;height:40px;background:var(--acd);border:1px solid var(--acb);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
+.aim-t{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t1)}
+.aim-s{font-size:11px;color:var(--t3);margin-top:1px}
+.aim-cl{margin-left:auto;color:var(--t3);display:flex;align-items:center;padding:4px;border-radius:6px;transition:all .15s;background:none;border:none;cursor:pointer}
+.aim-cl:hover{color:var(--t1);background:var(--bg3)}
+.aim-b{padding:18px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.aim-d{display:flex;gap:10px;align-items:flex-start}
+.aim-d p{font-size:13.5px;color:var(--t2);line-height:1.65}
+.aif{display:flex;flex-direction:column;gap:8px}
+.aifi{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t3)}
+.aifd{width:5px;height:5px;background:var(--ac);border-radius:50%;flex-shrink:0}
+.aim-cta{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--ac);color:#000;font-weight:700;font-size:14px;padding:12px;border-radius:10px;cursor:pointer;transition:opacity .15s,transform .15s;text-decoration:none}
+.aim-cta:hover{opacity:.88;transform:translateY(-1px)}
+.aim-nt{font-size:11.5px;color:var(--t3);text-align:center;line-height:1.6}
+@media(max-width:768px){
+  .sbw{position:fixed;left:-100%;top:0;z-index:100;transition:left .3s ease}
+  .sbw-o{left:0}
+  .ov{display:block}
+  .mob-hdr{display:flex}
+  .dash,.mp,.lp{padding:20px 16px 100px}
+  .mcg,.og{grid-template-columns:1fr}
+  .sdiv{display:none}
+  .lnb{flex-direction:column}
+  .nbb{max-width:100%}
+  .lnbn{justify-content:stretch}
+  .lcr{flex-direction:column;align-items:flex-start}
+  .ctab{padding:8px 10px;font-size:12px}
+  .mb{padding:0;align-items:flex-end}
+  .aim{max-width:100%;border-radius:18px 18px 0 0}
+  .fab{bottom:16px;right:16px;padding:10px 14px}
+  .lsc-n{display:none}
+  .dh-res{display:none}
+}
+</style>
+</head>
+<body>
+<div id="root" style="min-height:100vh;background:#0a0c0f"></div>
+<script type="text/babel">
+const {useState,useMemo,useCallback} = React;
+
+// ── Inline SVG icons — zero external deps ────────────────────────────────────
+const I = {
+  Search: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
+  X: ({n=14})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>,
+  Menu: ()=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
+  CDown: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>,
+  CRight: ({n=14})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
+  CLeft: ({n=16})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>,
+  Check: ({n=14})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>,
+  Circle: ({n=14})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/></svg>,
+  Book: ({n=13})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+  Clock: ({n=13})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  Play: ({n=14})=><svg width={n} height={n} viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+  Trophy: ({n=15})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>,
+  Bar: ({n=18})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>,
+  Arrow: ({n=16})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>,
+  Target: ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+  Spark: ({n=18})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>,
+  Bot: ()=><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>,
+  Msg: ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+  Ext: ({n=14})=><svg width={n} height={n} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>,
+  File: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>,
+  Bulb: ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>,
+  List: ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>,
+  Align: ()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>,
+};
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+const CD = {
+  title:"Algorithmic Trading Mastery",
+  subtitle:"From zero to systematic trader — build, test, and deploy real strategies.",
+  totalModules:4, estimatedHours:"12+ hours", level:"Beginner to Intermediate",
+  modules:[
+    {
+      id:"M01", title:"Foundations of Algorithmic Trading",
+      overview:"Establish the conceptual and practical groundwork for algorithmic trading. This module covers what algo trading is, the mental frameworks required, the tools you'll use throughout the course, and how a complete trading strategy is structured.",
+      learning_outcomes:[
+        "Understand what algorithmic trading is and why it outperforms discretionary trading in the long run",
+        "Adopt a probabilistic mindset and understand drawdown as a feature, not a bug",
+        "Set up your complete trading toolkit: TradingView, AI assistants, and byScript resources",
+        "Deconstruct the anatomy of a trading strategy into its five core components",
+      ],
+      total_duration:"45 min",
+      lessons:[
+        {id:"M01-V01",module_id:"M01",video_number:1,title:"What Is Algo Trading and Why Is It Better?",youtube_url:"https://www.youtube.com/watch?v=E-UzH6QvjNg",youtube_id:"E-UzH6QvjNg",duration:"10:24",
+          summary:"An introduction to algorithmic trading — what it is, how it differs from discretionary trading, and why systematic approaches consistently outperform human intuition over time.",
+          description:"This lesson sets the stage for the entire course. We define algorithmic trading as the practice of encoding trading rules into a system that can execute trades automatically. You'll understand the key advantages: removing emotional bias, enabling consistent execution, and allowing backtesting against historical data.",
+          key_takeaways:["Algorithmic trading is rule-based — every decision is pre-defined, not in-the-moment","Emotion is the #1 enemy of retail traders; algos remove it entirely","Systematic strategies can be backtested, refined, and deployed at scale","You don't need to be a programmer — TradingView's Pine Script is beginner-friendly","Edge comes from consistency over thousands of trades, not a few 'perfect' calls"],
+          comprehensive_explanation:"Algorithmic trading refers to using computer programs to execute trades based on a defined set of instructions. These instructions can be based on timing, price movements, technical indicators, or volume patterns.\n\nThe core advantage is behavioral: human traders are subject to fear, greed, FOMO, and revenge trading. An algorithm has none of these. It executes the exact same logic on the 1,000th trade as it did on the 1st.\n\nAlgo trading also enables rigorous historical testing. Before risking a single dollar, you can run your strategy against years of historical price data — adjusting parameters and stress-testing across different market regimes.\n\nbyScript's approach focuses on making this accessible: you don't need a quant background. You need clear thinking, good tools, and the discipline to follow a systematic process.",
+          timestamps:[{time:"0:00",label:"Introduction and course overview"},{time:"1:30",label:"What is algorithmic trading?"},{time:"3:45",label:"Discretionary vs. systematic trading"},{time:"6:10",label:"Why algos consistently outperform humans"},{time:"8:20",label:"Common myths debunked"},{time:"9:50",label:"What we'll build in this course"}],
+          transcript_clean:"Welcome to byScript Academy. In this first lesson, we're going to answer a fundamental question: what is algorithmic trading, and why should you care?\n\nAt its core, algorithmic trading is simple. You write down your trading rules — when to buy, when to sell, how much to risk — and you encode those rules into a system that executes them automatically.\n\nBut here's the thing most people miss: the power isn't in the automation. The power is in the discipline that automation forces on you...",
+        },
+        {id:"M01-V02",module_id:"M01",video_number:2,title:"Algo Trader Mindset: Probabilistic Thinking and Drawdown",youtube_url:"https://www.youtube.com/watch?v=zjNwzBWXiyc",youtube_id:"zjNwzBWXiyc",duration:"12:08",
+          summary:"The mental framework every successful algo trader needs. Learn to think in probabilities, accept losing streaks as statistical inevitabilities, and treat drawdown as information — not failure.",
+          description:"Most traders fail not because their strategy is bad, but because they abandon it during normal drawdown periods. This lesson builds the psychological foundation required to run an algo system long-term.",
+          key_takeaways:["A 40% win rate strategy can be highly profitable with the right risk/reward ratio","Drawdown is a statistical certainty — every strategy experiences it","Think in expected value (EV), not in individual trade outcomes","Never evaluate a strategy after fewer than 100 trades","The goal is to stay in the game long enough for your edge to play out"],
+          comprehensive_explanation:"Probabilistic thinking is the single most important mental shift a trader can make. In most areas of life, we judge decisions by their outcomes. In trading, this is a catastrophic error.\n\nA good trade can lose money. A bad trade can make money. What matters is whether you made the right decision given the information available — and whether that decision had positive expected value.\n\nExpected value (EV) = (Win Rate × Average Win) – (Loss Rate × Average Loss)\n\nA strategy with a 40% win rate but a 3:1 reward-to-risk ratio has a positive EV. Over 100 trades, it will be profitable even though it loses more often than it wins.",
+          timestamps:[{time:"0:00",label:"Why mindset matters more than strategy"},{time:"2:15",label:"Introduction to probabilistic thinking"},{time:"4:30",label:"Expected value explained simply"},{time:"6:45",label:"Win rate vs. reward-to-risk ratio"},{time:"8:50",label:"Understanding drawdown mathematically"},{time:"10:30",label:"How to stay the course"}],
+          transcript_clean:"Let's talk about the hardest part of algorithmic trading. It's not the code. It's not the math. It's you.\n\nEvery trader who has ever blown up an account did so not because their strategy was fundamentally broken. They did it because they couldn't handle a normal losing period.\n\nI want to give you the mental framework that prevents that from happening...",
+        },
+        {id:"M01-V03",module_id:"M01",video_number:3,title:"Setting Up the Tools: TradingView, AI, and byScript",youtube_url:"https://www.youtube.com/watch?v=1xEYWW1Pvr8",youtube_id:"1xEYWW1Pvr8",duration:"11:37",
+          summary:"A practical walkthrough of every tool you'll use in this course. Get TradingView configured, learn how AI assistants accelerate strategy development, and understand how byScript's resources fit into your workflow.",
+          description:"Before you write a single line of Pine Script, your environment needs to be set up correctly. This lesson is a guided setup walkthrough: TradingView account and layout, essential indicators to pre-load, and how to use AI coding assistants.",
+          key_takeaways:["TradingView is the primary charting and backtesting platform for this course","Pine Script is TradingView's native scripting language — beginner-friendly and powerful","AI coding assistants dramatically accelerate Pine Script development","byScript provides strategy templates that you'll customize — don't start from scratch","A clean, organized chart layout prevents analysis paralysis"],
+          comprehensive_explanation:"The right tooling setup is a force multiplier. In this course, you'll work with a focused, practical stack.\n\nTradingView is your primary platform. It combines professional-grade charting, a built-in scripting language (Pine Script), a backtesting engine, and a paper trading environment — all in one interface.\n\nPine Script v5 is TradingView's native language. It's purpose-built for writing indicators and strategies. You don't need to master programming to be productive — you need to understand the logic, and let AI assist with the syntax.\n\nAI Coding Assistants like ChatGPT and Claude are exceptional Pine Script assistants when prompted correctly. byScript has developed specific prompt templates for strategy development.",
+          timestamps:[{time:"0:00",label:"Course toolkit overview"},{time:"1:20",label:"TradingView account setup"},{time:"3:10",label:"Chart layout and indicators"},{time:"5:45",label:"Introduction to Pine Script v5"},{time:"7:30",label:"Using AI as a coding assistant"},{time:"9:15",label:"byScript templates walkthrough"}],
+          transcript_clean:"Before we write any code, we need to make sure your environment is set up correctly. A bad setup creates friction, and friction kills momentum.\n\nYou'll need three things: a TradingView account, access to an AI assistant like ChatGPT or Claude, and the byScript resource folder linked below...",
+        },
+        {id:"M01-V04",module_id:"M01",video_number:4,title:"Anatomy of a Trading Strategy",youtube_url:"https://www.youtube.com/watch?v=EnLYMFetWL4",youtube_id:"EnLYMFetWL4",duration:"13:52",
+          summary:"Deconstruct every trading strategy into its five core components. Once you understand the anatomy, you can analyze, critique, and build any strategy systematically.",
+          description:"Every profitable trading strategy shares the same fundamental structure. This lesson teaches you to see any strategy in terms of its five components: Universe, Signal, Filter, Risk Management, and Exit.",
+          key_takeaways:["Every strategy has 5 components: Universe, Signal, Filter, Risk Management, Exit","The signal is the least important component — risk management is the most important","Filters dramatically improve strategy performance by reducing false signals","Position sizing determines how much of each trade's theoretical edge you capture","Your exit logic often matters more than your entry logic"],
+          comprehensive_explanation:"Breaking down any trading strategy into five core components gives you a universal framework for analysis, development, and debugging.\n\n1. Universe — What are you trading? Stocks, crypto, forex, futures? The universe defines the opportunity set.\n\n2. Signal — What triggers an entry? This is what most traders obsess over, but it's actually the least important component. Signals are abundant — edge is rare.\n\n3. Filter — What conditions must be true for the signal to count? Filters are where most performance improvement happens.\n\n4. Risk Management — How much do you risk per trade? Where is your stop? Position sizing is the mechanism by which your edge compounds into wealth.\n\n5. Exit — When and how do you close the trade? Your exit logic often matters more than your entry.",
+          timestamps:[{time:"0:00",label:"Why every strategy has the same anatomy"},{time:"1:45",label:"Component 1: Universe"},{time:"3:20",label:"Component 2: Signal"},{time:"5:10",label:"Component 3: Filters"},{time:"7:40",label:"Component 4: Risk management"},{time:"10:15",label:"Component 5: Exit logic"},{time:"12:30",label:"Putting it all together"}],
+          transcript_clean:"Here's something I want you to internalize: every trading strategy that has ever existed can be described using the same five components.\n\nOnce you can see that, you can analyze any strategy you come across. You can reverse-engineer what the original developer was thinking. And most importantly, you can build your own with a clear, structured process...",
+        },
+      ],
+    },
+    {id:"M02",title:"Pine Script Fundamentals",overview:"Learn TradingView's Pine Script language from the ground up. By the end of this module, you'll be able to write, debug, and backtest complete trading strategies.",learning_outcomes:["Understand Pine Script syntax, structure, and execution model","Write indicators and strategy scripts from scratch","Use built-in functions for price data, indicators, and orders","Debug common Pine Script errors efficiently"],total_duration:"58 min",lessons:[]},
+    {id:"M03",title:"Strategy Building and Backtesting",overview:"Apply the strategy anatomy framework to build, backtest, and iterate on real trading strategies. Learn to read backtest results, avoid curve-fitting, and validate genuine edge.",learning_outcomes:["Build complete strategies using the five-component framework","Run and interpret TradingView backtests correctly","Identify and avoid the most common backtesting mistakes","Use walk-forward testing for out-of-sample validation"],total_duration:"72 min",lessons:[]},
+    {id:"M04",title:"Automation and Live Deployment",overview:"Take your validated strategy from TradingView to live execution via webhooks, broker APIs, and monitoring.",learning_outcomes:["Set up TradingView alert webhooks","Connect to broker APIs for live order placement","Build a monitoring dashboard","Implement circuit breakers and emergency stop procedures"],total_duration:"65 min",lessons:[]},
+  ]
+};
+
+// ── Progress ──────────────────────────────────────────────────────────────────
+function useProgress(data) {
+  const [prog, setProg] = useState(()=>{ try{const r=localStorage.getItem('bs_v1');return r?JSON.parse(r):{}}catch{return{}} });
+  const sv = p=>{ try{localStorage.setItem('bs_v1',JSON.stringify(p))}catch{} };
+  const done = useCallback(id=>{ setProg(p=>{const n={...p,[id]:true};sv(n);return n}) },[]);
+  const undone = useCallback(id=>{ setProg(p=>{const n={...p};delete n[id];sv(n);return n}) },[]);
+  const isDone = useCallback(id=>!!prog[id],[prog]);
+  const all = data.modules.flatMap(m=>m.lessons);
+  const tot = all.length;
+  const cnt = all.filter(l=>prog[l.id]).length;
+  const pct = tot>0?Math.round(cnt/tot*100):0;
+  const mStats = data.modules.map(m=>{ const t=m.lessons.length,c=m.lessons.filter(l=>prog[l.id]).length; return{id:m.id,total:t,completed:c,pct:t>0?Math.round(c/t*100):0} });
+  const next = all.find(l=>!prog[l.id])||null;
+  return {done,undone,isDone,tot,cnt,pct,mStats,next};
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function Sidebar({data,curLesson,isDone,nav,modClick,curView,sq,setSq}) {
+  const [exp,setExp]=useState({M01:true});
+  const tog=id=>setExp(p=>({...p,[id]:!p[id]}));
+  return (
+    <aside className="sb">
+      <div className="sb-brand" onClick={()=>nav('dash')}>
+        <div className="sb-logo">{'</>'}</div>
+        <div><div className="sb-bname">byScript</div><div className="sb-bsub">Academy</div></div>
+      </div>
+      <div className="sb-srch">
+        <span className="sb-si"><I.Search/></span>
+        <input className="sb-sinp" type="text" placeholder="Search lessons..." value={sq} onChange={e=>setSq(e.target.value)}/>
+        {sq&&<button className="sb-sx" onClick={()=>setSq('')}><I.X n={12}/></button>}
+      </div>
+      <div className="sb-lbl">Course Modules</div>
+      <nav className="sb-nav">
+        {data.modules.map((mod,idx)=>{
+          const filt = mod.lessons.filter(l=>sq?l.title.toLowerCase().includes(sq.toLowerCase()):true);
+          const isExp = exp[mod.id];
+          const cmplt = mod.lessons.filter(l=>isDone(l.id)).length;
+          const noLess = mod.lessons.length===0;
+          return (
+            <div key={mod.id} className="mg">
+              <button className="mh" onClick={()=>{if(!noLess){tog(mod.id);modClick(mod.id)}}}>
+                <div className="mhl">
+                  <span className="mhc">{isExp&&filt.length>0?<I.CDown/>:<I.CRight/>}</span>
+                  <div><div className="mhid">{mod.id}</div><div className="mht">{mod.title}</div></div>
+                </div>
+                {noLess?<span className="cs-badge">Soon</span>:<span className="mpill">{cmplt}/{mod.lessons.length}</span>}
+              </button>
+              {isExp&&filt.length>0&&(
+                <div className="ll">
+                  {filt.map(l=>{
+                    const d=isDone(l.id), cur=curLesson===l.id&&curView==='lesson';
+                    return (
+                      <button key={l.id} className={`li ${cur?'li-a':''} ${d?'li-done':''}`} onClick={()=>nav('lesson',l.id)}>
+                        <span className="lic">{d?<span className="ic-done"><I.Check n={14}/></span>:<span className="ic-empty"><I.Circle n={14}/></span>}</span>
+                        <div className="lin">
+                          <div className="li-id">{l.id}</div>
+                          <div className="li-tt">{l.title}</div>
+                          <div className="li-dur">{l.duration}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+      <div className="sb-foot"><I.Book n={13}/><span>{data.totalModules} modules · {data.estimatedHours}</span></div>
+    </aside>
+  );
+}
+
+// ── AI Modal ──────────────────────────────────────────────────────────────────
+function AIFAB({onClick}){return(<button className="fab" onClick={onClick}><I.Spark n={18}/><span>AI Tutor</span></button>)}
+function AIModal({onClose}){
+  return(
+    <div className="mb" onClick={onClose}>
+      <div className="aim" onClick={e=>e.stopPropagation()}>
+        <div className="aim-h">
+          <div className="aim-ic"><I.Bot/></div>
+          <div><div className="aim-t">byScript AI Tutor</div><div className="aim-s">Powered by Custom GPT</div></div>
+          <button className="aim-cl" onClick={onClose}><I.X n={18}/></button>
+        </div>
+        <div className="aim-b">
+          <div className="aim-d"><span style={{color:'var(--ac)',flexShrink:0,display:'flex',marginTop:2}}><I.Msg/></span><p>Ask questions about the full course content. The AI Tutor can help you find the relevant module, video, and timestamp.</p></div>
+          <div className="aif">
+            {["Covers all modules and lesson content","Points you to the exact video and timestamp","Explains Pine Script, backtesting, and strategy concepts","Available 24/7 — study at your own pace"].map((f,i)=>(
+              <div key={i} className="aifi"><div className="aifd"/><span>{f}</span></div>
+            ))}
+          </div>
+          <a href="https://chatgpt.com/g/your-custom-gpt-url" target="_blank" rel="noopener noreferrer" className="aim-cta">
+            <I.Spark n={16}/>Open AI Tutor<I.Ext n={14}/>
+          </a>
+          <p className="aim-nt">The AI Tutor is separate from the lesson page and can answer questions across the full course content.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+function Dash({data,pct,cnt,tot,mStats,next,nav,sq,setSq}){
+  const all=data.modules.flatMap(m=>m.lessons.map(l=>({...l,mTitle:m.title})));
+  const filt=sq?all.filter(l=>l.title.toLowerCase().includes(sq.toLowerCase())||(l.summary||'').toLowerCase().includes(sq.toLowerCase())):[];
+  return(
+    <main className="dash">
+      <section className="dh">
+        <div className="dh-ey"><span className="dh-badge">byScript Academy</span><span className="dh-lv">{data.level}</span></div>
+        <h1 className="dh-title">{data.title}</h1>
+        <p className="dh-desc">{data.subtitle}</p>
+        <div className="dh-acts">
+          {next?(
+            <button className="btn-p" onClick={()=>nav('lesson',next.id)}><I.Play n={15}/>{cnt===0?'Start Learning':'Continue Learning'}</button>
+          ):(
+            <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'var(--bg3)',color:'var(--ac)',border:'1px solid var(--acb)',borderRadius:8,padding:'10px 20px',fontWeight:600,fontSize:14}}><I.Trophy n={15}/>Course Complete!</div>
+          )}
+          {next&&cnt>0&&<span className="dh-res">Resume: {next.title}</span>}
+        </div>
+      </section>
+
+      <section className="sbar">
+        {[{Ic:()=><I.Bar n={18}/>,v:`${pct}%`,l:'Complete'},{Ic:()=><I.Book n={18}/>,v:`${cnt}/${tot}`,l:'Lessons Done'},{Ic:()=><I.Clock n={18}/>,v:data.estimatedHours,l:'Total Content'},{Ic:()=><I.Trophy n={18}/>,v:data.totalModules,l:'Modules'}].map((s,i,a)=>(
+          <React.Fragment key={i}>
+            <div className="si"><span className="siw"><s.Ic/></span><div><div className="sv">{s.v}</div><div className="sl">{s.l}</div></div></div>
+            {i<a.length-1&&<div className="sdiv"/>}
+          </React.Fragment>
+        ))}
+        <div className="sp"><div className="spb"><div className="spf" style={{width:`${pct}%`}}/></div></div>
+      </section>
+
+      <section className="ds-sec">
+        <div className="ds-w">
+          <span className="ds-i"><I.Search/></span>
+          <input className="ds-inp" type="text" placeholder="Search all lessons..." value={sq} onChange={e=>setSq(e.target.value)}/>
+          {sq&&<button className="ds-clr" onClick={()=>setSq('')}><I.X n={14}/></button>}
+        </div>
+      </section>
+
+      {sq&&(
+        <section className="srs">
+          <div className="sh"><h2 className="st">Search Results <span className="rc">({filt.length})</span></h2></div>
+          {filt.length===0?<div className="empty"><I.Search/><p>No results for "{sq}"</p></div>:(
+            <div className="srl">
+              {filt.map(l=>(
+                <button key={l.id} className="sri" onClick={()=>nav('lesson',l.id)}>
+                  <span className="sri-id">{l.id}</span>
+                  <div className="sri-c"><div className="sri-t">{l.title}</div><div className="sri-m">{l.mTitle} · {l.duration}</div></div>
+                  <I.Arrow n={16}/>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {!sq&&(
+        <section className="mcs">
+          <div className="sh"><h2 className="st">Course Modules</h2><span className="ss">{data.totalModules} modules</span></div>
+          <div className="mcg">
+            {data.modules.map((mod,idx)=>{
+              const s=mStats[idx],lk=mod.lessons.length===0;
+              return(
+                <div key={mod.id} className={`mc ${lk?'mc-lk':''}`} onClick={()=>!lk&&nav('module',mod.id)} tabIndex={lk?-1:0} role={lk?undefined:"button"}>
+                  <div className="mc-hd">
+                    <span className="mc-id">{mod.id}</span>
+                    {lk&&<span className="mc-cs">Coming Soon</span>}
+                    {!lk&&s.completed===s.total&&s.total>0&&<span className="mc-done"><I.Trophy n={11}/>Complete</span>}
+                  </div>
+                  <h3 className="mc-tit">{mod.title}</h3>
+                  <p className="mc-ov">{mod.overview.slice(0,120)}...</p>
+                  <div className="mc-st">
+                    <span className="mc-s"><I.Clock n={12}/>{mod.total_duration}</span>
+                    {!lk&&<span className="mc-s"><I.Book n={12}/>{mod.lessons.length} lessons</span>}
+                  </div>
+                  {!lk&&<><div className="mc-pb"><div className="mc-pf" style={{width:`${s.pct}%`}}/></div><div className="mc-pl">{s.completed}/{s.total} · {s.pct}%</div><div className="mc-ct"><span>{s.completed===0?'Start Module':'Continue'}</span><I.Arrow n={14}/></div></>}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {!sq&&(
+        <section className="os">
+          <div className="sh"><h2 className="st">What You'll Learn</h2></div>
+          <div className="og">
+            {data.modules.flatMap(m=>m.learning_outcomes).slice(0,8).map((o,i)=>(
+              <div key={i} className="oi"><div className="ock">✓</div><span>{o}</span></div>
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
+  );
+}
+
+// ── Module Page ───────────────────────────────────────────────────────────────
+function ModPage({mod,stats,isDone,nav}){
+  if(!mod)return null;
+  return(
+    <main className="mp">
+      <div className="bc">
+        <button className="bcl" onClick={()=>nav('dash')}>Course Home</button>
+        <span className="bcs"><I.CRight n={14}/></span>
+        <span className="bcc">{mod.id}</span>
+      </div>
+      <div className="mid-pill">{mod.id}</div>
+      <h1 className="mp-title">{mod.title}</h1>
+      <p className="mp-ov">{mod.overview}</p>
+      <div className="mp-mr">
+        <span className="mmc"><I.Clock n={13}/>{mod.total_duration}</span>
+        <span className="mmc"><I.Book n={13}/>{mod.lessons.length} lessons</span>
+        <span className="mmc"><I.Check n={13}/>{stats.completed}/{stats.total} done</span>
+      </div>
+      <div className="mpb-w"><div className="mpb"><div className="mpbf" style={{width:`${stats.pct}%`}}/></div><span className="mpp">{stats.pct}%</span></div>
+      <div className="mout">
+        <div className="mout-h"><span style={{color:'var(--ac)',display:'flex'}}><I.Target/></span><h2>Learning Outcomes</h2></div>
+        <div className="outl">
+          {mod.learning_outcomes.map((o,i)=>(
+            <div key={i} className="outr"><div className="outn">{String(i+1).padStart(2,'0')}</div><p>{o}</p></div>
+          ))}
+        </div>
+      </div>
+      <h2 className="lss-t">Lessons</h2>
+      <div className="lsl">
+        {mod.lessons.map((l,idx)=>{
+          const d=isDone(l.id);
+          return(
+            <button key={l.id} className={`lsc ${d?'lsc-done':''}`} onClick={()=>nav('lesson',l.id)}>
+              <div className="lsc-n">{String(idx+1).padStart(2,'0')}</div>
+              {d?<div className="lsc-di"><I.Check n={22}/></div>:<div className="lsc-pb"><I.Play n={14}/></div>}
+              <div className="lsc-c"><div className="lsc-id">{l.id}</div><div className="lsc-t">{l.title}</div><div className="lsc-s">{l.summary}</div></div>
+              <div className="lsc-r"><span className="lsc-dur">{l.duration}</span><span className="lsc-ch"><I.CRight n={16}/></span></div>
+            </button>
+          );
+        })}
+      </div>
+    </main>
+  );
+}
+
+// ── Lesson Page ───────────────────────────────────────────────────────────────
+function LessonPage({lesson,all,isDone,done,undone,nav}){
+  const [tab,setTab]=useState('overview');
+  if(!lesson)return null;
+  const idx=all.findIndex(l=>l.id===lesson.id);
+  const prev=idx>0?all[idx-1]:null;
+  const next=idx<all.length-1?all[idx+1]:null;
+  const isD=isDone(lesson.id);
+  const TABS=[{id:'overview',label:'Overview',Ic:I.File},{id:'explanation',label:'Deep Dive',Ic:I.Book},{id:'timestamps',label:'Timestamps',Ic:I.Clock},{id:'transcript',label:'Transcript',Ic:I.Align}];
+  return(
+    <main className="lp">
+      <div className="bc">
+        <button className="bcl" onClick={()=>nav('dash')}>Course Home</button>
+        <span className="bcs"><I.CRight n={14}/></span>
+        <button className="bcl" onClick={()=>nav('module',lesson.module_id)}>{lesson.module_id}</button>
+        <span className="bcs"><I.CRight n={14}/></span>
+        <span className="bcc">{lesson.id}</span>
+      </div>
+      <div className="lp-hd">
+        <div className="lp-ir">
+          <span className="lp-mb">{lesson.module_id}</span>
+          <span className="lp-vb">Video {lesson.video_number}</span>
+          {isD&&<span className="lp-db"><I.Check n={12}/>Completed</span>}
+        </div>
+        <h1 className="lp-tit">{lesson.title}</h1>
+        <div className="lp-meta">
+          <span className="lmc"><I.Clock n={13}/>{lesson.duration}</span>
+          <a href={lesson.youtube_url} target="_blank" rel="noopener noreferrer" className="lmc lmc-a"><I.Ext n={13}/>Watch on YouTube</a>
+        </div>
+      </div>
+      <div className="vc">
+        <iframe src={`https://www.youtube.com/embed/${lesson.youtube_id}?rel=0&modestbranding=1`} title={lesson.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="vif"/>
+      </div>
+      <div className="lcr">
+        <button className={`mcb ${isD?'mcb-d':''}`} onClick={()=>isD?undone(lesson.id):done(lesson.id)}>
+          <I.Check n={16}/>{isD?'Mark as Incomplete':'Mark as Complete'}
+        </button>
+        <div className="lni">
+          {prev&&<button className="nib" onClick={()=>nav('lesson',prev.id)}><I.CLeft n={14}/>Previous</button>}
+          {next&&<button className="nib nib-n" onClick={()=>nav('lesson',next.id)}>Next<I.CRight n={14}/></button>}
+        </div>
+      </div>
+      <div className="ctabs">
+        {TABS.map(({id,label,Ic})=>(
+          <button key={id} className={`ctab ${tab===id?'ctab-a':''}`} onClick={()=>setTab(id)}><Ic/>{label}</button>
+        ))}
+      </div>
+      <div className="tp">
+        {tab==='overview'&&(<>
+          <div className="cb"><h3 className="cbt"><I.Bulb/>Lesson Summary</h3><p className="ls-sum">{lesson.summary}</p></div>
+          <div className="cb"><h3 className="cbt"><I.File/>About This Lesson</h3><p className="ls-dsc">{lesson.description}</p></div>
+          <div className="cb"><h3 className="cbt"><I.List/>Key Takeaways</h3>
+            <ul className="tkl">{lesson.key_takeaways.map((t,i)=><li key={i} className="tki"><span className="tkn">{String(i+1).padStart(2,'0')}</span><span>{t}</span></li>)}</ul>
+          </div>
+        </>)}
+        {tab==='explanation'&&(
+          <div className="cb"><h3 className="cbt"><I.Book n={16}/>Comprehensive Explanation</h3>
+            <div className="ext">{lesson.comprehensive_explanation.split('\n\n').map((p,i)=><p key={i} className="exp">{p}</p>)}</div>
+          </div>
+        )}
+        {tab==='timestamps'&&(
+          <div className="cb"><h3 className="cbt"><I.Clock n={16}/>Video Timestamps</h3>
+            <div className="tsl">{lesson.timestamps.map((ts,i)=>(
+              <a key={i} href={`${lesson.youtube_url}&t=${ts.time.replace(':','m')}s`} target="_blank" rel="noopener noreferrer" className="tsi">
+                <span className="tst">{ts.time}</span><span className="tsl2">{ts.label}</span><span className="tse"><I.Ext n={12}/></span>
+              </a>
+            ))}</div>
+          </div>
+        )}
+        {tab==='transcript'&&(
+          <div className="cb"><h3 className="cbt"><I.Align/>Lesson Transcript</h3>
+            <div className="trt">
+              {lesson.transcript_clean.split('\n\n').map((p,i)=><p key={i} className="trp">{p}</p>)}
+              <div className="trf"><span className="trt2">Full transcript available in the AI Tutor →</span></div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="lnb">
+        <div className="lnbp">
+          {prev&&<button className="nbb" onClick={()=>nav('lesson',prev.id)}><I.CLeft n={16}/><div><div className="nbl">Previous Lesson</div><div className="nbt">{prev.title}</div></div></button>}
+        </div>
+        <div className="lnbn">
+          {next?(
+            <button className="nbb nbb-n" onClick={()=>nav('lesson',next.id)}><div><div className="nbl">Next Lesson</div><div className="nbt">{next.title}</div></div><I.CRight n={16}/></button>
+          ):(
+            <button className="nbb nbb-n nbb-c" onClick={()=>nav('module',lesson.module_id)}><div><div className="nbl">Module Complete</div><div className="nbt">Back to Overview</div></div><I.Check n={16}/></button>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+function App(){
+  const [view,setView]=useState('dash');
+  const [aid,setAid]=useState(null);
+  const [aiOpen,setAiOpen]=useState(false);
+  const [sbOpen,setSbOpen]=useState(false);
+  const [sq,setSq]=useState('');
+  const {done,undone,isDone,tot,cnt,pct,mStats,next}=useProgress(CD);
+  const all=useMemo(()=>CD.modules.flatMap(m=>m.lessons),[]);
+  const curLesson=useMemo(()=>all.find(l=>l.id===aid)||null,[all,aid]);
+  const curMod=useMemo(()=>CD.modules.find(m=>m.id===aid)||null,[aid]);
+  const curModStats=useMemo(()=>{ if(!curMod)return null;const i=CD.modules.findIndex(m=>m.id===aid);return mStats[i]||null; },[curMod,aid,mStats]);
+  const nav=(v,id=null)=>{ setView(v);setAid(id);setSbOpen(false);window.scrollTo({top:0,behavior:'smooth'}); };
+  return(
+    <div className="app">
+      {sbOpen&&<div className="ov" onClick={()=>setSbOpen(false)}/>}
+      <div className={`sbw ${sbOpen?'sbw-o':''}`}>
+        <Sidebar data={CD} curLesson={view==='lesson'?aid:null} isDone={isDone} nav={nav} modClick={id=>nav('module',id)} curView={view} sq={sq} setSq={setSq}/>
+      </div>
+      <div className="mw">
+        <header className="mob-hdr">
+          <button className="mob-mbtn" onClick={()=>setSbOpen(!sbOpen)}>{sbOpen?<I.X n={20}/>:<I.Menu/>}</button>
+          <div className="mob-brand">byScript <span>Academy</span></div>
+        </header>
+        <div>
+          {view==='dash'&&<Dash data={CD} pct={pct} cnt={cnt} tot={tot} mStats={mStats} next={next} nav={nav} sq={sq} setSq={setSq}/>}
+          {view==='module'&&curMod&&<ModPage mod={curMod} stats={curModStats} isDone={isDone} nav={nav}/>}
+          {view==='lesson'&&curLesson&&<LessonPage lesson={curLesson} all={all} isDone={isDone} done={done} undone={undone} nav={nav}/>}
+        </div>
+      </div>
+      <AIFAB onClick={()=>setAiOpen(true)}/>
+      {aiOpen&&<AIModal onClose={()=>setAiOpen(false)}/>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
