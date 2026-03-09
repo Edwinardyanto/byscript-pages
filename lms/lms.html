@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#0a0c0f">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>byScript Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;--bg1:#0f1215;--bg2:#141820;--bg3:#1a1f28;--bg4:#202633;
+  --b:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.12);
+  --t1:#f0f2f5;--t2:#8b95a8;--t3:#556070;
+  --ac:#22c55e;--acd:rgba(34,197,94,0.12);--acb:rgba(34,197,94,0.28);
+  --sw:272px;
+}
+html,body{background:var(--bg);color:var(--t1);min-height:100vh;font-family:"DM Sans",sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;font-size:inherit}
+input{font-family:inherit;font-size:inherit}
+svg{display:block;flex-shrink:0}
+/* LAYOUT */
+#app{display:flex;min-height:100vh}
+#sbw{width:var(--sw);flex-shrink:0;transition:width .25s ease;overflow:hidden}
+#main{flex:1;min-width:0}
+/* SIDEBAR */
+#sb{width:var(--sw);height:100vh;background:var(--bg1);border-right:1px solid var(--b);display:flex;flex-direction:column;overflow:hidden;position:fixed;top:0;left:0;z-index:50;transition:transform .25s ease}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--b);cursor:pointer;flex-shrink:0;height:58px;box-sizing:border-box}
+.sb-logo{width:34px;height:34px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:"Syne",sans-serif;font-weight:800;font-size:10px;color:#000;flex-shrink:0;letter-spacing:-.5px}
+.sb-name{font-family:"Syne",sans-serif;font-weight:800;font-size:14px;color:var(--t1)}
+.sb-sub{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.sb-search{margin:10px 10px 6px;position:relative;flex-shrink:0}
+.sb-search input{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:7px 10px 7px 30px;font-size:12px;color:var(--t1);outline:none}
+.sb-search input:focus{border-color:var(--acb)}
+.sb-search input::placeholder{color:var(--t3)}
+.sb-si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.sb-lbl{padding:6px 16px 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);flex-shrink:0}
+.sb-nav{flex:1;overflow-y:auto;padding:2px 6px 8px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--bg4)}
+.mod-hdr{width:100%;display:flex;align-items:center;justify-content:space-between;padding:7px 8px 7px 8px;border-radius:7px;gap:6px;background:none;transition:background .15s}
+.mod-hdr:hover{background:var(--bg3)}
+.mod-hdr-l{display:flex;align-items:flex-start;gap:6px;flex:1;min-width:0}
+.mod-id{font-size:9px;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.07em;line-height:1.2}
+.mod-ttl{font-size:11.5px;font-weight:500;color:var(--t2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.mod-pill{font-size:9.5px;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.cs-tag{font-size:9.5px;color:var(--t3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.les-list{padding:1px 0 3px 16px;display:flex;flex-direction:column;gap:1px}
+.les-item{width:100%;display:flex;align-items:flex-start;gap:7px;padding:6px 7px;border-radius:6px;border:1px solid transparent;background:none;text-align:left;cursor:pointer;transition:background .12s}
+.les-item:hover{background:var(--bg3)}
+.les-item.active{background:var(--acd);border-color:var(--acb)}
+.les-item.done .les-ttl{color:var(--t3)}
+.les-item.active .les-ttl{color:var(--t1)}
+.les-chk{flex-shrink:0;padding-top:1px;color:var(--t3)}
+.les-chk.done{color:var(--ac)}
+/* SIDEBAR COLLAPSE */
+.sb-logo{width:34px;height:34px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:"Syne",sans-serif;font-weight:800;font-size:10px;color:#000;flex-shrink:0;letter-spacing:-.5px}
+.sb-name{font-family:"Syne",sans-serif;font-weight:800;font-size:14px;color:var(--t1)}
+.sb-sub{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.sb-search{margin:10px 10px 6px;position:relative;flex-shrink:0}
+.sb-search input{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:7px 10px 7px 30px;font-size:12px;color:var(--t1);outline:none}
+.sb-search input:focus{border-color:var(--acb)}
+.sb-search input::placeholder{color:var(--t3)}
+.sb-si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.sb-lbl{padding:6px 16px 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);flex-shrink:0}
+.sb-nav{flex:1;overflow-y:auto;padding:2px 6px 8px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--bg4)}
+.mod-hdr{width:100%;display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:7px;gap:6px;background:none;transition:background .15s}
+.mod-hdr:hover{background:var(--bg3)}
+.mod-hdr-l{display:flex;align-items:flex-start;gap:6px;flex:1;min-width:0}
+.mod-num{font-size:9px;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.07em;line-height:1.2}
+.mod-ttl{font-size:11.5px;font-weight:500;color:var(--t2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:155px}
+.mod-pill{font-size:9.5px;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.cs-tag{font-size:9.5px;color:var(--t3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.les-list{padding:1px 0 3px 16px;display:flex;flex-direction:column;gap:1px}
+.les-item{width:100%;display:flex;align-items:flex-start;gap:7px;padding:6px 7px;border-radius:6px;border:1px solid transparent;background:none;text-align:left;cursor:pointer;transition:background .12s}
+.les-item:hover{background:var(--bg3)}
+.les-item.active{background:var(--acd);border-color:var(--acb)}
+.les-item.done .les-ttl{color:var(--t3)}
+.les-item.active .les-ttl{color:var(--t1)}
+.les-chk{flex-shrink:0;padding-top:1px;color:var(--t3)}
+.les-chk.done{color:var(--ac)}
+.les-id{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.les-ttl{font-size:11.5px;font-weight:500;color:var(--t2);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.les-dur{font-size:10px;color:var(--t3);margin-top:1px}
+.sb-foot{display:flex;align-items:center;gap:6px;padding:10px 16px;border-top:1px solid var(--b);font-size:11px;color:var(--t3);flex-shrink:0}
+/* DESKTOP TOP BAR */
+#desk-hdr{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--b);background:var(--bg1);position:sticky;top:0;z-index:40;height:58px}
+/* COLLAPSE TOGGLE BUTTON */
+#sb-toggle{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:7px;background:none;border:none;cursor:pointer;color:var(--t3);flex-shrink:0;transition:background .15s,color .15s}
+#sb-toggle:hover{background:var(--bg3);color:var(--t1)}
+/* MOB */
+#mob-hdr{display:none;align-items:center;gap:10px;padding:12px 16px;background:var(--bg1);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:40}
+.mob-btn{color:var(--t2);display:flex;padding:4px;border-radius:6px;transition:background .15s}
+.mob-btn:hover{color:var(--t1);background:var(--bg3)}
+.mob-brand{font-family:"Syne",sans-serif;font-weight:800;font-size:15px;color:var(--t1)}
+.mob-brand span{color:var(--t3)}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:45}
+#sb-close{display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:6px;background:none;border:none;cursor:pointer;color:var(--t3);flex-shrink:0;transition:background .15s,color .15s}
+#sb-close:hover{background:var(--bg3);color:var(--t1)}
+/* PAGES */
+.page{max-width:920px;margin:0 auto;padding:36px 28px 80px}
+/* DASH */
+.hero-ey{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.ey-badge{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:100px;padding:2px 10px}
+.ey-lv{font-size:12px;color:var(--t3)}
+.hero-title{font-family:"Syne",sans-serif;font-size:clamp(24px,3.5vw,34px);font-weight:800;color:var(--t1);line-height:1.15;letter-spacing:-.02em;margin-bottom:10px}
+.hero-desc{font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.65;margin-bottom:22px}
+.hero-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.btn-go{display:inline-flex;align-items:center;gap:7px;background:var(--ac);color:#000;font-weight:600;font-size:13.5px;padding:9px 18px;border-radius:8px;cursor:pointer;transition:opacity .15s,transform .15s;border:none;font-family:"DM Sans",sans-serif}
+.btn-go:hover{opacity:.85;transform:translateY(-1px)}
+.hero-res{font-size:12.5px;color:var(--t3);max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* STATS BAR */
+.sbar{display:flex;align-items:center;flex-wrap:wrap;gap:14px;background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:14px 18px;margin-bottom:26px}
+.stat{display:flex;align-items:center;gap:9px}
+.stat-ic{color:var(--ac);display:flex}
+.stat-v{font-family:"Syne",sans-serif;font-size:17px;font-weight:700;color:var(--t1);line-height:1}
+.stat-l{font-size:11px;color:var(--t3);margin-top:2px}
+.sdivd{width:1px;height:32px;background:var(--b)}
+.prog-wrap{flex:1;min-width:100px}
+.prog-bar{height:5px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.prog-fill{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+/* SEARCH */
+.dsearch{position:relative;max-width:500px;margin-bottom:28px}
+.dsearch input{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:11px 36px 11px 40px;font-size:13.5px;color:var(--t1);outline:none;transition:border-color .2s}
+.dsearch input:focus{border-color:var(--acb)}
+.dsearch input::placeholder{color:var(--t3)}
+.ds-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex}
+.ds-clr{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--t3);display:flex;padding:2px;cursor:pointer}
+/* SECTION */
+.sec-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}
+.sec-title{font-family:"Syne",sans-serif;font-size:17px;font-weight:800;color:var(--t1)}
+.sec-sub{font-size:11.5px;color:var(--t3)}
+/* SEARCH RESULTS */
+.sr-list{display:flex;flex-direction:column;gap:4px;margin-bottom:36px}
+.sr-item{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:12px 14px;cursor:pointer;transition:background .15s,border-color .15s;text-align:left;width:100%}
+.sr-item:hover{background:var(--bg3);border-color:var(--b2)}
+.sr-id{font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border-radius:4px;padding:2px 7px;flex-shrink:0;letter-spacing:.05em}
+.sr-t{font-size:13.5px;font-weight:500;color:var(--t1)}
+.sr-m{font-size:11.5px;color:var(--t3);margin-top:1px}
+.empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px;color:var(--t3);font-size:13.5px}
+/* MODULE CARDS */
+.mcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:36px}
+.mc{background:var(--bg2);border:1px solid var(--b);border-radius:13px;padding:18px;display:flex;flex-direction:column;gap:9px;cursor:pointer;transition:background .18s,border-color .18s,transform .15s}
+.mc:hover:not(.mc-lk){background:var(--bg3);border-color:var(--b2);transform:translateY(-2px)}
+.mc-lk{cursor:default;opacity:.55}
+.mc-hd{display:flex;align-items:center;justify-content:space-between}
+.mc-bid{font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:4px;padding:2px 7px;letter-spacing:.05em}
+.mc-cs{font-size:10px;color:var(--t3);border:1px solid var(--b);border-radius:100px;padding:2px 8px}
+.mc-ttl{font-family:"Syne",sans-serif;font-size:14px;font-weight:800;color:var(--t1);line-height:1.3;letter-spacing:-.01em}
+.mc-ov{font-size:12px;color:var(--t3);line-height:1.5}
+.mc-meta{display:flex;gap:10px;flex-wrap:wrap}
+.mc-mt{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t3)}
+.mc-pb{height:4px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.mc-pf{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+.mc-pl{font-size:10.5px;color:var(--t3)}
+.mc-cta{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ac);margin-top:2px}
+/* OUTCOMES */
+.outg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin-bottom:36px}
+.out-item{display:flex;align-items:flex-start;gap:9px;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:11px 13px;font-size:12.5px;color:var(--t2);line-height:1.5}
+.out-ck{color:var(--ac);font-weight:700;flex-shrink:0}
+/* MODULE PAGE */
+.mid-pill{display:inline-block;font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:4px;padding:2px 9px;letter-spacing:.07em;margin-bottom:10px}
+.pg-title{font-family:"Syne",sans-serif;font-size:clamp(20px,3vw,28px);font-weight:800;color:var(--t1);line-height:1.2;letter-spacing:-.02em;margin-bottom:10px}
+.pg-ov{font-size:14px;color:var(--t2);line-height:1.65;max-width:620px;margin-bottom:16px}
+.pg-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.meta-chip{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--t3);background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:4px 9px}
+.pb-wrap{display:flex;align-items:center;gap:9px;max-width:460px;margin-bottom:0}
+.pb-bar{flex:1;height:5px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.pb-fill{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+.pb-pct{font-size:11.5px;font-weight:600;color:var(--ac);min-width:34px;text-align:right}
+.out-box{background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:18px;margin:24px 0}
+.out-bh{display:flex;align-items:center;gap:7px;margin-bottom:14px;font-family:"Syne",sans-serif;font-size:14px;font-weight:800;color:var(--t1)}
+.out-bh svg{color:var(--ac)}
+.outl{display:flex;flex-direction:column;gap:9px}
+.out-row{display:flex;align-items:flex-start;gap:10px}
+.out-num{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;color:var(--ac);flex-shrink:0;min-width:22px;margin-top:1px}
+.out-row p{font-size:13px;color:var(--t2);line-height:1.55}
+.les-sec-title{font-family:"Syne",sans-serif;font-size:17px;font-weight:800;color:var(--t1);margin:24px 0 14px}
+.les-cards{display:flex;flex-direction:column;gap:8px}
+.les-card{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer;transition:background .18s,border-color .18s,transform .12s;width:100%;text-align:left}
+.les-card:hover{background:var(--bg3);border-color:var(--b2);transform:translateY(-1px)}
+.les-card.done{opacity:.7}
+.les-num{font-family:"Syne",sans-serif;font-size:22px;font-weight:800;color:var(--bg4);min-width:32px;flex-shrink:0}
+.play-btn{width:34px;height:34px;background:var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;flex-shrink:0;transition:transform .15s}
+.les-card:hover .play-btn{transform:scale(1.1)}
+.done-ic{color:var(--ac);display:flex;flex-shrink:0}
+.lc-cnt{flex:1;min-width:0}
+.lc-id{font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.lc-ttl{font-size:14.5px;font-weight:600;color:var(--t1);margin-bottom:3px;line-height:1.3}
+.lc-sum{font-size:12px;color:var(--t3);line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lc-r{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.lc-dur{font-size:11.5px;color:var(--t3);white-space:nowrap}
+/* BREADCRUMB */
+.bc{display:flex;align-items:center;gap:5px;margin-bottom:20px;flex-wrap:wrap}
+.bcl{font-size:12px;color:var(--t3);cursor:pointer;background:none;border:none;padding:0;transition:color .15s}
+.bcl:hover{color:var(--t2)}
+.bc-sep{color:var(--t3);display:flex;align-items:center}
+.bcc{font-size:12px;color:var(--t2);font-weight:500}
+/* LESSON PAGE */
+.les-badges{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.badge-mod{font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:4px;padding:2px 8px;letter-spacing:.05em}
+.badge-vid{font-size:9.5px;font-weight:700;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:4px;padding:2px 8px}
+.badge-done{display:flex;align-items:center;gap:3px;font-size:9.5px;font-weight:600;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:100px;padding:2px 8px}
+.les-title{font-family:"Syne",sans-serif;font-size:clamp(18px,2.8vw,24px);font-weight:800;color:var(--t1);line-height:1.2;letter-spacing:-.02em;margin-bottom:10px}
+.les-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.lm-chip{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--t3);background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:4px 9px}
+.lm-link:hover{color:var(--t2);border-color:var(--b2)}
+/* VIDEO */
+.vid-wrap{position:relative;width:100%;padding-bottom:56.25%;background:var(--bg2);border-radius:12px;overflow:hidden;border:1px solid var(--b);margin-bottom:14px}
+.vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+/* COMPLETE ROW */
+.comp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.comp-btn{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:8px 15px;border-radius:8px;border:1px solid var(--b);background:var(--bg2);color:var(--t2);transition:all .2s;cursor:pointer}
+.comp-btn:hover{border-color:var(--acb);color:var(--ac);background:var(--acd)}
+.comp-btn.done{background:var(--acd);border-color:var(--acb);color:var(--ac)}
+.nav-btns{display:flex;gap:7px}
+.nav-b{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--t3);padding:7px 11px;border-radius:7px;border:1px solid var(--b);background:var(--bg2);cursor:pointer;transition:all .15s}
+.nav-b:hover{color:var(--t1);border-color:var(--b2)}
+.nav-b.nxt{color:var(--ac);border-color:var(--acb);background:var(--acd)}
+/* TABS */
+.tabs{display:flex;gap:3px;border-bottom:1px solid var(--b);margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--t3);padding:9px 13px;border-radius:7px 7px 0 0;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s}
+.tab:hover{color:var(--t2)}
+.tab.active{color:var(--ac);border-bottom:2px solid var(--ac)}
+/* CONTENT BLOCKS */
+.cblock{background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.cblock-t{display:flex;align-items:center;gap:7px;font-family:"Syne",sans-serif;font-size:13px;font-weight:800;color:var(--ac);margin-bottom:12px}
+.les-sum{font-size:14px;color:var(--t2);line-height:1.7;font-style:italic}
+.les-dsc{font-size:13.5px;color:var(--t2);line-height:1.7}
+.tkl{list-style:none;display:flex;flex-direction:column;gap:9px}
+.tki{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--t2);line-height:1.6}
+.tkn{font-family:"Syne",sans-serif;font-size:11.5px;font-weight:700;color:var(--ac);flex-shrink:0;min-width:20px;margin-top:1px}
+.exp-text{display:flex;flex-direction:column;gap:12px}
+.exp-p{font-size:13.5px;color:var(--t2);line-height:1.75}
+.ts-list{display:flex;flex-direction:column;gap:3px}
+.ts-item{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:7px;border:1px solid transparent;cursor:pointer;transition:background .12s;text-decoration:none;color:inherit}
+.ts-item:hover{background:var(--bg3);border-color:var(--b)}
+.ts-t{font-family:"Syne",sans-serif;font-size:12.5px;font-weight:700;color:var(--ac);min-width:38px;flex-shrink:0}
+.ts-l{font-size:13px;color:var(--t2);flex:1}
+.tr-text{display:flex;flex-direction:column;gap:10px}
+.tr-p{font-size:13.5px;color:var(--t2);line-height:1.8}
+.tr-fade{margin-top:6px;text-align:center;font-size:12px;color:var(--t3);font-style:italic;padding:10px}
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-between;gap:10px;margin-top:36px;padding-top:20px;border-top:1px solid var(--b)}
+.bnav-btn{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:12px 16px;cursor:pointer;max-width:260px;transition:all .18s;text-align:left}
+.bnav-btn:hover{border-color:var(--b2);background:var(--bg3)}
+.bnav-btn.nxt{flex-direction:row-reverse;text-align:right}
+.bnav-btn.cmp{border-color:var(--acb);background:var(--acd)}
+.bnav-lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:2px}
+.bnav-ttl{font-size:12.5px;font-weight:600;color:var(--t2);line-height:1.35}
+/* AI FAB */
+#ai-fab{position:fixed;bottom:22px;right:22px;display:flex;align-items:center;gap:7px;background:var(--ac);color:#000;font-family:"DM Sans",sans-serif;font-weight:700;font-size:13px;padding:11px 17px;border-radius:100px;box-shadow:0 4px 20px rgba(34,197,94,.35);z-index:60;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s}
+#ai-fab:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 28px rgba(34,197,94,.5)}
+/* AI MODAL */
+#ai-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:70;align-items:flex-end;justify-content:flex-end;padding:70px 20px 20px}
+#ai-backdrop.open{display:flex}
+#ai-modal{width:100%;max-width:370px;background:var(--bg2);border:1px solid var(--b2);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:mup .22s ease}
+@keyframes mup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.aim-h{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--b)}
+.aim-ic{width:38px;height:38px;background:var(--acd);border:1px solid var(--acb);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
+.aim-name{font-family:"Syne",sans-serif;font-size:14px;font-weight:800;color:var(--t1)}
+.aim-sub{font-size:10.5px;color:var(--t3)}
+.aim-cls{margin-left:auto;color:var(--t3);padding:4px;border-radius:5px;cursor:pointer;background:none;border:none;display:flex;transition:all .15s}
+.aim-cls:hover{color:var(--t1);background:var(--bg3)}
+.aim-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:13px}
+.aim-desc{display:flex;gap:9px;align-items:flex-start}
+.aim-desc p{font-size:13px;color:var(--t2);line-height:1.6}
+.aim-feats{display:flex;flex-direction:column;gap:7px}
+.aim-fi{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t3)}
+.aim-dot{width:4px;height:4px;background:var(--ac);border-radius:50%;flex-shrink:0}
+.aim-cta{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ac);color:#000;font-weight:700;font-size:13.5px;padding:11px;border-radius:9px;cursor:pointer;transition:opacity .15s;text-decoration:none}
+.aim-cta:hover{opacity:.85}
+.aim-note{font-size:11px;color:var(--t3);text-align:center;line-height:1.55}
+/* RESPONSIVE */
+@media(max-width:760px){
+  /* layout */
+  #desk-hdr{display:none}
+  #sbw{position:fixed;left:-260px;top:0;z-index:50;transition:left .28s ease;width:260px;height:100vh}
+  #sbw.open{left:0}
+  #sb{position:relative;width:260px;transform:none !important}
+  #ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:49}
+  #sb-close{display:flex}
+  #mob-hdr{display:flex}
+  #sb-toggle{display:none}
+  #app{flex-direction:column}
+  #main{width:100%;min-width:0}
+
+  /* page padding */
+  .page{padding:14px 14px 100px}
+
+  /* dashboard hero */
+  .hero-title{font-size:clamp(20px,6.5vw,28px);margin-bottom:8px}
+  .hero-desc{font-size:13.5px;margin-bottom:16px}
+  .hero-acts{gap:10px;margin-bottom:20px}
+  .btn-go{font-size:13px;padding:9px 16px}
+  .hero-res{display:none}
+
+  /* stats bar */
+  .sbar{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+  .sdivd{display:none}
+  .stat{flex-direction:column;align-items:flex-start;gap:3px}
+  .stat-v{font-size:18px}
+  .prog-wrap{grid-column:1/-1}
+
+  /* search */
+  .dsearch{max-width:100%}
+
+  /* module cards */
+  .mcg{grid-template-columns:1fr;gap:8px;margin-bottom:24px}
+  .mc{padding:14px}
+  .mc-ov{display:none}
+
+  /* outcomes */
+  .outg{grid-template-columns:1fr;gap:6px;margin-bottom:24px}
+
+  /* module page */
+  .pg-title{font-size:clamp(18px,5.5vw,24px)}
+  .pg-ov{font-size:13px}
+  .out-box{padding:14px}
+  .les-cards{gap:6px}
+  .les-card{padding:12px 12px;gap:10px}
+  .les-num{display:none}
+  .lc-ttl{font-size:13.5px}
+  .lc-sum{display:none}
+  .lc-dur{font-size:11px}
+  .play-btn{width:30px;height:30px}
+
+  /* breadcrumb */
+  .bc{gap:3px;margin-bottom:14px}
+  .bcl,.bcc{font-size:11px}
+
+  /* lesson page */
+  .les-title{font-size:clamp(16px,5vw,22px)}
+  .les-meta{gap:5px;margin-bottom:12px}
+  .lm-chip{font-size:10.5px;padding:3px 7px}
+
+  /* video */
+  .vid-wrap{border-radius:8px;margin-bottom:12px}
+
+  /* complete row */
+  .comp-row{flex-direction:row;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .comp-btn{font-size:12px;padding:7px 12px}
+  .nav-btns{gap:6px}
+  .nav-b{font-size:11.5px;padding:7px 10px}
+
+  /* tabs */
+  .tabs{gap:0;margin-bottom:16px}
+  .tab{padding:8px 10px;font-size:11.5px;gap:4px}
+  .tab svg{width:13px;height:13px}
+
+  /* content blocks */
+  .cblock{padding:14px 14px;margin-bottom:12px}
+  .cblock-t{font-size:12.5px}
+  .les-sum{font-size:13px}
+  .les-dsc{font-size:13px}
+
+  /* takeaways */
+  .tk-item{padding:9px 11px;gap:8px}
+  .tk-num{font-size:11px;min-width:18px}
+  .tk-t{font-size:12.5px}
+
+  /* timestamps */
+  .ts-item{padding:8px 10px;gap:8px}
+  .ts-t{font-size:10.5px;min-width:34px}
+  .ts-l{font-size:12.5px}
+
+  /* bottom nav */
+  .bnav{flex-direction:column;gap:8px;margin-top:24px}
+  .bnav-btn{max-width:100%;width:100%;padding:14px}
+
+  /* AI modal */
+  #ai-fab{bottom:14px;right:14px;padding:9px 13px;font-size:12px}
+  #ai-backdrop{padding:0;align-items:flex-end}
+  #ai-modal{max-width:100%;border-radius:16px 16px 0 0}
+}
+@media(min-width:761px){
+  #mob-hdr{display:none}
+  #main{transition:margin-left .25s ease}
+  body.sb-collapsed #sbw{width:0}
+  body.sb-collapsed #main{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="sbw">
+    <aside id="sb">
+      <div class="sb-brand">
+        <div style="display:flex;align-items:center;gap:12px;cursor:pointer;flex:1" onclick="showDash()">
+          <div class="sb-logo">&lt;/&gt;</div>
+          <div><div class="sb-name">byScript</div><div class="sb-sub">Academy</div></div>
+        </div>
+        <button id="sb-close" onclick="closeSb()" title="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="sb-search">
+        <span class="sb-si">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input type="text" id="sb-search-inp" placeholder="Search lessons..." oninput="sbSearch(this.value)"/>
+      </div>
+      <div class="sb-lbl">Course Modules</div>
+      <nav class="sb-nav" id="sb-nav"></nav>
+      <div class="sb-foot">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>4 modules · 12+ hours</span>
+      </div>
+    </aside>
+  </div>
+
+  <div id="main">
+    <header id="desk-hdr">
+      <button id="sb-toggle" onclick="toggleSbDesktop()" title="Toggle sidebar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+      </button>
+    </header>
+    <header id="mob-hdr">
+      <button class="mob-btn" onclick="toggleSb()" id="mob-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+      <div class="mob-brand">byScript <span>Academy</span></div>
+    </header>
+    <div id="content"></div>
+  </div>
+</div>
+
+<div id="ov" onclick="closeSb()"></div>
+
+<button id="ai-fab" onclick="openAI()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+  AI Tutor
+</button>
+
+<div id="ai-backdrop" onclick="closeAI(event)">
+  <div id="ai-modal">
+    <div class="aim-h">
+      <div class="aim-ic">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+      </div>
+      <div><div class="aim-name">byScript AI Tutor</div><div class="aim-sub">Powered by Custom GPT</div></div>
+      <button class="aim-cls" onclick="closeAI()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="aim-body">
+      <div class="aim-desc">
+        <svg style="color:var(--ac);flex-shrink:0;margin-top:2px" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <p>Ask questions about the full course content. The AI Tutor helps you find the relevant module, video, and timestamp.</p>
+      </div>
+      <div class="aim-feats" id="ai-feats"></div>
+      <a href="https://chatgpt.com/g/your-custom-gpt-url" target="_blank" rel="noopener" class="aim-cta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        Open AI Tutor
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+      </a>
+      <p class="aim-note">The AI Tutor is separate from the lesson page and answers questions across the full course.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SVG icon strings ──────────────────────────────────────────────────────────
+const ico = {
+  cright: (n=14)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+  cleft:  (n=16)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`,
+  cdown:  ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`,
+  check:  (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`,
+  circle: (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`,
+  play:   (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+  clock:  (n=12)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  book:   (n=12)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+  search: (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`,
+  arrow:  (n=14)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
+  trophy: (n=14)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`,
+  bar:    (n=16)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>`,
+  target: ()=>`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+  ext:    (n=12)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>`,
+  x:      (n=16)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+  bulb:   ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>`,
+  file:   ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  list:   ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>`,
+  align:  ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>`,
+};
+
+// ── Course Data ───────────────────────────────────────────────────────────────
+const CD = {
+  title:"Algorithmic Trading Mastery",
+  subtitle:"From zero to systematic trader — build, test, and deploy real strategies.",
+  level:"Beginner to Intermediate",
+  modules:[
+    {id:"M01",title:"Foundations of Algorithmic Trading",
+     overview:"Establish the conceptual and practical groundwork for algorithmic trading. Covers what algo trading is, the mental frameworks required, the tools you will use, and how a complete trading strategy is structured.",
+     learning_outcomes:["Understand what algorithmic trading is and why it outperforms discretionary trading","Adopt a probabilistic mindset and understand drawdown as a feature, not a bug","Set up your complete toolkit: TradingView, AI assistants, and byScript resources","Deconstruct the anatomy of a trading strategy into its five core components"],
+     total_duration:"45 min",
+     lessons:[
+      {id:"M01-V01",module_id:"M01",vn:1,title:"Apa Itu Algo Trading dan Kenapa Lebih Unggul?",yt_url:"https://www.youtube.com/watch?v=E-UzH6QvjNg",yt_id:"E-UzH6QvjNg",dur:"10:24",
+       summary:"Video ini membahas fondasi paling awal tentang algo trading: apa itu algo trading, kenapa pendekatan manual sering gagal, serta apa saja keunggulan utama sistem trading berbasis aturan.",
+       desc:"Video ini memperkenalkan konsep dasar algo trading sebagai cara trading yang menggunakan program atau script untuk membaca kondisi market dan mengeksekusi order berdasarkan aturan yang sudah ditetapkan sebelumnya. Kamu akan memahami mengapa banyak trader manual gagal bukan karena tidak punya strategi, tetapi karena eksekusinya tidak stabil akibat emosi dan inkonsistensi.",
+       takeaways:["Algo trading adalah penggunaan program untuk membaca market dan mengeksekusi order berdasarkan aturan yang sudah ditetapkan sebelumnya","Trader manual sering gagal karena emosi, inkonsistensi, bias, dan kelelahan — bukan karena tidak punya strategi","Keunggulan utama algo trading: konsisten, cepat, dan tanpa emosi","Algo trading bukan jaminan profit — prosesnya lebih objektif dan edge-nya dapat diuji","Kamu tidak harus jago coding untuk memulai — AI bisa membantu selama logika tradingnya jelas"],
+       explanation:"Materi menjelaskan bahwa banyak trader gagal bukan semata karena tidak punya strategi, tetapi karena eksekusinya tidak stabil. Emosi, overthinking, kelelahan, dan pergantian strategi yang terlalu cepat menjadi penyebab utama kegagalan.\n\nAlgo trading didefinisikan sebagai penggunaan program atau script untuk membaca kondisi market dan mengeksekusi order berdasarkan aturan yang sudah ditetapkan sebelumnya. Trader lebih dulu mendefinisikan logika tradingnya, lalu sistem yang menjalankannya secara disiplin.\n\nTiga keunggulan yang ditekankan adalah konsistensi, kecepatan, dan ketiadaan emosi. Sistem tidak takut saat loss, tidak serakah saat profit, dan bisa mengeksekusi sinyal dengan disiplin selama aturan terpenuhi.\n\nAlgo trading bukan jaminan profit. Sistem tetap bisa rugi, tetapi kelebihannya adalah prosesnya lebih objektif dan edge-nya dapat diuji. AI bisa membantu menghasilkan kode selama logika tradingnya sudah jelas.",
+       timestamps:[{t:"0:00",l:"Pembukaan: apa itu algo trading dan kenapa lebih unggul dari trading manual"},{t:"0:06",l:"Masalah manual trading: emosi, inkonsistensi, bias, dan kelelahan"},{t:"1:40",l:"Definisi algo trading: program yang mengeksekusi order berbasis aturan"},{t:"2:45",l:"Perbandingan manual trading vs algo trading"},{t:"4:49",l:"Mitos vs realita: algo trading bukan jaminan profit"},{t:"7:44",l:"Roadmap belajar: ide strategi → Pine Script → backtest → Monte Carlo → auto-trade"},{t:"8:43",l:"Recap keseluruhan video"}],
+       transcript:""
+      },
+      {id:"M01-V02",module_id:"M01",vn:2,title:"Mindset Algo Trader: Probabilistik dan Drawdown",yt_url:"https://www.youtube.com/watch?v=zjNwzBWXiyc",yt_id:"zjNwzBWXiyc",dur:"12:08",
+       summary:"Video ini mengubah cara pandang kamu terhadap trading. Fokusnya bukan menebak satu trade akan menang atau kalah, tetapi memahami probabilitas, menerima drawdown sebagai bagian normal, dan fokus pada expectancy — bukan win rate.",
+       desc:"Sebagian besar trader gagal bukan karena strategi mereka buruk, tetapi karena mereka meninggalkannya di tengah periode drawdown yang sebetulnya normal. Video ini membangun fondasi psikologis yang dibutuhkan untuk menjalankan sistem algo dalam jangka panjang.",
+       takeaways:["Algo trader tidak menilai kualitas strategi dari satu trade — yang dilihat adalah kumpulan trade dalam jumlah besar","Drawdown adalah penurunan equity dari puncak ke titik terendah — ini hal normal, bukan tanda strategi rusak","Expectancy lebih penting dari win rate: strategi dengan win rate rendah tetap bisa profit jika average win-nya besar","Tentukan batas drawdown yang masih nyaman secara personal sebelum mulai trading","Journaling dan review rutin membantu memastikan strategi masih layak dijalankan"],
+       explanation:"Algo trader tidak menilai kualitas strategi dari satu trade. Yang dilihat adalah kumpulan trade dalam jumlah cukup besar. Karena itu, sample size backtest yang memadai sangat penting.\n\nDrawdown adalah penurunan equity dari titik tertinggi ke titik terendah sebelum recovery. Ini dianalogikan seperti musim paceklik pada petani: tidak nyaman, tetapi tetap bagian normal dari proses jangka panjang.\n\nStrategi dengan win rate tinggi belum tentu menguntungkan jika kerugian rata-ratanya terlalu besar. Sebaliknya, strategi dengan win rate rendah tetap bisa profit jika expectancy-nya positif. Rumus expectancy: (Win Rate × Average Win) – (Loss Rate × Average Loss).\n\nSeorang algo trader tidak berhenti setelah strategi dijalankan. Hasil live, perubahan market condition, dan kondisi psikologis tetap perlu dicatat dan dievaluasi secara berkala.",
+       timestamps:[{t:"0:00",l:"Pembukaan: mindset algo trader berfokus pada probabilistik dan drawdown"},{t:"0:09",l:"Mindset pertama: berpikir probabilistik, bukan memprediksi hasil satu trade"},{t:"1:38",l:"Mindset kedua: merangkul drawdown sebagai bagian normal dari trading"},{t:"2:20",l:"Cara menentukan batas drawdown yang nyaman secara personal"},{t:"4:06",l:"Mindset ketiga: fokus pada expectancy, bukan win rate"},{t:"5:42",l:"Mindset keempat: journaling dan review rutin"},{t:"6:41",l:"Recap keseluruhan video"}],
+       transcript:""
+      },
+      {id:"M01-V03",module_id:"M01",vn:3,title:"Setup Semua Tools: TradingView, AI, dan byScript",yt_url:"https://www.youtube.com/watch?v=1xEYWW1Pvr8",yt_id:"1xEYWW1Pvr8",dur:"11:37",
+       summary:"Video ini memperkenalkan tool stack utama yang dipakai dalam alur belajar algo trading byScript: TradingView untuk charting dan backtesting, AI sebagai partner coding, serta Monte Carlo dan byScript untuk validasi dan eksekusi otomatis.",
+       desc:"Sebelum menulis satu baris Pine Script pun, kamu perlu mengenal tool yang akan dipakai sepanjang kursus ini. Video ini memandu kamu dari pengenalan antarmuka TradingView, penggunaan AI untuk generate kode, hingga cara Monte Carlo byScript dipakai untuk memvalidasi strategi secara statistik sebelum masuk ke tahap auto-trade.",
+       takeaways:["TradingView adalah platform utama — menyediakan chart, data, Pine Script Editor, dan Strategy Tester di satu tempat","AI dipakai sebagai partner coding: membantu membuat script dari deskripsi strategi dan menjelaskan kode yang membingungkan","Indikator belum cukup — logika harus dibawa ke level strategi agar bisa dievaluasi dan dibacktest","Monte Carlo dipakai untuk menguji ketahanan hasil backtest secara statistik, bukan hanya melihat profit","Jika strategi lolos validasi, logic dan alert bisa disalurkan ke byScript untuk eksekusi otomatis"],
+       explanation:"TradingView diposisikan sebagai pusat kerja utama karena menyediakan chart, data, Pine Script Editor, dan Strategy Tester di satu tempat. Ini membuat alur kerja dari ide ke eksekusi menjadi lebih efisien.\n\nAI dipakai sebagai partner coding, terutama untuk membantu membuat script dari deskripsi strategi, menjelaskan bagian kode yang membingungkan, dan membantu debugging. Dengan AI, kamu tidak perlu hafal syntax Pine Script dari awal.\n\nMateri menekankan bahwa indikator belum tentu siap dipakai untuk trading plan. Logika tersebut harus dibawa sampai level strategi yang mencakup entry, filter, risk management, dan exit.\n\nSetelah backtest terlihat menarik, langkah berikutnya adalah menguji ketahanan hasil tersebut dengan Monte Carlo. Jika strategi sudah lolos validasi, logic dan alert dapat disalurkan ke byScript untuk eksekusi otomatis.",
+       timestamps:[{t:"0:00",l:"Pembukaan: setup semua tools — TradingView, AI, dan byScript"},{t:"0:10",l:"TradingView: membuat akun, mengenal chart, Pine Editor, dan Strategy Tester"},{t:"1:09",l:"AI sebagai tools kedua untuk membantu generate dan debug kode"},{t:"1:45",l:"AI digunakan untuk generate contoh kode indikator RSI di Pine Script v5"},{t:"3:00",l:"Perbedaan indikator vs strategi — pentingnya membawa logika ke level strategi"},{t:"4:56",l:"Monte Carlo byScript untuk validasi statistik"},{t:"6:43",l:"Recap: TradingView untuk charting dan backtest, AI untuk coding, byScript untuk validasi dan eksekusi"}],
+       transcript:""
+      },
+      {id:"M01-V04",module_id:"M01",vn:4,title:"Anatomi Sebuah Trading Strategy",yt_url:"https://www.youtube.com/watch?v=EnLYMFetWL4",yt_id:"EnLYMFetWL4",dur:"13:52",
+       summary:"Video ini merangkum komponen inti yang membentuk sebuah trading strategy yang utuh — bukan hanya entry dan exit, tetapi juga filter, risk management, dan timeframe. Dengan framework ini, kamu bisa menganalisis dan membangun strategi apa pun secara sistematis.",
+       desc:"Setiap trading strategy yang profitable memiliki struktur yang sama. Video ini mengajarkan cara melihat strategi dalam komponen-komponen intinya: entry signal, filter, risk management, exit, dan pertimbangan timeframe. Dengan framework ini, kamu bisa mengevaluasi dan membangun strategi secara lebih terstruktur.",
+       takeaways:["Struktur minimal strategi terdiri dari tiga komponen: entry, filter, dan exit","Filter berfungsi mengurangi false signal — di sinilah sebagian besar peningkatan performa terjadi","Risk management bukan aksesori — besaran risiko per trade dan jenis stop loss harus ditentukan sejak awal","Stop loss berbasis ATR lebih adaptif karena menyesuaikan dengan volatilitas market","Timeframe 1 jam hingga 4 jam cenderung lebih seimbang antara jumlah trade dan kualitas sinyal"],
+       explanation:"Materi menegaskan bahwa strategi tidak cukup hanya punya entry. Struktur minimalnya adalah entry, filter, dan exit. Filter berfungsi mengurangi false signal — misalnya, hanya ambil sinyal beli saat volume di atas rata-rata, atau hanya trading saat ADX di atas 20.\n\nUrutan yang benar adalah: sinyal muncul → cek filter → jika lolos maka entry → monitor posisi → keluar saat kondisi exit terpenuhi.\n\nRisk management bukan aksesori, tetapi bagian utama strategi. Besarnya risiko per trade dan jenis stop loss harus ditentukan sejak awal. Rekomendasi awal adalah tidak merisikokan lebih dari 1–2 persen modal per trade.\n\nStop loss berbasis ATR lebih adaptif karena menyesuaikan diri dengan volatilitas market. Saat ATR besar, stop loss diberi ruang lebih lebar; saat ATR kecil, stop loss menjadi lebih ketat.\n\nTimeframe 1 jam hingga 4 jam disebut lebih seimbang, sedangkan daily dan weekly memberi trade lebih sedikit tetapi sinyal lebih bersih.",
+       timestamps:[{t:"0:00",l:"Pembukaan: anatomi sebuah trading strategy"},{t:"0:04",l:"Komponen utama strategi: entry, exit, dan filter"},{t:"0:36",l:"Filter: cara melewatkan trade yang kurang berkualitas"},{t:"1:01",l:"Contoh filter: volume di bawah rata-rata, ADX di bawah 20"},{t:"1:33",l:"Risk management: tidak lebih dari 1–2 persen modal per trade"},{t:"1:58",l:"Stop loss: fixed distance vs ATR-based stop loss"},{t:"2:29",l:"Pertimbangan timeframe: kecil vs besar"},{t:"3:47",l:"Contoh strategi lengkap: BTCUSDT 4H dengan EMA crossover dan filter volume"},{t:"4:18",l:"Recap seluruh Module 01"}],
+       transcript:""
+      }
+    ]},
+    {id:"M02",title:"Pine Script Basics",overview:"Pelajari Pine Script TradingView dari nol. Kamu akan membangun script pertama, memahami cara kerja variabel dan series, menggunakan fungsi bawaan, hingga menyelesaikan project indikator MA crossover lengkap dengan alert.",
+     learning_outcomes:[
+       "Memahami struktur dasar Pine Script dan perbedaan indicator vs strategy",
+       "Mengenal tipe data, variabel, operator, dan conditional logic",
+       "Memahami konsep series, historical data, dan cara menangani nilai na",
+       "Menggunakan built-in functions dan membuat custom function sendiri",
+       "Membangun indikator MA crossover lengkap dengan visualisasi dan alert"
+     ],
+     total_duration:"45 min",
+     lessons:[
+      {id:"M02-V01",module_id:"M02",vn:1,title:"Pine Script Pertamamu: Struktur, Tipe Data, dan Output",yt_url:"https://www.youtube.com/watch?v=Mi-vXuZp7Is",yt_id:"Mi-vXuZp7Is",dur:"5:41",
+       summary:"Pada video ini, kamu akan membuat script Pine Script pertama langsung di Pine Editor. Fokus utamanya adalah memahami struktur dasar script, perbedaan indicator dan strategy, tipe data paling umum, serta cara menampilkan output visual di chart.",
+       desc:"Video ini memperkenalkan pengalaman pertama menulis Pine Script secara langsung. Tujuannya bukan membuat strategi yang kompleks, tetapi membantu kamu memahami seperti apa alur kerja Pine Script dari struktur paling dasar hingga output visual yang muncul di chart.",
+       takeaways:[
+         "Pine Editor ada di tab bawah chart TradingView dan menjadi tempat utama menulis kode",
+         "Struktur dasar script dimulai dari deklarasi versi, lalu indicator() atau strategy(), lalu body code",
+         "Lima tipe data dasar yang perlu dikenali: int, float, string, bool, dan color",
+         "plot() dipakai untuk menggambar garis, sedangkan plotshape() dipakai untuk menampilkan ikon atau tanda pada chart",
+         "Fokus pembelajaran menggunakan Pine Script versi 5 karena masih sangat umum dan mudah dipahami oleh AI"
+       ],
+       explanation:"Pine Script selalu dimulai dengan deklarasi versi. Setelah itu, developer menentukan apakah script tersebut berupa indicator atau strategy. Indicator digunakan untuk visualisasi, sedangkan strategy digunakan untuk backtest.\n\nMateri ini menekankan bahwa bahkan script sederhana tetap membutuhkan pemahaman tentang tipe data. Integer digunakan untuk bilangan bulat, float untuk angka desimal, string untuk teks, bool untuk nilai true atau false, dan color untuk pewarnaan output.\n\nBagian output sangat penting karena Pine Script sering dipakai untuk memvisualisasikan hasil pengolahan data. plot() berguna ketika kita ingin menampilkan garis seperti close atau moving average. plotshape() berguna ketika ingin menampilkan simbol atau ikon di chart untuk menandai kondisi tertentu.\n\nVideo ini adalah fondasi untuk semua materi berikutnya. Ketika belajar variabel, conditional logic, atau project indikator, kamu tidak lagi bingung dengan struktur dasar dan cara kerja output di Pine Script.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: script Pine Script pertama, struktur dasar, tipe data, dan output"},
+         {t:"0:08",l:"Cara membuka Pine Editor di bawah chart TradingView"},
+         {t:"0:38",l:"Script pertama disalin ke Pine Editor dan ditambahkan ke chart"},
+         {t:"0:57",l:"Hasil dari 4 baris script: garis biru yang memplot harga close"},
+         {t:"1:14",l:"Penjelasan versi script — fokus di Pine Script v5"},
+         {t:"1:31",l:"Perbedaan indicator vs strategy"},
+         {t:"1:45",l:"Fungsi plot() untuk menggambar garis pada chart"},
+         {t:"1:54",l:"Lima tipe data dasar: int, float, string, bool, color"},
+         {t:"2:52",l:"plotshape() untuk menampilkan simbol atau ikon di chart"},
+         {t:"3:27",l:"Contoh SMA dengan warna tertentu"},
+         {t:"4:02",l:"Contoh plotshape() untuk menandai kondisi RSI < 30"},
+         {t:"4:55",l:"Recap keseluruhan video"}
+       ],
+       transcript:""
+      },
+      {id:"M02-V02",module_id:"M02",vn:2,title:"Variabel, Operator, dan Conditional Logic",yt_url:"https://www.youtube.com/watch?v=1albalzSei8",yt_id:"1albalzSei8",dur:"5:07",
+       summary:"Pada video ini, kamu akan mempelajari fondasi programming di Pine Script: variabel, operator, dan logika kondisi. Materi ini penting karena hampir semua script, baik indicator maupun strategy, dibangun dari tiga elemen ini.",
+       desc:"Setelah mengetahui cara menulis script paling sederhana, kamu perlu memahami bagaimana Pine Script menyimpan nilai, membandingkan kondisi, dan membuat keputusan. Itulah peran variabel, operator, dan conditional logic dalam setiap script.",
+       takeaways:[
+         "Ada tiga jenis variabel utama: variabel biasa (dihitung ulang setiap bar), var (inisialisasi sekali, bisa diubah), dan varip (bergerak intrabar secara real-time)",
+         "Operator dibagi menjadi operator aritmatika, perbandingan, dan logika",
+         "Conditional logic bisa ditulis dengan if-else atau dengan bentuk ringkas ternary operator",
+         "Built-in variables seperti open, high, low, close, volume, time, dan bar_index adalah data inti yang paling sering digunakan",
+         "Reference manual TradingView bisa digunakan untuk melihat penjelasan resmi setiap keyword"
+       ],
+       explanation:"Variabel biasa dihitung ulang setiap bar — cocok untuk kondisi atau rumus yang memang harus selalu diperbarui. var dipakai ketika kita ingin menyimpan nilai yang persistem dan diinisialisasi hanya sekali, tetapi nilainya bisa diubah pada bar-bar berikutnya. varip mirip var, tetapi diperbarui secara intrabar sehingga lebih real-time. Dalam praktik, var lebih sering dipakai daripada varip.\n\nOperator aritmatika dipakai untuk perhitungan seperti tambah, kurang, kali, bagi, dan modulus. Operator perbandingan dipakai untuk membentuk kondisi seperti lebih besar, lebih kecil, sama dengan. Operator logika seperti and dan or dipakai untuk menggabungkan beberapa kondisi sekaligus.\n\nDengan if-else, kita bisa menentukan tindakan berdasarkan kondisi tertentu. Untuk kondisi yang lebih ringkas, ternary operator bisa dipakai untuk menetapkan nilai dalam satu baris.\n\nTradingView sudah menyediakan data inti seperti open, high, low, close, volume, time, bar_index, hl2, hlc3, dan ohlc4. Variabel bawaan ini adalah bahan baku utama yang dipakai di hampir setiap script.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: variabel, operator, dan conditional logic"},
+         {t:"0:07",l:"Tiga jenis variabel: variabel biasa, var, dan varip"},
+         {t:"0:16",l:"Perbedaan var dan varip — varip diperbarui intrabar"},
+         {t:"0:49",l:"Operator: aritmatika, perbandingan, dan logika"},
+         {t:"1:06",l:"Conditional logic dengan if-else"},
+         {t:"1:24",l:"Ternary operator sebagai bentuk ringkas conditional"},
+         {t:"1:50",l:"Built-in variables: open, high, low, close, volume, bar_index, dll"},
+         {t:"2:18",l:"Cara menggunakan reference manual TradingView"},
+         {t:"2:34",l:"Contoh penggunaan var untuk inisialisasi satu kali"},
+         {t:"3:38",l:"varip sebagai variabel yang bergerak intrabar"},
+         {t:"4:06",l:"Contoh variabel biasa dalam kondisi ta.crossover()"},
+         {t:"4:27",l:"Recap keseluruhan video"}
+       ],
+       transcript:""
+      },
+      {id:"M02-V03",module_id:"M02",vn:3,title:"Series, Historical Data, dan na Values",yt_url:"https://www.youtube.com/watch?v=71G4e9N_f2k",yt_id:"71G4e9N_f2k",dur:"5:10",
+       summary:"Video ini menjelaskan salah satu konsep terpenting di Pine Script: series. Kamu akan belajar bahwa setiap variabel memiliki nilai per bar, cara mengakses data historis dengan operator [], serta bagaimana menangani nilai na agar script tidak error.",
+       desc:"Konsep series adalah inti Pine Script yang sering membingungkan pemula. Video ini menjelaskan bagaimana script dieksekusi bar per bar, cara mengakses nilai dari bar sebelumnya, dan pentingnya menangani nilai na dengan benar agar hasil perhitungan tidak rusak.",
+       takeaways:[
+         "Series berarti sebuah variabel memiliki deretan nilai, satu nilai untuk setiap bar",
+         "Operator [] dipakai untuk mengakses nilai dari bar sebelumnya: close[1] adalah close satu bar lalu, close[2] dua bar lalu",
+         "na berarti not available — bukan nol, tetapi nilai yang belum tersedia",
+         "Fungsi na() dipakai untuk mengecek apakah suatu nilai bernilai na",
+         "Fungsi nz() dipakai untuk mengganti nilai na dengan default tertentu, misalnya 0"
+       ],
+       explanation:"Ketika kita menulis close, itu bukan berarti satu angka tunggal. close adalah rangkaian nilai close pada setiap bar di chart — itulah yang disebut series. Memahami ini adalah kunci untuk tidak bingung saat membaca atau menulis script yang lebih kompleks.\n\nOperator siku [] memungkinkan kita mengakses nilai dari bar sebelumnya. close[1] berarti close satu bar lalu, close[2] berarti dua bar lalu. Fitur ini penting untuk membuat perbandingan antar-bar, menghitung perubahan harga, atau referensi sinyal dari bar sebelumnya.\n\nScript Pine Script dieksekusi ulang dari bar pertama sampai bar terakhir. Artinya, semua kondisi dan perhitungan dilakukan berulang untuk setiap bar. Memahami mekanisme ini membantu kita mengerti kenapa nilai bisa berbeda di setiap bar.\n\nNilai na berarti not available, bukan nol. Biasanya muncul di awal chart, atau ketika sebuah nilai memang belum tersedia. Jika tidak ditangani dengan benar, na dapat membuat hasil perhitungan ikut menjadi na dan script tidak berjalan seperti yang diharapkan. Fungsi na() dipakai untuk mengecek, sedangkan nz() dipakai untuk mengganti nilai na dengan nilai default.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: series, historical data, dan na values"},
+         {t:"0:07",l:"Setiap variabel di Pine Script adalah series — satu nilai per bar"},
+         {t:"0:17",l:"close bukan satu angka — nilainya berbeda-beda di setiap bar"},
+         {t:"0:40",l:"Operator []: close[1] = satu bar lalu, close[2] = dua bar lalu"},
+         {t:"1:11",l:"Contoh: menghitung change sebagai close saat ini dikurangi close sebelumnya"},
+         {t:"1:27",l:"na berarti not available, bukan nol"},
+         {t:"1:40",l:"Jika variabel bernilai na, tidak bisa dipakai untuk perhitungan biasa"},
+         {t:"1:54",l:"nz() untuk mengganti nilai na dengan nilai default"},
+         {t:"2:10",l:"Contoh script menghitung red candle setelah waktu tertentu"},
+         {t:"3:06",l:"Mengamati perubahan nilai dari bar ke bar via Data Window"},
+         {t:"3:50",l:"Contoh lain: menghitung change sebagai selisih close antar-bar"}
+       ],
+       transcript:""
+      },
+      {id:"M02-V04",module_id:"M02",vn:4,title:"Built-in Functions dan Custom Functions",yt_url:"https://www.youtube.com/watch?v=x4gmMqhX7U8",yt_id:"x4gmMqhX7U8",dur:"2:48",
+       summary:"Pada video ini, kamu akan memahami dua hal penting: fungsi bawaan yang sudah disediakan TradingView dan fungsi custom yang bisa kamu buat sendiri. Materi ini membantu kamu bekerja lebih cepat karena tidak perlu menulis rumus dari nol.",
+       desc:"TradingView sudah menyediakan banyak fungsi technical analysis yang siap pakai. Dengan memanggil ta.sma(close, 20), misalnya, kita langsung mendapatkan simple moving average tanpa harus menulis rumusnya secara manual. Untuk logika yang belum tersedia secara bawaan, kita bisa membuat custom function sendiri.",
+       takeaways:[
+         "TradingView menyediakan banyak fungsi bawaan: ta.sma(), ta.ema(), ta.rsi(), ta.macd(), ta.crossover(), ta.crossunder(), ta.highest(), ta.atr()",
+         "Semua fungsi technical analysis diawali dengan namespace ta.",
+         "Fungsi bawaan membantu mempercepat coding karena rumus umum tidak perlu ditulis manual",
+         "Custom function berguna ketika logika yang dibutuhkan belum tersedia secara bawaan",
+         "Membuat fungsi sendiri membuat code lebih rapi, singkat, dan mudah digunakan ulang"
+       ],
+       explanation:"TradingView menyediakan banyak fungsi technical analysis yang siap pakai. Dengan memanggil ta.sma(close, 20), misalnya, kita langsung mendapatkan simple moving average tanpa harus menulis rumusnya secara manual. Semua fungsi di namespace ta. sudah dioptimasi dan siap pakai.\n\nBeberapa kelompok fungsi yang paling sering dipakai: moving average seperti ta.sma() dan ta.ema(), momentum seperti ta.rsi() dan ta.macd(), fungsi crossover seperti ta.crossover() dan ta.crossunder(), serta range dan volatility seperti ta.highest() dan ta.atr(). Khusus MACD, satu fungsi dapat menghasilkan beberapa output sekaligus: line, signal, dan histogram.\n\nMeskipun banyak fungsi sudah tersedia, ada kasus ketika logika yang dibutuhkan belum ada secara bawaan. Di sinilah custom function dipakai. Dengan menulis fungsi sendiri, kita bisa membungkus logika berulang ke dalam satu blok yang bisa dipanggil berkali-kali.\n\nPemahaman tentang built-in dan custom functions adalah jembatan menuju script yang lebih modular dan efisien saat membangun indikator atau strategi yang lebih panjang.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: built-in functions dan custom functions"},
+         {t:"0:05",l:"TradingView menyediakan banyak indikator bawaan — tidak perlu menulis rumus dari nol"},
+         {t:"0:12",l:"Contoh kelompok fungsi: moving average, momentum, crossover, range, volatility"},
+         {t:"0:21",l:"Semua fungsi technical analysis diawali namespace ta."},
+         {t:"1:02",l:"Contoh: ta.sma(close, 20) untuk simple moving average 20 bar"},
+         {t:"1:11",l:"ta.crossover dan ta.crossunder untuk deteksi potong antar-series"},
+         {t:"1:30",l:"ta.highest(high, 20) untuk nilai high tertinggi dalam 20 bar"},
+         {t:"1:36",l:"ta.atr(14) untuk Average True Range panjang 14"},
+         {t:"1:42",l:"RSI dan MACD — MACD menghasilkan tiga output sekaligus"},
+         {t:"1:57",l:"Custom function untuk logika yang belum tersedia secara bawaan"},
+         {t:"2:07",l:"Contoh candleRange(idx) menghitung selisih high dan low"},
+         {t:"2:35",l:"Recap: gunakan built-in bila tersedia, buat custom function bila belum ada"}
+       ],
+       transcript:""
+      },
+      {id:"M02-V05",module_id:"M02",vn:5,title:"Project: MA Crossover Indicator + Alert",yt_url:"https://www.youtube.com/watch?v=m-_aldMukPQ",yt_id:"m-_aldMukPQ",dur:"10:34",
+       summary:"Video ini adalah project praktik membangun indikator MA crossover lengkap dengan alert. Kamu akan melihat bagaimana input, perhitungan moving average, deteksi sinyal, visualisasi, dan alert condition digabungkan menjadi satu script yang bisa langsung dipakai.",
+       desc:"Project ini menggabungkan materi-materi dasar dari video sebelumnya menjadi indikator yang benar-benar bisa dipakai. Alur script dibagi menjadi lima tahap: membuat input, menghitung moving average, mendeteksi crossover/crossunder, memvisualisasikan hasil ke chart, lalu menambahkan alert.",
+       takeaways:[
+         "Project dimulai dari input parameter agar user bisa mengubah setting tanpa mengedit code",
+         "Fast MA dan Slow MA dihitung dari harga close dengan panjang yang berbeda",
+         "ta.crossover() dan ta.crossunder() dipakai untuk mendeteksi buy signal dan sell signal",
+         "Visualisasi dengan plot() dan plotshape() penting untuk memastikan logika benar-benar berjalan",
+         "alertcondition() memungkinkan script mengirim notifikasi otomatis saat kondisi terjadi",
+         "Jika ada error, salin pesan error ke AI untuk dibantu diperbaiki"
+       ],
+       explanation:"Project ini menggabungkan materi-materi dasar dari video sebelumnya menjadi indikator yang benar-benar bisa dipakai. Alur script dibagi menjadi lima tahap yang terstruktur.\n\nTahap pertama: membuat input parameter. Input membuat parameter seperti fast MA dan slow MA bisa diubah dari settings tanpa menyentuh code. Ini penting agar pengguna dapat bereksperimen dengan parameter yang berbeda.\n\nTahap kedua: menghitung moving average. Fast MA dan Slow MA dihitung dari harga close menggunakan ta.sma() dengan panjang masing-masing.\n\nTahap ketiga: mendeteksi sinyal. ta.crossover() dipakai untuk buy signal saat fast MA memotong ke atas slow MA. ta.crossunder() dipakai untuk sell signal saat fast MA memotong ke bawah.\n\nTahap keempat: visualisasi. Materi ini menekankan bahwa visualisasi bukan hanya untuk estetika, tetapi juga untuk debugging. Jika logika sudah ditulis tetapi tidak divisualisasikan, pengguna sulit memverifikasi apakah script berjalan benar.\n\nTahap kelima: alert. Dengan alertcondition(), indikator tidak hanya menjadi alat visual, tetapi juga dapat mengirim notifikasi otomatis saat sinyal terjadi.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: project MA crossover indicator dengan alert"},
+         {t:"0:18",l:"Tahap 1: membuat input parameters"},
+         {t:"0:36",l:"Fast MA dan Slow MA sebagai input integer"},
+         {t:"0:44",l:"Tahap 2: menghitung SMA fast dan slow dari close"},
+         {t:"1:07",l:"Tahap 3: mendeteksi buy signal (crossover) dan sell signal (crossunder)"},
+         {t:"1:41",l:"Tahap 4: plot garis MA dan tampilkan tanda visual di chart"},
+         {t:"2:01",l:"Tahap 5: membuat alertcondition untuk notifikasi otomatis"},
+         {t:"2:23",l:"Proses debugging: baca error, cek line number, periksa code"},
+         {t:"3:03",l:"Cara menyalin error ke AI untuk dibantu diperbaiki"},
+         {t:"3:35",l:"Debugging visual dengan plot nilai, label, atau background color"},
+         {t:"4:53",l:"Input bisa diubah dari settings tanpa mengubah source code"},
+         {t:"6:23",l:"Crossover dan crossunder dijadikan variabel sinyal"},
+         {t:"8:32",l:"Memasang alert saat crossover terjadi"},
+         {t:"9:27",l:"Sinyal muncul setelah candle close sesuai konfirmasi"},
+         {t:"10:24",l:"Module 02 selesai — pengantar ke module berikutnya"}
+       ],
+       transcript:""
+      }
+    ]},
+    {id:"M03",title:"Pine Script Lanjutan",overview:"Tingkatkan kemampuan Pine Script kamu ke level berikutnya. Module ini membahas input dinamis, loops dan array, multi-timeframe analysis yang aman dari repainting, visual tools seperti table dan box, hingga strategy functions yang siap untuk auto trade.",
+     learning_outcomes:[
+       "Membuat input dinamis dengan UI settings yang rapi menggunakan group, inline, dan tooltip",
+       "Menggunakan for loop dan array untuk kalkulasi dan analisis data yang lebih kompleks",
+       "Mengambil data multi-timeframe dengan aman dan menghindari repainting",
+       "Membangun visual dashboard menggunakan table, box, dan line langsung di chart",
+       "Menulis strategy functions yang realistis dan alert-ready untuk auto trade"
+     ],
+     total_duration:"~45 min",
+     lessons:[
+      {id:"M03-V01",module_id:"M03",vn:1,title:"Input Dinamis dan UI yang Rapi",yt_url:"https://www.youtube.com/watch?v=ixoVSriKAb0",yt_id:"ixoVSriKAb0",dur:"~6 min",
+       summary:"Pada lesson ini, kamu akan mempelajari enam jenis input utama di Pine Script: integer, float, bool, string, source, dan timeframe. Kamu juga akan belajar merapikan tampilan settings dengan group, inline, dan tooltip, serta memilih default value yang tepat.",
+       desc:"Input adalah jembatan antara logika script dan pengalaman user. Dengan input yang tepat, script tidak terasa kaku karena parameter penting dapat diubah langsung dari panel settings tanpa mengedit kode. Video ini membahas semua jenis input utama beserta cara menyusun UI settings yang profesional.",
+       takeaways:[
+         "Input membuat script menjadi dinamis dan mudah dipakai tanpa edit kode",
+         "Jenis input utama meliputi int, float, bool, string, source, dan timeframe",
+         "Group dipakai untuk mengelompokkan parameter yang saling berhubungan",
+         "Inline membuat beberapa input tampil dalam satu baris agar layout lebih ringkas",
+         "Tooltip memberi penjelasan singkat saat user hover pada ikon informasi",
+         "Default value yang baik membuat user bisa langsung memakai script dengan nyaman"
+       ],
+       explanation:"Input adalah jembatan antara logika script dan pengalaman user. Dengan input yang tepat, script tidak terasa kaku karena parameter penting dapat diubah langsung dari panel settings.\n\ninput.int dan input.float dipakai untuk angka, misalnya period, length, atau multiplier. input.bool cocok untuk toggle on/off seperti menampilkan sinyal atau warna tambahan. input.string berguna untuk pilihan teks seperti tipe moving average. input.source memungkinkan user memilih sumber data seperti close atau hl2. input.timeframe sudah menyediakan daftar timeframe sehingga user cukup memilih tanpa mengetik satu per satu.\n\nSelain jenis input, kualitas UI settings juga penting. Group membantu mengelompokkan parameter yang saling berhubungan sehingga panel settings tidak berantakan. Inline membuat beberapa input tampil dalam satu baris agar layout lebih ringkas. Tooltip memberi penjelasan singkat saat user hover pada ikon informasi.\n\nBest practice pentingnya adalah memberi default value yang masuk akal. Tujuannya agar script tetap berguna bahkan sebelum user melakukan optimasi sendiri. Panel settings yang rapi membuat indikator terasa lebih profesional dan mudah dibagikan.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: input dinamis dan UI settings di Pine Script"},
+         {t:"0:20",l:"Enam jenis input utama: int, float, bool, string, source, timeframe"},
+         {t:"0:45",l:"Contoh input.int untuk length MA dan input.float untuk multiplier"},
+         {t:"1:10",l:"input.bool untuk toggle show signal dan warna tambahan"},
+         {t:"1:35",l:"input.string untuk pilihan tipe moving average"},
+         {t:"2:00",l:"input.source untuk memilih sumber data (close, hl2, dll)"},
+         {t:"2:20",l:"input.timeframe dengan daftar timeframe siap pilih"},
+         {t:"2:50",l:"Group untuk mengelompokkan parameter yang berhubungan"},
+         {t:"3:20",l:"Inline agar dua input tampil sejajar dalam satu baris"},
+         {t:"3:50",l:"Tooltip untuk memberi penjelasan saat user hover"},
+         {t:"4:30",l:"Best practice: default value yang masuk akal"},
+         {t:"5:20",l:"Recap: input yang baik = script fleksibel dan profesional"}
+       ],
+       transcript:""
+      },
+      {id:"M03-V02",module_id:"M03",vn:2,title:"Loops, Arrays, dan Data Operations",yt_url:"https://www.youtube.com/watch?v=TBmUiVlEjZs",yt_id:"TBmUiVlEjZs",dur:"~8 min",
+       summary:"Pada lesson ini, kamu akan belajar kapan memakai for loop, bagaimana menghitung nilai seperti moving average secara manual, serta bagaimana array dipakai untuk menyimpan, mengambil, dan menganalisis kumpulan data dalam satu variabel.",
+       desc:"Loop dan array memperluas kemampuan Pine Script untuk menangani kalkulasi berulang dan data yang lebih kompleks. Video ini membahas penggunaan for loop untuk perhitungan manual, serta operasi array seperti push, get, set, avg, sum, min, dan max untuk analisis data yang lebih kaya.",
+       takeaways:[
+         "Loop digunakan untuk kalkulasi berulang dalam range yang ditentukan",
+         "for loop di Pine Script berjalan dari indeks 0 sampai period - 1",
+         "Array memungkinkan banyak nilai disimpan dalam satu variabel",
+         "Operasi array: push (tambah), get (ambil), set (ubah), pop (hapus terakhir), avg, sum, min, max, size",
+         "Loop cocok untuk membangun rumus manual, array cocok untuk menyimpan state dan statistik"
+       ],
+       explanation:"Loop dipakai ketika kita ingin mengulang operasi yang sama dalam sejumlah bar tertentu. Salah satu contoh klasiknya adalah menghitung moving average secara manual: mulai dari sum = 0, lalu menambahkan nilai close[i] dari i = 0 sampai period - 1, kemudian membagi totalnya dengan period.\n\nDi Pine Script, for loop biasanya berjalan dari indeks 0 sampai period - 1. Ini penting karena indeks dimulai dari 0, bukan 1. Salah memahami indeks bisa menyebabkan hasil hitungan meleset satu bar.\n\nArray digunakan ketika satu variabel perlu menyimpan banyak data sekaligus. Ini berbeda dengan variabel biasa yang hanya menyimpan satu nilai pada satu waktu. Dengan array, kita bisa menyimpan serangkaian perubahan harga, sinyal, atau nilai perhitungan lainnya.\n\nOperasi array sangat luas: array.push menambahkan nilai, array.get mengambil nilai, array.set memperbarui nilai, array.pop menghapus elemen terakhir, array.avg menghitung rata-rata, array.sum menjumlahkan, array.min dan array.max mencari nilai ekstrem, serta array.size mengembalikan jumlah elemen.\n\nSecara praktis, loop cocok untuk membangun rumus manual, sedangkan array cocok untuk menyimpan state, membuat statistik, dan mengelola data dinamis dari waktu ke waktu.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: loops, arrays, dan data operations"},
+         {t:"0:20",l:"Kapan memakai loop: kalkulasi berulang dalam range tertentu"},
+         {t:"0:45",l:"Contoh: hitung SMA manual dengan for loop dan close[i]"},
+         {t:"1:30",l:"Indeks dimulai dari 0, bukan 1 — penting untuk hasil yang akurat"},
+         {t:"2:00",l:"Array: satu variabel yang menyimpan banyak data"},
+         {t:"2:30",l:"array.push untuk menambahkan nilai ke array"},
+         {t:"3:00",l:"array.get dan array.set untuk ambil dan ubah nilai"},
+         {t:"3:30",l:"array.pop untuk menghapus elemen terakhir"},
+         {t:"4:00",l:"Operasi statistik: avg, sum, min, max, size"},
+         {t:"5:00",l:"Contoh: simpan perubahan harga ke array, hitung jumlah data"},
+         {t:"6:30",l:"Recap: loop untuk kalkulasi berulang, array untuk data kompleks"}
+       ],
+       transcript:""
+      },
+      {id:"M03-V03",module_id:"M03",vn:3,title:"Multi-Timeframe Analysis dan Anti-Repainting",yt_url:"https://www.youtube.com/watch?v=EyIunmqTsmo",yt_id:"EyIunmqTsmo",dur:"~12 min",
+       summary:"Pada lesson ini, kamu akan memahami mengapa multi-timeframe analysis sangat powerful sekaligus berbahaya. Kamu akan belajar konsep repainting, penyebab utamanya saat memakai request.security, dan tiga proteksi wajib: barstate.isconfirmed, close[1], dan lookahead_off.",
+       desc:"Multi-timeframe analysis memungkinkan kamu menggabungkan sinyal dari timeframe besar dan kecil dalam satu script. Namun tanpa perlindungan yang tepat, script bisa mengalami repainting — backtest terlihat bagus tetapi gagal saat live. Video ini membahas cara mengambil data HTF dengan aman.",
+       takeaways:[
+         "Multi-timeframe analysis: trend di HTF (4H/daily), entry di LTF (5M/1H)",
+         "Repainting membuat hasil historis terlihat bagus tetapi gagal saat live",
+         "request.security harus dipakai dengan hati-hati untuk menghindari repainting",
+         "Tiga proteksi anti-repainting: barstate.isconfirmed, close[1], dan lookahead_off",
+         "Data timeframe besar dianggap valid hanya setelah bar tersebut selesai (confirmed)"
+       ],
+       explanation:"Multi-timeframe analysis adalah teknik menggunakan lebih dari satu timeframe dalam satu script. Contohnya, trend ditentukan di 4H atau daily, lalu entry dieksekusi di 5M atau 1H.\n\nMasalah terbesarnya adalah repainting, yaitu kondisi ketika nilai historis tampak berubah atau terlihat terlalu sempurna karena script memakai data yang sebenarnya belum confirm pada saat itu. Akibatnya, backtest terlihat indah tetapi hasil live justru buruk.\n\nDalam Pine Script, akses data timeframe lain biasanya dilakukan dengan request.security. Fungsi ini sangat berguna, tetapi harus dipakai dengan hati-hati. Jika data current bar HTF langsung dipakai di LTF tanpa proteksi, script akan membaca nilai yang belum final dan menyebabkan repainting.\n\nAda tiga perlindungan utama yang ditekankan. Pertama, barstate.isconfirmed agar logika hanya diproses setelah bar selesai. Kedua, gunakan close[1] atau data bar sebelumnya yang sudah confirmed. Ketiga, set lookahead ke barmerge.lookahead_off agar script tidak melihat ke depan.\n\nPola yang sehat adalah memakai HTF untuk direction atau filter, lalu LTF untuk timing entry. Tetapi semua keputusan tetap harus memakai data yang sudah final agar hasil backtest selaras dengan kondisi live.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: multi-timeframe analysis dan anti-repainting"},
+         {t:"0:30",l:"Konsep MTF: trend di HTF, entry di LTF"},
+         {t:"1:00",l:"Apa itu repainting dan kenapa berbahaya"},
+         {t:"1:45",l:"Cara kerja request.security dan risikonya"},
+         {t:"2:30",l:"Proteksi 1: barstate.isconfirmed"},
+         {t:"3:30",l:"Proteksi 2: gunakan close[1] — data bar sebelumnya yang sudah confirmed"},
+         {t:"4:30",l:"Proteksi 3: lookahead_off"},
+         {t:"5:30",l:"Demo perbandingan data repaint vs non-repaint pada daily close di LTF"},
+         {t:"7:00",l:"Pola yang sehat: HTF untuk direction, LTF untuk entry"},
+         {t:"10:00",l:"Recap: disiplin anti-repainting adalah wajib untuk strategi yang valid"}
+       ],
+       transcript:""
+      },
+      {id:"M03-V04",module_id:"M03",vn:4,title:"Tables, Boxes, Lines, dan Dashboard",yt_url:"https://www.youtube.com/watch?v=eNJd0yqmab4",yt_id:"eNJd0yqmab4",dur:"~12 min",
+       summary:"Pada lesson ini, kamu akan belajar kapan memakai table, kapan memakai box, dan kapan memakai line. Kamu juga akan melihat bagaimana objek visual dibangun dari koordinat serta mengapa object lama perlu dihapus agar script tetap ringan dan performanya tidak turun.",
+       desc:"Pine Script tidak hanya untuk menghitung sinyal — kamu juga bisa membangun visual dashboard langsung di chart. Video ini membahas tiga alat visual utama: table untuk dashboard informasi, box untuk menggambar zona, dan line untuk level-level penting seperti support, resistance, TP, dan SL.",
+       takeaways:[
+         "Table cocok untuk dashboard informasi: trend, RSI, win rate, atau status strategi",
+         "Box cocok untuk menggambar zona: order block, supply-demand, atau consolidation range",
+         "Line cocok untuk support, resistance, trendline, entry, stop loss, dan take profit",
+         "Pembuatan box memerlukan batas kiri, kanan, atas, dan bawah",
+         "Pembuatan line memerlukan dua titik koordinat: x1 y1 dan x2 y2",
+         "Object visual perlu dikelola dengan fungsi delete agar chart tidak overload"
+       ],
+       explanation:"Pine Script tidak hanya untuk menghitung sinyal, tetapi juga untuk menyajikan informasi secara visual. Tiga alat visual yang dibahas di sini adalah table, box, dan line.\n\nTable dipakai untuk membuat dashboard kecil langsung di chart. Isinya bisa berupa status trend, nilai RSI, jumlah sinyal, performa, atau ringkasan lain yang ingin dilihat cepat. Table menampilkan nilai terakhir, sehingga cocok untuk dashboard ringkas yang selalu terlihat di chart.\n\nBox digunakan untuk menggambar area atau zona. Contoh umumnya adalah order block, fair value gap, consolidation zone, atau range tertinggi-terendah dalam lookback tertentu. Untuk membuat box, kita harus menentukan sisi kiri, kanan, atas, dan bawah dari zona yang ingin digambar.\n\nLine digunakan untuk menggambar level atau arah tertentu, misalnya support, resistance, trendline, entry, TP, dan SL. Berbeda dengan box yang langsung punya empat sisi, line dibentuk dari dua titik koordinat utama: x1 y1 dan x2 y2.\n\nVisual tools memang powerful, tetapi harus dikelola dengan baik. Jika object baru terus dibuat pada setiap bar tanpa delete object lama, performa script bisa turun. Memory management seperti box.delete, line.delete, atau penghapusan object lama secara berkala sangat penting.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: tiga visual tools — table, box, dan line"},
+         {t:"0:30",l:"Table: dashboard informasi langsung di chart"},
+         {t:"1:00",l:"Contoh table: status trend, RSI, win rate, performa strategi"},
+         {t:"2:00",l:"Box: menggambar zona seperti order block dan consolidation range"},
+         {t:"3:00",l:"Cara membuat box: kiri, kanan, atas, bawah"},
+         {t:"4:30",l:"Line: support, resistance, trendline, TP, SL"},
+         {t:"5:30",l:"Cara membuat line: dua titik koordinat x1 y1 dan x2 y2"},
+         {t:"7:00",l:"Memory management: delete object lama agar chart tidak overload"},
+         {t:"8:30",l:"Demo lengkap dashboard dengan tabel dan zona box"},
+         {t:"10:30",l:"Recap: table untuk info, box untuk zona, line untuk level"}
+       ],
+       transcript:""
+      },
+      {id:"M03-V05",module_id:"M03",vn:5,title:"Strategy Functions dan Auto-Trade Ready",yt_url:"https://www.youtube.com/watch?v=IGf1ZjKaTKA",yt_id:"IGf1ZjKaTKA",dur:"~7 min",
+       summary:"Pada lesson ini, kamu akan belajar struktur dasar strategy di Pine Script: pengaturan initial capital, commission, slippage, dan order size, lalu strategy.entry, strategy.exit, serta alert yang siap dipakai untuk auto trade via webhook.",
+       desc:"Strategy berbeda dari indikator karena bisa menghasilkan report backtest. Video ini membahas cara membuat strategy yang realistis dengan pengaturan backtest yang tepat, logic entry dan exit yang terstruktur, serta alert function yang menjadi jembatan menuju auto trade.",
+       takeaways:[
+         "Strategy harus memakai pengaturan backtest yang realistis: capital, commission, dan slippage",
+         "strategy.entry dipakai untuk membuka posisi, strategy.exit untuk keluar dari posisi",
+         "Alert function dengan mode alert function calls only dipakai sebagai dasar webhook",
+         "Strategy sederhana yang rapi dan alert-ready lebih berguna daripada script rumit yang belum terstandarisasi",
+         "Strategy yang sudah alert-ready adalah jembatan langsung menuju alur auto trade"
+       ],
+       explanation:"Strategy berbeda dari indikator karena strategy bisa menghasilkan report backtest. Oleh karena itu, parameter dasarnya harus dibuat realistis. Initial capital, default order size, commission, slippage, dan process/fill behavior sangat memengaruhi hasil backtest.\n\nDalam contoh yang dibahas, logic dasar memakai crossover SMA 9 dan SMA 21 untuk entry long dan short. Contoh ini sengaja dibuat sederhana agar fokus pembelajaran ada pada struktur strategy, bukan pada kompleksitas logika entry.\n\nFungsi utama yang perlu dipahami adalah strategy.entry untuk membuka posisi dan strategy.exit untuk menutup posisi dengan target profit atau stop loss tertentu.\n\nBagian penting lain adalah alert. Dengan alert function yang benar dan mode alert function calls only di TradingView, strategy tidak hanya bisa dibacktest tetapi juga siap mengirim pesan ke webhook. Ini menjadi jembatan langsung menuju auto trade.\n\nPesan utama video ini adalah standar yang rapi lebih penting daripada script yang tampak canggih. Strategy yang sederhana, realistis, dan alert-ready jauh lebih berguna untuk tahap awal daripada script kompleks yang belum jelas validitasnya.",
+       timestamps:[
+         {t:"0:00",l:"Pembukaan: strategy functions dan auto-trade readiness"},
+         {t:"0:20",l:"Perbedaan strategy vs indicator: strategy menghasilkan report backtest"},
+         {t:"0:45",l:"Pengaturan realistis: initial capital, commission, slippage, order size"},
+         {t:"1:30",l:"Logic entry: crossover SMA 9 dan SMA 21 untuk long dan short"},
+         {t:"2:30",l:"strategy.entry untuk membuka posisi"},
+         {t:"3:00",l:"strategy.exit untuk menutup posisi dengan TP dan SL"},
+         {t:"3:45",l:"Alert function: cara membuat alert yang siap dikirim ke webhook"},
+         {t:"4:30",l:"Mode alert function calls only di TradingView"},
+         {t:"5:15",l:"Sinyal berhasil terpicu — siap untuk integrasi webhook"},
+         {t:"6:00",l:"Recap: strategy rapi + alert-ready = siap auto trade"}
+       ],
+       transcript:""
+      }
+    ]},
+    {id:"M04",title:"Automation and Live Deployment",overview:"Take your validated strategy from TradingView to live execution via webhooks, broker APIs, and monitoring.",learning_outcomes:["Set up TradingView alert webhooks for automated execution","Connect to broker APIs for live order placement","Build a monitoring dashboard","Implement circuit breakers and emergency stop procedures"],total_duration:"65 min",lessons:[]},
+  ]
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let prog = {};
+try { prog = JSON.parse(localStorage.getItem("bs_v2")||"{}"); } catch {}
+let expanded = {M01:true};
+let curView = "dash";
+let curId = null;
+let sbSearchQ = "";
+let dashSearchQ = "";
+let curTab = "overview";
+
+function saveProg(){ try{ localStorage.setItem("bs_v2",JSON.stringify(prog)); }catch{} }
+function allLessons(){ return CD.modules.flatMap(m=>m.lessons); }
+function getLessonById(id){ return allLessons().find(l=>l.id===id); }
+function getModById(id){ return CD.modules.find(m=>m.id===id); }
+function getModIdx(id){ return CD.modules.findIndex(m=>m.id===id); }
+function isDone(id){ return !!prog[id]; }
+
+function stats(){
+  const all = allLessons();
+  const tot = all.length;
+  const cnt = all.filter(l=>isDone(l.id)).length;
+  const pct = tot>0?Math.round(cnt/tot*100):0;
+  return {tot,cnt,pct};
+}
+function modStats(mod){
+  const t = mod.lessons.length;
+  const c = mod.lessons.filter(l=>isDone(l.id)).length;
+  return {total:t,completed:c,pct:t>0?Math.round(c/t*100):0};
+}
+function nextLesson(){
+  return allLessons().find(l=>!isDone(l.id))||null;
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function navigate(view, id){
+  curView = view; curId = id||null;
+  curTab = "overview";
+  ytPlayer = null;
+  closeSb();
+  window.scrollTo({top:0,behavior:"auto"});
+  renderSidebar();
+  renderContent();
+  if(view === 'lesson') setTimeout(initYTPlayer, 150);
+}
+function showDash(){ navigate("dash"); }
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function sbSearch(q){
+  sbSearchQ = q;
+  renderSidebar();
+}
+
+function renderSidebar(){
+  const nav = document.getElementById("sb-nav");
+  let html = "";
+  CD.modules.forEach((mod,idx)=>{
+    const filt = mod.lessons.filter(l=> sbSearchQ ? l.title.toLowerCase().includes(sbSearchQ.toLowerCase()) : true);
+    const noLessons = mod.lessons.length===0;
+    const isExp = expanded[mod.id];
+    const cmplt = mod.lessons.filter(l=>isDone(l.id)).length;
+    const modNum = `Module ${String(idx+1).padStart(2,"0")}`;
+    html += `<div>
+      <button class="mod-hdr" onclick="toggleMod('${mod.id}')">
+        <div class="mod-hdr-l">
+          <span style="color:var(--t3);display:flex;flex-shrink:0;margin-top:3px">${isExp&&filt.length>0?ico.cdown():ico.cright()}</span>
+          <div><div class="mod-num">${modNum}</div><div class="mod-ttl">${mod.title}</div></div>
+        </div>
+        ${noLessons?`<span class="cs-tag">Soon</span>`:`<span class="mod-pill">${cmplt}/${mod.lessons.length}</span>`}
+      </button>`;
+    if(isExp && filt.length>0){
+      html += `<div class="les-list">`;
+      filt.forEach(l=>{
+        const d = isDone(l.id);
+        const active = curView==="lesson" && curId===l.id;
+        html += `<button class="les-item ${active?"active":""} ${d?"done":""}" onclick="navigate('lesson','${l.id}')">
+          <span class="les-chk ${d?"done":""}">${d?ico.check(13):ico.circle(13)}</span>
+          <div>
+            <div class="les-id">${l.id}</div>
+            <div class="les-ttl">${l.title}</div>
+            <div class="les-dur">${l.dur}</div>
+          </div>
+        </button>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+  nav.innerHTML = html;
+}
+
+function toggleMod(id){
+  expanded[id] = !expanded[id];
+  if(!expanded[id]) return renderSidebar();
+  const mod = getModById(id);
+  if(mod && mod.lessons.length>0) navigate("module", id);
+  else renderSidebar();
+}
+
+// ── Sidebar toggle (mobile) ───────────────────────────────────────────────────
+let sbOpen = false;
+function toggleSb(){
+  sbOpen = !sbOpen;
+  document.getElementById("sbw").classList.toggle("open", sbOpen);
+  document.getElementById("ov").style.display = sbOpen ? "block" : "none";
+}
+function closeSb(){
+  sbOpen = false;
+  document.getElementById("sbw").classList.remove("open");
+  document.getElementById("ov").style.display = "none";
+}
+
+// ── Sidebar collapse (desktop) ────────────────────────────────────────────────
+let sbCollapsed = false;
+function toggleSbDesktop(){
+  sbCollapsed = !sbCollapsed;
+  const sbw = document.getElementById("sbw");
+  const sb  = document.getElementById("sb");
+  const sw  = getComputedStyle(document.documentElement).getPropertyValue("--sw").trim();
+  if(sbCollapsed){
+    sbw.style.width = "0";
+    sb.style.transform = "translateX(-100%)";
+  } else {
+    sbw.style.width = sw;
+    sb.style.transform = "translateX(0)";
+  }
+}
+
+// ── AI Modal ──────────────────────────────────────────────────────────────────
+function openAI(){
+  const feats = document.getElementById("ai-feats");
+  if(!feats.innerHTML){
+    const items = ["Covers all modules and lesson content","Points to exact video and timestamp","Explains Pine Script, backtesting, and strategy concepts","Available 24/7"];
+    feats.innerHTML = items.map(f=>`<div class="aim-fi"><div class="aim-dot"></div><span>${f}</span></div>`).join("");
+  }
+  document.getElementById("ai-backdrop").classList.add("open");
+}
+function closeAI(e){
+  if(!e || e.target===document.getElementById("ai-backdrop") || e.currentTarget===document.querySelector(".aim-cls"))
+    document.getElementById("ai-backdrop").classList.remove("open");
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderContent(){
+  const el = document.getElementById("content");
+  if(curView==="dash") el.innerHTML = renderDash();
+  else if(curView==="module") el.innerHTML = renderModPage();
+  else if(curView==="lesson") el.innerHTML = renderLessonPage();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function dsSearch(q){
+  dashSearchQ = q;
+  renderContent();
+}
+function clearDsSearch(){
+  dashSearchQ = "";
+  renderContent();
+}
+
+function renderDash(){
+  const s = stats();
+  const nx = nextLesson();
+  const all = allLessons();
+  const filt = dashSearchQ ? all.filter(l=>l.title.toLowerCase().includes(dashSearchQ.toLowerCase())||(l.summary||"").toLowerCase().includes(dashSearchQ.toLowerCase())) : [];
+  return `
+<div class="page" style="max-width:960px">
+  <div class="hero-ey"><span class="ey-badge">byScript Academy</span><span class="ey-lv">${CD.level}</span></div>
+  <h1 class="hero-title">${CD.title}</h1>
+  <p class="hero-desc">${CD.subtitle}</p>
+  <div class="hero-acts">
+    ${nx?`<button class="btn-go" onclick="navigate('lesson','${nx.id}')">${ico.play(14)} ${s.cnt===0?"Start Learning":"Continue Learning"}</button>`:
+        `<div class="btn-go" style="background:var(--bg3);color:var(--ac);border:1px solid var(--acb)">${ico.trophy(14)} Course Complete!</div>`}
+    ${nx&&s.cnt>0?`<span class="hero-res">Resume: ${nx.title}</span>`:""}
+  </div>
+
+  <div class="sbar">
+    <div class="stat"><span class="stat-ic">${ico.bar(16)}</span><div><div class="stat-v">${s.pct}%</div><div class="stat-l">Complete</div></div></div>
+    <div class="sdivd"></div>
+    <div class="stat"><span class="stat-ic">${ico.book(16)}</span><div><div class="stat-v">${s.cnt}/${s.tot}</div><div class="stat-l">Lessons Done</div></div></div>
+    <div class="sdivd"></div>
+    <div class="stat"><span class="stat-ic">${ico.clock(16)}</span><div><div class="stat-v">12+ hrs</div><div class="stat-l">Total Content</div></div></div>
+    <div class="sdivd"></div>
+    <div class="stat"><span class="stat-ic">${ico.trophy(16)}</span><div><div class="stat-v">4</div><div class="stat-l">Modules</div></div></div>
+    <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:${s.pct}%"></div></div></div>
+  </div>
+
+  <div class="dsearch">
+    <span class="ds-ic">${ico.search(15)}</span>
+    <input type="text" placeholder="Search all lessons..." value="${esc(dashSearchQ)}" oninput="dsSearch(this.value)" id="dsearch-inp"/>
+    ${dashSearchQ?`<button class="ds-clr" onclick="clearDsSearch()">${ico.x(13)}</button>`:""}
+  </div>
+
+  ${dashSearchQ ? renderSearchResults(filt) : renderModCards() + renderOutcomes()}
+</div>`;
+}
+
+function renderSearchResults(filt){
+  if(!filt.length) return `<div class="empty">${ico.search(28)}<p>No lessons match "${esc(dashSearchQ)}"</p></div>`;
+  return `
+    <div class="sec-hdr"><h2 class="sec-title">Search Results <span style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:14px;color:var(--t3)">(${filt.length})</span></h2></div>
+    <div class="sr-list">
+      ${filt.map(l=>`
+        <button class="sr-item" onclick="navigate('lesson','${l.id}')">
+          <span class="sr-id">${l.id}</span>
+          <div style="flex:1;min-width:0;text-align:left">
+            <div class="sr-t">${l.title}</div>
+            <div class="sr-m">${getModById(l.module_id).title} · ${l.dur}</div>
+          </div>
+          ${ico.arrow(14)}
+        </button>`).join("")}
+    </div>`;
+}
+
+function renderModCards(){
+  return `
+    <section style="margin-bottom:32px">
+      <div class="sec-hdr"><h2 class="sec-title">Course Modules</h2><span class="sec-sub">4 modules</span></div>
+      <div class="mcg">
+        ${CD.modules.map((mod,idx)=>{
+          const s = modStats(mod);
+          const lk = mod.lessons.length===0;
+          return `<div class="mc ${lk?"mc-lk":""}" ${lk?"":`onclick="navigate('module','${mod.id}')"`} tabindex="${lk?-1:0}">
+            <div class="mc-hd">
+              <span class="mc-bid">${mod.id}</span>
+              ${lk?`<span class="mc-cs">Coming Soon</span>`:
+                s.completed===s.total&&s.total>0?`<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--ac);background:var(--acd);border-radius:100px;padding:2px 8px">${ico.trophy(11)} Complete</span>`:
+                ""}
+            </div>
+            <div class="mc-ttl">${mod.title}</div>
+            <div class="mc-ov">${mod.overview.slice(0,115)}...</div>
+            <div class="mc-meta">
+              <span class="mc-mt">${ico.clock(11)} ${mod.total_duration}</span>
+              ${!lk?`<span class="mc-mt">${ico.book(11)} ${mod.lessons.length} lessons</span>`:""}
+            </div>
+            ${!lk?`
+              <div class="mc-pb"><div class="mc-pf" style="width:${s.pct}%"></div></div>
+              <div class="mc-pl">${s.completed}/${s.total} lessons · ${s.pct}%</div>
+              <div class="mc-cta"><span>${s.completed===0?"Start Module":"Continue"}</span>${ico.arrow(13)}</div>
+            `:""}
+          </div>`;
+        }).join("")}
+      </div>
+    </section>`;
+}
+
+function renderOutcomes(){
+  const outs = CD.modules.flatMap(m=>m.learning_outcomes).slice(0,8);
+  return `
+    <section>
+      <div class="sec-hdr"><h2 class="sec-title">What You'll Learn</h2></div>
+      <div class="outg">${outs.map(o=>`<div class="out-item"><span class="out-ck">✓</span><span>${o}</span></div>`).join("")}</div>
+    </section>`;
+}
+
+// ── MODULE PAGE ───────────────────────────────────────────────────────────────
+function renderModPage(){
+  const mod = getModById(curId);
+  if(!mod) return "";
+  const s = modStats(mod);
+  return `
+<div class="page">
+  <div class="bc">
+    <button class="bcl" onclick="navigate('dash')">Course Home</button>
+    <span class="bc-sep">${ico.cright(13)}</span>
+    <span class="bcc">${mod.id}</span>
+  </div>
+  <div class="mid-pill">${mod.id}</div>
+  <h1 class="pg-title">${mod.title}</h1>
+  <p class="pg-ov">${mod.overview}</p>
+  <div class="pg-meta">
+    <span class="meta-chip">${ico.clock(12)} ${mod.total_duration}</span>
+    <span class="meta-chip">${ico.book(12)} ${mod.lessons.length} lessons</span>
+    <span class="meta-chip">${ico.check(12)} ${s.completed}/${s.total} done</span>
+  </div>
+  <div class="pb-wrap" style="margin-bottom:0">
+    <div class="pb-bar"><div class="pb-fill" style="width:${s.pct}%"></div></div>
+    <span class="pb-pct">${s.pct}%</span>
+  </div>
+  <div class="out-box">
+    <div class="out-bh">${ico.target()} Learning Outcomes</div>
+    <div class="outl">
+      ${mod.learning_outcomes.map((o,i)=>`<div class="out-row"><div class="out-num">${String(i+1).padStart(2,"0")}</div><p>${o}</p></div>`).join("")}
+    </div>
+  </div>
+  <h2 class="les-sec-title">Lessons</h2>
+  <div class="les-cards">
+    ${mod.lessons.map((l,idx)=>{
+      const d = isDone(l.id);
+      return `<button class="les-card ${d?"done":""}" onclick="navigate('lesson','${l.id}')">
+        <div class="les-num">${String(idx+1).padStart(2,"0")}</div>
+        ${d?`<div class="done-ic">${ico.check(22)}</div>`:`<div class="play-btn">${ico.play(14)}</div>`}
+        <div class="lc-cnt">
+          <div class="lc-id">${l.id}</div>
+          <div class="lc-ttl">${l.title}</div>
+          <div class="lc-sum">${l.summary}</div>
+        </div>
+        <div class="lc-r"><span class="lc-dur">${l.dur}</span>${ico.cright(15)}</div>
+      </button>`;
+    }).join("")}
+  </div>
+</div>`;
+}
+
+// ── LESSON PAGE ───────────────────────────────────────────────────────────────
+function renderLessonPage(){
+  const l = getLessonById(curId);
+  if(!l) return "";
+  const all = allLessons();
+  const idx = all.findIndex(x=>x.id===l.id);
+  const prev = idx>0?all[idx-1]:null;
+  const next = idx<all.length-1?all[idx+1]:null;
+  const d = isDone(l.id);
+  const TABS = [
+    {id:"overview",label:"Overview",icon:ico.file()},
+    {id:"explanation",label:"Deep Dive",icon:ico.book()},
+    {id:"timestamps",label:"Timestamps",icon:ico.clock()},
+  ];
+  return `
+<div class="page">
+  <div class="bc">
+    <button class="bcl" onclick="navigate('dash')">Course Home</button>
+    <span class="bc-sep">${ico.cright(13)}</span>
+    <button class="bcl" onclick="navigate('module','${l.module_id}')">${l.module_id}</button>
+    <span class="bc-sep">${ico.cright(13)}</span>
+    <span class="bcc">${l.id}</span>
+  </div>
+  <div class="les-badges">
+    <span class="badge-mod">${l.module_id}</span>
+    <span class="badge-vid">Video ${l.vn}</span>
+    ${d?`<span class="badge-done">${ico.check(11)} Completed</span>`:""}
+  </div>
+  <h1 class="les-title">${l.title}</h1>
+  <div class="les-meta">
+    <span class="lm-chip">${ico.clock(12)} ${l.dur}</span>
+
+  </div>
+
+  <div class="vid-wrap">
+    <iframe id="yt-player" src="https://www.youtube.com/embed/${l.yt_id}?rel=0&modestbranding=1&enablejsapi=1" title="${l.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+
+  <div class="comp-row">
+    <button class="comp-btn ${d?"done":""}" onclick="toggleDone('${l.id}')">
+      ${ico.check(15)} ${d?"Mark as Incomplete":"Mark as Complete"}
+    </button>
+    <div class="nav-btns">
+      ${prev?`<button class="nav-b" onclick="navigate('lesson','${prev.id}')">${ico.cleft(13)} Previous</button>`:""}
+      ${next?`<button class="nav-b nxt" onclick="navigate('lesson','${next.id}')">Next ${ico.cright(13)}</button>`:""}
+    </div>
+  </div>
+
+  <div class="tabs">
+    ${TABS.map(t=>`<button class="tab ${curTab===t.id?"active":""}" onclick="setTab('${t.id}')">${t.icon} ${t.label}</button>`).join("")}
+  </div>
+
+  <div id="tab-body">${renderTabBody(l)}</div>
+
+  <div class="bnav">
+    <div>
+      ${prev?`<button class="bnav-btn" onclick="navigate('lesson','${prev.id}')">${ico.cleft(15)}<div><div class="bnav-lbl">Previous Lesson</div><div class="bnav-ttl">${prev.title}</div></div></button>`:""}
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      ${next?`<button class="bnav-btn nxt" onclick="navigate('lesson','${next.id}')"><div style="text-align:right"><div class="bnav-lbl">Next Lesson</div><div class="bnav-ttl">${next.title}</div></div>${ico.cright(15)}</button>`:
+             `<button class="bnav-btn nxt cmp" onclick="navigate('module','${l.module_id}')"><div style="text-align:right"><div class="bnav-lbl">Module Complete</div><div class="bnav-ttl">Back to Overview</div></div>${ico.check(15)}</button>`}
+    </div>
+  </div>
+</div>`;
+}
+
+function setTab(t){
+  curTab = t;
+  const l = getLessonById(curId);
+  const tb = document.getElementById("tab-body");
+  if(tb && l) tb.innerHTML = renderTabBody(l);
+  document.querySelectorAll(".tab").forEach(el=>{
+    el.classList.toggle("active", el.getAttribute("onclick")===`setTab('${t}')`);
+  });
+  // Re-attach YT player reference if needed (iframe wasn't re-rendered, just tab content)
+  if(!ytPlayer && ytReady) setTimeout(initYTPlayer, 100);
+}
+
+function renderTabBody(l){
+  if(curTab==="overview") return `
+    <div class="cblock"><div class="cblock-t">${ico.bulb()} Lesson Summary</div><p class="les-sum">${l.summary}</p></div>
+    <div class="cblock"><div class="cblock-t">${ico.file()} About This Lesson</div><p class="les-dsc">${l.desc}</p></div>
+    <div class="cblock"><div class="cblock-t">${ico.list()} Key Takeaways</div>
+      <ul class="tkl">${l.takeaways.map((t,i)=>`<li class="tki"><span class="tkn">${String(i+1).padStart(2,"0")}</span><span>${t}</span></li>`).join("")}</ul>
+    </div>`;
+  if(curTab==="explanation") return `
+    <div class="cblock"><div class="cblock-t">${ico.book()} Comprehensive Explanation</div>
+      <div class="exp-text">${l.explanation.split("\n\n").map(p=>`<p class="exp-p">${p}</p>`).join("")}</div>
+    </div>`;
+  if(curTab==="timestamps") return `
+    <div class="cblock"><div class="cblock-t">${ico.clock()} Video Timestamps</div>
+      <div class="ts-list">${l.timestamps.map(ts=>`
+        <button class="ts-item" onclick="seekVideo('${ts.t}')">
+          <span class="ts-t">${ts.t}</span><span class="ts-l">${ts.l}</span>
+          <span style="color:var(--ac);display:flex;flex-shrink:0">${ico.play(11)}</span>
+        </button>`).join("")}
+      </div>
+    </div>`;
+  return "";
+}
+
+function toggleDone(id){
+  if(prog[id]) delete prog[id]; else prog[id]=true;
+  saveProg();
+  renderSidebar();
+  renderContent();
+}
+
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ── YouTube IFrame API ────────────────────────────────────────────────────────
+let ytPlayer = null;
+let ytReady = false;
+
+// Load the IFrame API script once
+(function(){
+  const tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+})();
+
+// Called automatically by YouTube API when ready
+function onYouTubeIframeAPIReady(){
+  ytReady = true;
+  if(curView === 'lesson') initYTPlayer();
+}
+
+function initYTPlayer(){
+  const iframe = document.getElementById('yt-player');
+  if(!iframe || !ytReady) return;
+  ytPlayer = new YT.Player('yt-player', {
+    events: { onReady: ()=>{} }
+  });
+}
+
+// Convert "m:ss" or "mm:ss" string to total seconds
+function timeToSeconds(t){
+  const parts = t.split(':').map(Number);
+  return parts.length === 2 ? parts[0]*60 + parts[1] : parts[0];
+}
+
+function seekVideo(timeStr){
+  const secs = timeToSeconds(timeStr);
+  if(ytPlayer && typeof ytPlayer.seekTo === 'function'){
+    ytPlayer.seekTo(secs, true);
+    ytPlayer.playVideo();
+    const vid = document.querySelector('.vid-wrap');
+    if(vid) vid.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderSidebar();
+renderContent();
+</script>
+</body>
+</html>
