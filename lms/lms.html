@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#0a0c0f">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>byScript Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;--bg1:#0f1215;--bg2:#141820;--bg3:#1a1f28;--bg4:#202633;
+  --b:rgba(255,255,255,0.07);--b2:rgba(255,255,255,0.12);
+  --t1:#f0f2f5;--t2:#8b95a8;--t3:#556070;
+  --ac:#22c55e;--acd:rgba(34,197,94,0.12);--acb:rgba(34,197,94,0.28);
+  --sw:272px;
+}
+html,body{background:var(--bg);color:var(--t1);min-height:100vh;font-family:"DM Sans",sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;font-size:inherit}
+input{font-family:inherit;font-size:inherit}
+svg{display:block;flex-shrink:0}
+/* LAYOUT */
+#app{display:flex;min-height:100vh}
+#sbw{width:var(--sw);flex-shrink:0}
+#main{flex:1;min-width:0}
+/* SIDEBAR */
+#sb{width:var(--sw);height:100vh;background:var(--bg1);border-right:1px solid var(--b);display:flex;flex-direction:column;overflow:hidden;position:fixed;top:0;left:0;z-index:50}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:18px 16px 14px;border-bottom:1px solid var(--b);cursor:pointer;flex-shrink:0}
+.sb-logo{width:34px;height:34px;background:var(--ac);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:"Syne",sans-serif;font-weight:800;font-size:10px;color:#000;flex-shrink:0;letter-spacing:-.5px}
+.sb-name{font-family:"Syne",sans-serif;font-weight:800;font-size:14px;color:var(--t1)}
+.sb-sub{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.sb-search{margin:10px 10px 6px;position:relative;flex-shrink:0}
+.sb-search input{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:7px;padding:7px 10px 7px 30px;font-size:12px;color:var(--t1);outline:none}
+.sb-search input:focus{border-color:var(--acb)}
+.sb-search input::placeholder{color:var(--t3)}
+.sb-si{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.sb-lbl{padding:6px 16px 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);flex-shrink:0}
+.sb-nav{flex:1;overflow-y:auto;padding:2px 6px 8px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--bg4)}
+.mod-hdr{width:100%;display:flex;align-items:center;justify-content:space-between;padding:7px 8px 7px 8px;border-radius:7px;gap:6px;background:none;transition:background .15s}
+.mod-hdr:hover{background:var(--bg3)}
+.mod-hdr-l{display:flex;align-items:flex-start;gap:6px;flex:1;min-width:0}
+.mod-id{font-size:9px;font-weight:700;color:var(--ac);text-transform:uppercase;letter-spacing:.07em;line-height:1.2}
+.mod-ttl{font-size:11.5px;font-weight:500;color:var(--t2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+.mod-pill{font-size:9.5px;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.cs-tag{font-size:9.5px;color:var(--t3);border:1px solid var(--b);border-radius:100px;padding:1px 7px;flex-shrink:0}
+.les-list{padding:1px 0 3px 16px;display:flex;flex-direction:column;gap:1px}
+.les-item{width:100%;display:flex;align-items:flex-start;gap:7px;padding:6px 7px;border-radius:6px;border:1px solid transparent;background:none;text-align:left;cursor:pointer;transition:background .12s}
+.les-item:hover{background:var(--bg3)}
+.les-item.active{background:var(--acd);border-color:var(--acb)}
+.les-item.done .les-ttl{color:var(--t3)}
+.les-item.active .les-ttl{color:var(--t1)}
+.les-chk{flex-shrink:0;padding-top:1px;color:var(--t3)}
+.les-chk.done{color:var(--ac)}
+.les-id{font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+.les-ttl{font-size:11.5px;font-weight:500;color:var(--t2);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.les-dur{font-size:10px;color:var(--t3);margin-top:1px}
+.sb-foot{display:flex;align-items:center;gap:6px;padding:10px 16px;border-top:1px solid var(--b);font-size:11px;color:var(--t3);flex-shrink:0}
+/* MOB */
+#mob-hdr{display:none;align-items:center;gap:10px;padding:12px 16px;background:var(--bg1);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:40}
+.mob-btn{color:var(--t2);display:flex;padding:4px}
+.mob-btn:hover{color:var(--t1)}
+.mob-brand{font-family:"Syne",sans-serif;font-weight:800;font-size:15px;color:var(--t1)}
+.mob-brand span{color:var(--t3)}
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:45}
+/* PAGES */
+.page{max-width:920px;margin:0 auto;padding:36px 28px 80px}
+/* DASH */
+.hero-ey{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.ey-badge{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:100px;padding:2px 10px}
+.ey-lv{font-size:12px;color:var(--t3)}
+.hero-title{font-family:"Syne",sans-serif;font-size:clamp(24px,3.5vw,34px);font-weight:800;color:var(--t1);line-height:1.15;letter-spacing:-.02em;margin-bottom:10px}
+.hero-desc{font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.65;margin-bottom:22px}
+.hero-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.btn-go{display:inline-flex;align-items:center;gap:7px;background:var(--ac);color:#000;font-weight:600;font-size:13.5px;padding:9px 18px;border-radius:8px;cursor:pointer;transition:opacity .15s,transform .15s;border:none;font-family:"DM Sans",sans-serif}
+.btn-go:hover{opacity:.85;transform:translateY(-1px)}
+.hero-res{font-size:12.5px;color:var(--t3);max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* STATS BAR */
+.sbar{display:flex;align-items:center;flex-wrap:wrap;gap:14px;background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:14px 18px;margin-bottom:26px}
+.stat{display:flex;align-items:center;gap:9px}
+.stat-ic{color:var(--ac);display:flex}
+.stat-v{font-family:"Syne",sans-serif;font-size:17px;font-weight:700;color:var(--t1);line-height:1}
+.stat-l{font-size:11px;color:var(--t3);margin-top:2px}
+.sdivd{width:1px;height:32px;background:var(--b)}
+.prog-wrap{flex:1;min-width:100px}
+.prog-bar{height:5px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.prog-fill{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+/* SEARCH */
+.dsearch{position:relative;max-width:500px;margin-bottom:28px}
+.dsearch input{width:100%;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:11px 36px 11px 40px;font-size:13.5px;color:var(--t1);outline:none;transition:border-color .2s}
+.dsearch input:focus{border-color:var(--acb)}
+.dsearch input::placeholder{color:var(--t3)}
+.ds-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none;display:flex}
+.ds-clr{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--t3);display:flex;padding:2px;cursor:pointer}
+/* SECTION */
+.sec-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}
+.sec-title{font-family:"Syne",sans-serif;font-size:17px;font-weight:800;color:var(--t1)}
+.sec-sub{font-size:11.5px;color:var(--t3)}
+/* SEARCH RESULTS */
+.sr-list{display:flex;flex-direction:column;gap:4px;margin-bottom:36px}
+.sr-item{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:12px 14px;cursor:pointer;transition:background .15s,border-color .15s;text-align:left;width:100%}
+.sr-item:hover{background:var(--bg3);border-color:var(--b2)}
+.sr-id{font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border-radius:4px;padding:2px 7px;flex-shrink:0;letter-spacing:.05em}
+.sr-t{font-size:13.5px;font-weight:500;color:var(--t1)}
+.sr-m{font-size:11.5px;color:var(--t3);margin-top:1px}
+.empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px;color:var(--t3);font-size:13.5px}
+/* MODULE CARDS */
+.mcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:36px}
+.mc{background:var(--bg2);border:1px solid var(--b);border-radius:13px;padding:18px;display:flex;flex-direction:column;gap:9px;cursor:pointer;transition:background .18s,border-color .18s,transform .15s}
+.mc:hover:not(.mc-lk){background:var(--bg3);border-color:var(--b2);transform:translateY(-2px)}
+.mc-lk{cursor:default;opacity:.55}
+.mc-hd{display:flex;align-items:center;justify-content:space-between}
+.mc-bid{font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:4px;padding:2px 7px;letter-spacing:.05em}
+.mc-cs{font-size:10px;color:var(--t3);border:1px solid var(--b);border-radius:100px;padding:2px 8px}
+.mc-ttl{font-family:"Syne",sans-serif;font-size:14px;font-weight:800;color:var(--t1);line-height:1.3;letter-spacing:-.01em}
+.mc-ov{font-size:12px;color:var(--t3);line-height:1.5}
+.mc-meta{display:flex;gap:10px;flex-wrap:wrap}
+.mc-mt{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t3)}
+.mc-pb{height:4px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.mc-pf{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+.mc-pl{font-size:10.5px;color:var(--t3)}
+.mc-cta{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ac);margin-top:2px}
+/* OUTCOMES */
+.outg{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin-bottom:36px}
+.out-item{display:flex;align-items:flex-start;gap:9px;background:var(--bg2);border:1px solid var(--b);border-radius:9px;padding:11px 13px;font-size:12.5px;color:var(--t2);line-height:1.5}
+.out-ck{color:var(--ac);font-weight:700;flex-shrink:0}
+/* MODULE PAGE */
+.mid-pill{display:inline-block;font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:4px;padding:2px 9px;letter-spacing:.07em;margin-bottom:10px}
+.pg-title{font-family:"Syne",sans-serif;font-size:clamp(20px,3vw,28px);font-weight:800;color:var(--t1);line-height:1.2;letter-spacing:-.02em;margin-bottom:10px}
+.pg-ov{font-size:14px;color:var(--t2);line-height:1.65;max-width:620px;margin-bottom:16px}
+.pg-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.meta-chip{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--t3);background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:4px 9px}
+.pb-wrap{display:flex;align-items:center;gap:9px;max-width:460px;margin-bottom:0}
+.pb-bar{flex:1;height:5px;background:var(--bg4);border-radius:100px;overflow:hidden}
+.pb-fill{height:100%;background:var(--ac);border-radius:100px;transition:width .5s}
+.pb-pct{font-size:11.5px;font-weight:600;color:var(--ac);min-width:34px;text-align:right}
+.out-box{background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:18px;margin:24px 0}
+.out-bh{display:flex;align-items:center;gap:7px;margin-bottom:14px;font-family:"Syne",sans-serif;font-size:14px;font-weight:800;color:var(--t1)}
+.out-bh svg{color:var(--ac)}
+.outl{display:flex;flex-direction:column;gap:9px}
+.out-row{display:flex;align-items:flex-start;gap:10px}
+.out-num{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;color:var(--ac);flex-shrink:0;min-width:22px;margin-top:1px}
+.out-row p{font-size:13px;color:var(--t2);line-height:1.55}
+.les-sec-title{font-family:"Syne",sans-serif;font-size:17px;font-weight:800;color:var(--t1);margin:24px 0 14px}
+.les-cards{display:flex;flex-direction:column;gap:8px}
+.les-card{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:14px 16px;cursor:pointer;transition:background .18s,border-color .18s,transform .12s;width:100%;text-align:left}
+.les-card:hover{background:var(--bg3);border-color:var(--b2);transform:translateY(-1px)}
+.les-card.done{opacity:.7}
+.les-num{font-family:"Syne",sans-serif;font-size:22px;font-weight:800;color:var(--bg4);min-width:32px;flex-shrink:0}
+.play-btn{width:34px;height:34px;background:var(--ac);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;flex-shrink:0;transition:transform .15s}
+.les-card:hover .play-btn{transform:scale(1.1)}
+.done-ic{color:var(--ac);display:flex;flex-shrink:0}
+.lc-cnt{flex:1;min-width:0}
+.lc-id{font-size:9.5px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.lc-ttl{font-size:14.5px;font-weight:600;color:var(--t1);margin-bottom:3px;line-height:1.3}
+.lc-sum{font-size:12px;color:var(--t3);line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lc-r{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.lc-dur{font-size:11.5px;color:var(--t3);white-space:nowrap}
+/* BREADCRUMB */
+.bc{display:flex;align-items:center;gap:5px;margin-bottom:20px;flex-wrap:wrap}
+.bcl{font-size:12px;color:var(--t3);cursor:pointer;background:none;border:none;padding:0;transition:color .15s}
+.bcl:hover{color:var(--t2)}
+.bc-sep{color:var(--t3);display:flex;align-items:center}
+.bcc{font-size:12px;color:var(--t2);font-weight:500}
+/* LESSON PAGE */
+.les-badges{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.badge-mod{font-size:9.5px;font-weight:700;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:4px;padding:2px 8px;letter-spacing:.05em}
+.badge-vid{font-size:9.5px;font-weight:700;color:var(--t3);background:var(--bg3);border:1px solid var(--b);border-radius:4px;padding:2px 8px}
+.badge-done{display:flex;align-items:center;gap:3px;font-size:9.5px;font-weight:600;color:var(--ac);background:var(--acd);border:1px solid var(--acb);border-radius:100px;padding:2px 8px}
+.les-title{font-family:"Syne",sans-serif;font-size:clamp(18px,2.8vw,24px);font-weight:800;color:var(--t1);line-height:1.2;letter-spacing:-.02em;margin-bottom:10px}
+.les-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.lm-chip{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--t3);background:var(--bg2);border:1px solid var(--b);border-radius:6px;padding:4px 9px}
+.lm-link:hover{color:var(--t2);border-color:var(--b2)}
+/* VIDEO */
+.vid-wrap{position:relative;width:100%;padding-bottom:56.25%;background:var(--bg2);border-radius:12px;overflow:hidden;border:1px solid var(--b);margin-bottom:14px}
+.vid-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+/* COMPLETE ROW */
+.comp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.comp-btn{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:8px 15px;border-radius:8px;border:1px solid var(--b);background:var(--bg2);color:var(--t2);transition:all .2s;cursor:pointer}
+.comp-btn:hover{border-color:var(--acb);color:var(--ac);background:var(--acd)}
+.comp-btn.done{background:var(--acd);border-color:var(--acb);color:var(--ac)}
+.nav-btns{display:flex;gap:7px}
+.nav-b{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--t3);padding:7px 11px;border-radius:7px;border:1px solid var(--b);background:var(--bg2);cursor:pointer;transition:all .15s}
+.nav-b:hover{color:var(--t1);border-color:var(--b2)}
+.nav-b.nxt{color:var(--ac);border-color:var(--acb);background:var(--acd)}
+/* TABS */
+.tabs{display:flex;gap:3px;border-bottom:1px solid var(--b);margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:500;color:var(--t3);padding:9px 13px;border-radius:7px 7px 0 0;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .15s}
+.tab:hover{color:var(--t2)}
+.tab.active{color:var(--ac);border-bottom:2px solid var(--ac)}
+/* CONTENT BLOCKS */
+.cblock{background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.cblock-t{display:flex;align-items:center;gap:7px;font-family:"Syne",sans-serif;font-size:13px;font-weight:800;color:var(--ac);margin-bottom:12px}
+.les-sum{font-size:14px;color:var(--t2);line-height:1.7;font-style:italic}
+.les-dsc{font-size:13.5px;color:var(--t2);line-height:1.7}
+.tkl{list-style:none;display:flex;flex-direction:column;gap:9px}
+.tki{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--t2);line-height:1.6}
+.tkn{font-family:"Syne",sans-serif;font-size:11.5px;font-weight:700;color:var(--ac);flex-shrink:0;min-width:20px;margin-top:1px}
+.exp-text{display:flex;flex-direction:column;gap:12px}
+.exp-p{font-size:13.5px;color:var(--t2);line-height:1.75}
+.ts-list{display:flex;flex-direction:column;gap:3px}
+.ts-item{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:7px;border:1px solid transparent;cursor:pointer;transition:background .12s;text-decoration:none;color:inherit}
+.ts-item:hover{background:var(--bg3);border-color:var(--b)}
+.ts-t{font-family:"Syne",sans-serif;font-size:12.5px;font-weight:700;color:var(--ac);min-width:38px;flex-shrink:0}
+.ts-l{font-size:13px;color:var(--t2);flex:1}
+.tr-text{display:flex;flex-direction:column;gap:10px}
+.tr-p{font-size:13.5px;color:var(--t2);line-height:1.8}
+.tr-fade{margin-top:6px;text-align:center;font-size:12px;color:var(--t3);font-style:italic;padding:10px}
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-between;gap:10px;margin-top:36px;padding-top:20px;border-top:1px solid var(--b)}
+.bnav-btn{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--b);border-radius:12px;padding:12px 16px;cursor:pointer;max-width:260px;transition:all .18s;text-align:left}
+.bnav-btn:hover{border-color:var(--b2);background:var(--bg3)}
+.bnav-btn.nxt{flex-direction:row-reverse;text-align:right}
+.bnav-btn.cmp{border-color:var(--acb);background:var(--acd)}
+.bnav-lbl{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:2px}
+.bnav-ttl{font-size:12.5px;font-weight:600;color:var(--t2);line-height:1.35}
+/* AI FAB */
+#ai-fab{position:fixed;bottom:22px;right:22px;display:flex;align-items:center;gap:7px;background:var(--ac);color:#000;font-family:"DM Sans",sans-serif;font-weight:700;font-size:13px;padding:11px 17px;border-radius:100px;box-shadow:0 4px 20px rgba(34,197,94,.35);z-index:60;cursor:pointer;border:none;transition:transform .2s,box-shadow .2s}
+#ai-fab:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 6px 28px rgba(34,197,94,.5)}
+/* AI MODAL */
+#ai-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:70;align-items:flex-end;justify-content:flex-end;padding:70px 20px 20px}
+#ai-backdrop.open{display:flex}
+#ai-modal{width:100%;max-width:370px;background:var(--bg2);border:1px solid var(--b2);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:mup .22s ease}
+@keyframes mup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.aim-h{display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--b)}
+.aim-ic{width:38px;height:38px;background:var(--acd);border:1px solid var(--acb);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--ac);flex-shrink:0}
+.aim-name{font-family:"Syne",sans-serif;font-size:14px;font-weight:800;color:var(--t1)}
+.aim-sub{font-size:10.5px;color:var(--t3)}
+.aim-cls{margin-left:auto;color:var(--t3);padding:4px;border-radius:5px;cursor:pointer;background:none;border:none;display:flex;transition:all .15s}
+.aim-cls:hover{color:var(--t1);background:var(--bg3)}
+.aim-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:13px}
+.aim-desc{display:flex;gap:9px;align-items:flex-start}
+.aim-desc p{font-size:13px;color:var(--t2);line-height:1.6}
+.aim-feats{display:flex;flex-direction:column;gap:7px}
+.aim-fi{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t3)}
+.aim-dot{width:4px;height:4px;background:var(--ac);border-radius:50%;flex-shrink:0}
+.aim-cta{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--ac);color:#000;font-weight:700;font-size:13.5px;padding:11px;border-radius:9px;cursor:pointer;transition:opacity .15s;text-decoration:none}
+.aim-cta:hover{opacity:.85}
+.aim-note{font-size:11px;color:var(--t3);text-align:center;line-height:1.55}
+/* RESPONSIVE */
+@media(max-width:760px){
+  #sbw{position:fixed;left:-100%;top:0;z-index:50;transition:left .28s ease;width:var(--sw)}
+  #sbw.open{left:0}
+  #ov{display:block}
+  #mob-hdr{display:flex}
+  .page{padding:18px 14px 90px}
+  .mcg,.outg{grid-template-columns:1fr}
+  .sdivd{display:none}
+  .bnav{flex-direction:column}
+  .bnav-btn{max-width:100%}
+  .comp-row{flex-direction:column;align-items:flex-start}
+  .tab{padding:8px 10px;font-size:12px}
+  #ai-fab{bottom:14px;right:14px;padding:10px 13px}
+  #ai-backdrop{padding:0;align-items:flex-end}
+  #ai-modal{max-width:100%;border-radius:16px 16px 0 0}
+  .les-num{display:none}
+  .hero-res{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="sbw">
+    <aside id="sb">
+      <div class="sb-brand" onclick="showDash()">
+        <div class="sb-logo">&lt;/&gt;</div>
+        <div><div class="sb-name">byScript</div><div class="sb-sub">Academy</div></div>
+      </div>
+      <div class="sb-search">
+        <span class="sb-si">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input type="text" id="sb-search-inp" placeholder="Search lessons..." oninput="sbSearch(this.value)"/>
+      </div>
+      <div class="sb-lbl">Course Modules</div>
+      <nav class="sb-nav" id="sb-nav"></nav>
+      <div class="sb-foot">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>4 modules · 12+ hours</span>
+      </div>
+    </aside>
+  </div>
+
+  <div id="main">
+    <header id="mob-hdr">
+      <button class="mob-btn" onclick="toggleSb()" id="mob-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+      <div class="mob-brand">byScript <span>Academy</span></div>
+    </header>
+    <div id="content"></div>
+  </div>
+</div>
+
+<div id="ov" onclick="closeSb()"></div>
+
+<button id="ai-fab" onclick="openAI()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+  AI Tutor
+</button>
+
+<div id="ai-backdrop" onclick="closeAI(event)">
+  <div id="ai-modal">
+    <div class="aim-h">
+      <div class="aim-ic">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+      </div>
+      <div><div class="aim-name">byScript AI Tutor</div><div class="aim-sub">Powered by Custom GPT</div></div>
+      <button class="aim-cls" onclick="closeAI()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="aim-body">
+      <div class="aim-desc">
+        <svg style="color:var(--ac);flex-shrink:0;margin-top:2px" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <p>Ask questions about the full course content. The AI Tutor helps you find the relevant module, video, and timestamp.</p>
+      </div>
+      <div class="aim-feats" id="ai-feats"></div>
+      <a href="https://chatgpt.com/g/your-custom-gpt-url" target="_blank" rel="noopener" class="aim-cta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        Open AI Tutor
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+      </a>
+      <p class="aim-note">The AI Tutor is separate from the lesson page and answers questions across the full course.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SVG icon strings ──────────────────────────────────────────────────────────
+const ico = {
+  cright: (n=14)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
+  cleft:  (n=16)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`,
+  cdown:  ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`,
+  check:  (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`,
+  circle: (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`,
+  play:   (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+  clock:  (n=12)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  book:   (n=12)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+  search: (n=13)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>`,
+  arrow:  (n=14)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
+  trophy: (n=14)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`,
+  bar:    (n=16)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>`,
+  target: ()=>`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+  ext:    (n=12)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>`,
+  x:      (n=16)=>`<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+  bulb:   ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>`,
+  file:   ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+  list:   ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>`,
+  align:  ()=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="3" y1="6" y2="6"/><line x1="15" x2="3" y1="12" y2="12"/><line x1="17" x2="3" y1="18" y2="18"/></svg>`,
+};
+
+// ── Course Data ───────────────────────────────────────────────────────────────
+const CD = {
+  title:"Algorithmic Trading Mastery",
+  subtitle:"From zero to systematic trader — build, test, and deploy real strategies.",
+  level:"Beginner to Intermediate",
+  modules:[
+    {id:"M01",title:"Foundations of Algorithmic Trading",
+     overview:"Establish the conceptual and practical groundwork for algorithmic trading. Covers what algo trading is, the mental frameworks required, the tools you will use, and how a complete trading strategy is structured.",
+     learning_outcomes:["Understand what algorithmic trading is and why it outperforms discretionary trading","Adopt a probabilistic mindset and understand drawdown as a feature, not a bug","Set up your complete toolkit: TradingView, AI assistants, and byScript resources","Deconstruct the anatomy of a trading strategy into its five core components"],
+     total_duration:"45 min",
+     lessons:[
+      {id:"M01-V01",module_id:"M01",vn:1,title:"Apa Itu Algo Trading dan Kenapa Lebih Unggul?",yt_url:"https://www.youtube.com/watch?v=E-UzH6QvjNg",yt_id:"E-UzH6QvjNg",dur:"10:24",
+       summary:"Video ini membahas fondasi paling awal tentang algo trading: apa itu algo trading, kenapa pendekatan manual sering gagal, serta apa saja keunggulan utama sistem trading berbasis aturan.",
+       desc:"Video ini memperkenalkan konsep dasar algo trading sebagai cara trading yang menggunakan program atau script untuk membaca kondisi market dan mengeksekusi order berdasarkan aturan yang sudah ditetapkan sebelumnya. Kamu akan memahami mengapa banyak trader manual gagal bukan karena tidak punya strategi, tetapi karena eksekusinya tidak stabil akibat emosi dan inkonsistensi.",
+       takeaways:["Algo trading adalah penggunaan program untuk membaca market dan mengeksekusi order berdasarkan aturan yang sudah ditetapkan sebelumnya","Trader manual sering gagal karena emosi, inkonsistensi, bias, dan kelelahan — bukan karena tidak punya strategi","Keunggulan utama algo trading: konsisten, cepat, dan tanpa emosi","Algo trading bukan jaminan profit — prosesnya lebih objektif dan edge-nya dapat diuji","Kamu tidak harus jago coding untuk memulai — AI bisa membantu selama logika tradingnya jelas"],
+       explanation:"Materi menjelaskan bahwa banyak trader gagal bukan semata karena tidak punya strategi, tetapi karena eksekusinya tidak stabil. Emosi, overthinking, kelelahan, dan pergantian strategi yang terlalu cepat menjadi penyebab utama kegagalan.\n\nAlgo trading didefinisikan sebagai penggunaan program atau script untuk membaca kondisi market dan mengeksekusi order berdasarkan aturan yang sudah ditetapkan sebelumnya. Trader lebih dulu mendefinisikan logika tradingnya, lalu sistem yang menjalankannya secara disiplin.\n\nTiga keunggulan yang ditekankan adalah konsistensi, kecepatan, dan ketiadaan emosi. Sistem tidak takut saat loss, tidak serakah saat profit, dan bisa mengeksekusi sinyal dengan disiplin selama aturan terpenuhi.\n\nAlgo trading bukan jaminan profit. Sistem tetap bisa rugi, tetapi kelebihannya adalah prosesnya lebih objektif dan edge-nya dapat diuji. AI bisa membantu menghasilkan kode selama logika tradingnya sudah jelas.",
+       timestamps:[{t:"0:00",l:"Pembukaan: apa itu algo trading dan kenapa lebih unggul dari trading manual"},{t:"0:06",l:"Masalah manual trading: emosi, inkonsistensi, bias, dan kelelahan"},{t:"1:40",l:"Definisi algo trading: program yang mengeksekusi order berbasis aturan"},{t:"2:45",l:"Perbandingan manual trading vs algo trading"},{t:"4:49",l:"Mitos vs realita: algo trading bukan jaminan profit"},{t:"7:44",l:"Roadmap belajar: ide strategi → Pine Script → backtest → Monte Carlo → auto-trade"},{t:"8:43",l:"Recap keseluruhan video"}],
+       transcript:""
+      },
+      {id:"M01-V02",module_id:"M01",vn:2,title:"Mindset Algo Trader: Probabilistik dan Drawdown",yt_url:"https://www.youtube.com/watch?v=zjNwzBWXiyc",yt_id:"zjNwzBWXiyc",dur:"12:08",
+       summary:"Video ini mengubah cara pandang kamu terhadap trading. Fokusnya bukan menebak satu trade akan menang atau kalah, tetapi memahami probabilitas, menerima drawdown sebagai bagian normal, dan fokus pada expectancy — bukan win rate.",
+       desc:"Sebagian besar trader gagal bukan karena strategi mereka buruk, tetapi karena mereka meninggalkannya di tengah periode drawdown yang sebetulnya normal. Video ini membangun fondasi psikologis yang dibutuhkan untuk menjalankan sistem algo dalam jangka panjang.",
+       takeaways:["Algo trader tidak menilai kualitas strategi dari satu trade — yang dilihat adalah kumpulan trade dalam jumlah besar","Drawdown adalah penurunan equity dari puncak ke titik terendah — ini hal normal, bukan tanda strategi rusak","Expectancy lebih penting dari win rate: strategi dengan win rate rendah tetap bisa profit jika average win-nya besar","Tentukan batas drawdown yang masih nyaman secara personal sebelum mulai trading","Journaling dan review rutin membantu memastikan strategi masih layak dijalankan"],
+       explanation:"Algo trader tidak menilai kualitas strategi dari satu trade. Yang dilihat adalah kumpulan trade dalam jumlah cukup besar. Karena itu, sample size backtest yang memadai sangat penting.\n\nDrawdown adalah penurunan equity dari titik tertinggi ke titik terendah sebelum recovery. Ini dianalogikan seperti musim paceklik pada petani: tidak nyaman, tetapi tetap bagian normal dari proses jangka panjang.\n\nStrategi dengan win rate tinggi belum tentu menguntungkan jika kerugian rata-ratanya terlalu besar. Sebaliknya, strategi dengan win rate rendah tetap bisa profit jika expectancy-nya positif. Rumus expectancy: (Win Rate × Average Win) – (Loss Rate × Average Loss).\n\nSeorang algo trader tidak berhenti setelah strategi dijalankan. Hasil live, perubahan market condition, dan kondisi psikologis tetap perlu dicatat dan dievaluasi secara berkala.",
+       timestamps:[{t:"0:00",l:"Pembukaan: mindset algo trader berfokus pada probabilistik dan drawdown"},{t:"0:09",l:"Mindset pertama: berpikir probabilistik, bukan memprediksi hasil satu trade"},{t:"1:38",l:"Mindset kedua: merangkul drawdown sebagai bagian normal dari trading"},{t:"2:20",l:"Cara menentukan batas drawdown yang nyaman secara personal"},{t:"4:06",l:"Mindset ketiga: fokus pada expectancy, bukan win rate"},{t:"5:42",l:"Mindset keempat: journaling dan review rutin"},{t:"6:41",l:"Recap keseluruhan video"}],
+       transcript:""
+      },
+      {id:"M01-V03",module_id:"M01",vn:3,title:"Setup Semua Tools: TradingView, AI, dan byScript",yt_url:"https://www.youtube.com/watch?v=1xEYWW1Pvr8",yt_id:"1xEYWW1Pvr8",dur:"11:37",
+       summary:"Video ini memperkenalkan tool stack utama yang dipakai dalam alur belajar algo trading byScript: TradingView untuk charting dan backtesting, AI sebagai partner coding, serta Monte Carlo dan byScript untuk validasi dan eksekusi otomatis.",
+       desc:"Sebelum menulis satu baris Pine Script pun, kamu perlu mengenal tool yang akan dipakai sepanjang kursus ini. Video ini memandu kamu dari pengenalan antarmuka TradingView, penggunaan AI untuk generate kode, hingga cara Monte Carlo byScript dipakai untuk memvalidasi strategi secara statistik sebelum masuk ke tahap auto-trade.",
+       takeaways:["TradingView adalah platform utama — menyediakan chart, data, Pine Script Editor, dan Strategy Tester di satu tempat","AI dipakai sebagai partner coding: membantu membuat script dari deskripsi strategi dan menjelaskan kode yang membingungkan","Indikator belum cukup — logika harus dibawa ke level strategi agar bisa dievaluasi dan dibacktest","Monte Carlo dipakai untuk menguji ketahanan hasil backtest secara statistik, bukan hanya melihat profit","Jika strategi lolos validasi, logic dan alert bisa disalurkan ke byScript untuk eksekusi otomatis"],
+       explanation:"TradingView diposisikan sebagai pusat kerja utama karena menyediakan chart, data, Pine Script Editor, dan Strategy Tester di satu tempat. Ini membuat alur kerja dari ide ke eksekusi menjadi lebih efisien.\n\nAI dipakai sebagai partner coding, terutama untuk membantu membuat script dari deskripsi strategi, menjelaskan bagian kode yang membingungkan, dan membantu debugging. Dengan AI, kamu tidak perlu hafal syntax Pine Script dari awal.\n\nMateri menekankan bahwa indikator belum tentu siap dipakai untuk trading plan. Logika tersebut harus dibawa sampai level strategi yang mencakup entry, filter, risk management, dan exit.\n\nSetelah backtest terlihat menarik, langkah berikutnya adalah menguji ketahanan hasil tersebut dengan Monte Carlo. Jika strategi sudah lolos validasi, logic dan alert dapat disalurkan ke byScript untuk eksekusi otomatis.",
+       timestamps:[{t:"0:00",l:"Pembukaan: setup semua tools — TradingView, AI, dan byScript"},{t:"0:10",l:"TradingView: membuat akun, mengenal chart, Pine Editor, dan Strategy Tester"},{t:"1:09",l:"AI sebagai tools kedua untuk membantu generate dan debug kode"},{t:"1:45",l:"AI digunakan untuk generate contoh kode indikator RSI di Pine Script v5"},{t:"3:00",l:"Perbedaan indikator vs strategi — pentingnya membawa logika ke level strategi"},{t:"4:56",l:"Monte Carlo byScript untuk validasi statistik"},{t:"6:43",l:"Recap: TradingView untuk charting dan backtest, AI untuk coding, byScript untuk validasi dan eksekusi"}],
+       transcript:""
+      },
+      {id:"M01-V04",module_id:"M01",vn:4,title:"Anatomi Sebuah Trading Strategy",yt_url:"https://www.youtube.com/watch?v=EnLYMFetWL4",yt_id:"EnLYMFetWL4",dur:"13:52",
+       summary:"Video ini merangkum komponen inti yang membentuk sebuah trading strategy yang utuh — bukan hanya entry dan exit, tetapi juga filter, risk management, dan timeframe. Dengan framework ini, kamu bisa menganalisis dan membangun strategi apa pun secara sistematis.",
+       desc:"Setiap trading strategy yang profitable memiliki struktur yang sama. Video ini mengajarkan cara melihat strategi dalam komponen-komponen intinya: entry signal, filter, risk management, exit, dan pertimbangan timeframe. Dengan framework ini, kamu bisa mengevaluasi dan membangun strategi secara lebih terstruktur.",
+       takeaways:["Struktur minimal strategi terdiri dari tiga komponen: entry, filter, dan exit","Filter berfungsi mengurangi false signal — di sinilah sebagian besar peningkatan performa terjadi","Risk management bukan aksesori — besaran risiko per trade dan jenis stop loss harus ditentukan sejak awal","Stop loss berbasis ATR lebih adaptif karena menyesuaikan dengan volatilitas market","Timeframe 1 jam hingga 4 jam cenderung lebih seimbang antara jumlah trade dan kualitas sinyal"],
+       explanation:"Materi menegaskan bahwa strategi tidak cukup hanya punya entry. Struktur minimalnya adalah entry, filter, dan exit. Filter berfungsi mengurangi false signal — misalnya, hanya ambil sinyal beli saat volume di atas rata-rata, atau hanya trading saat ADX di atas 20.\n\nUrutan yang benar adalah: sinyal muncul → cek filter → jika lolos maka entry → monitor posisi → keluar saat kondisi exit terpenuhi.\n\nRisk management bukan aksesori, tetapi bagian utama strategi. Besarnya risiko per trade dan jenis stop loss harus ditentukan sejak awal. Rekomendasi awal adalah tidak merisikokan lebih dari 1–2 persen modal per trade.\n\nStop loss berbasis ATR lebih adaptif karena menyesuaikan diri dengan volatilitas market. Saat ATR besar, stop loss diberi ruang lebih lebar; saat ATR kecil, stop loss menjadi lebih ketat.\n\nTimeframe 1 jam hingga 4 jam disebut lebih seimbang, sedangkan daily dan weekly memberi trade lebih sedikit tetapi sinyal lebih bersih.",
+       timestamps:[{t:"0:00",l:"Pembukaan: anatomi sebuah trading strategy"},{t:"0:04",l:"Komponen utama strategi: entry, exit, dan filter"},{t:"0:36",l:"Filter: cara melewatkan trade yang kurang berkualitas"},{t:"1:01",l:"Contoh filter: volume di bawah rata-rata, ADX di bawah 20"},{t:"1:33",l:"Risk management: tidak lebih dari 1–2 persen modal per trade"},{t:"1:58",l:"Stop loss: fixed distance vs ATR-based stop loss"},{t:"2:29",l:"Pertimbangan timeframe: kecil vs besar"},{t:"3:47",l:"Contoh strategi lengkap: BTCUSDT 4H dengan EMA crossover dan filter volume"},{t:"4:18",l:"Recap seluruh Module 01"}],
+       transcript:""
+      }
+    ]},
+    {id:"M02",title:"Pine Script Fundamentals",overview:"Learn TradingView Pine Script from the ground up. Write, debug, and backtest complete trading strategies.",learning_outcomes:["Understand Pine Script syntax, structure, and execution model","Write indicators and strategy scripts from scratch","Use built-in functions for price data, indicators, and orders","Debug common Pine Script errors efficiently"],total_duration:"58 min",lessons:[]},
+    {id:"M03",title:"Strategy Building and Backtesting",overview:"Apply the strategy anatomy framework to build, backtest, and iterate on real trading strategies.",learning_outcomes:["Build complete strategies using the five-component framework","Run and interpret TradingView backtests correctly","Identify and avoid the most common backtesting mistakes","Use walk-forward testing for out-of-sample validation"],total_duration:"72 min",lessons:[]},
+    {id:"M04",title:"Automation and Live Deployment",overview:"Take your validated strategy from TradingView to live execution via webhooks, broker APIs, and monitoring.",learning_outcomes:["Set up TradingView alert webhooks for automated execution","Connect to broker APIs for live order placement","Build a monitoring dashboard","Implement circuit breakers and emergency stop procedures"],total_duration:"65 min",lessons:[]},
+  ]
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let prog = {};
+try { prog = JSON.parse(localStorage.getItem("bs_v2")||"{}"); } catch {}
+let expanded = {M01:true};
+let curView = "dash";
+let curId = null;
+let sbSearchQ = "";
+let dashSearchQ = "";
+let curTab = "overview";
+
+function saveProg(){ try{ localStorage.setItem("bs_v2",JSON.stringify(prog)); }catch{} }
+function allLessons(){ return CD.modules.flatMap(m=>m.lessons); }
+function getLessonById(id){ return allLessons().find(l=>l.id===id); }
+function getModById(id){ return CD.modules.find(m=>m.id===id); }
+function getModIdx(id){ return CD.modules.findIndex(m=>m.id===id); }
+function isDone(id){ return !!prog[id]; }
+
+function stats(){
+  const all = allLessons();
+  const tot = all.length;
+  const cnt = all.filter(l=>isDone(l.id)).length;
+  const pct = tot>0?Math.round(cnt/tot*100):0;
+  return {tot,cnt,pct};
+}
+function modStats(mod){
+  const t = mod.lessons.length;
+  const c = mod.lessons.filter(l=>isDone(l.id)).length;
+  return {total:t,completed:c,pct:t>0?Math.round(c/t*100):0};
+}
+function nextLesson(){
+  return allLessons().find(l=>!isDone(l.id))||null;
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function navigate(view, id){
+  curView = view; curId = id||null;
+  curTab = "overview";
+  closeSb();
+  window.scrollTo({top:0,behavior:"auto"});
+  renderSidebar();
+  renderContent();
+}
+function showDash(){ navigate("dash"); }
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function sbSearch(q){
+  sbSearchQ = q;
+  renderSidebar();
+}
+
+function renderSidebar(){
+  const nav = document.getElementById("sb-nav");
+  let html = "";
+  CD.modules.forEach((mod,idx)=>{
+    const filt = mod.lessons.filter(l=> sbSearchQ ? l.title.toLowerCase().includes(sbSearchQ.toLowerCase()) : true);
+    const noLessons = mod.lessons.length===0;
+    const isExp = expanded[mod.id];
+    const cmplt = mod.lessons.filter(l=>isDone(l.id)).length;
+    html += `<div>
+      <button class="mod-hdr" onclick="toggleMod('${mod.id}')">
+        <div class="mod-hdr-l">
+          <span style="color:var(--t3);display:flex;flex-shrink:0;margin-top:3px">${isExp&&filt.length>0?ico.cdown():ico.cright()}</span>
+          <div><div class="mod-id">${mod.id}</div><div class="mod-ttl">${mod.title}</div></div>
+        </div>
+        ${noLessons?`<span class="cs-tag">Soon</span>`:`<span class="mod-pill">${cmplt}/${mod.lessons.length}</span>`}
+      </button>`;
+    if(isExp && filt.length>0){
+      html += `<div class="les-list">`;
+      filt.forEach(l=>{
+        const d = isDone(l.id);
+        const active = curView==="lesson" && curId===l.id;
+        html += `<button class="les-item ${active?"active":""} ${d?"done":""}" onclick="navigate('lesson','${l.id}')">
+          <span class="les-chk ${d?"done":""}">${d?ico.check(13):ico.circle(13)}</span>
+          <div>
+            <div class="les-id">${l.id}</div>
+            <div class="les-ttl">${l.title}</div>
+            <div class="les-dur">${l.dur}</div>
+          </div>
+        </button>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+  nav.innerHTML = html;
+}
+
+function toggleMod(id){
+  expanded[id] = !expanded[id];
+  if(!expanded[id]) return renderSidebar();
+  const mod = getModById(id);
+  if(mod && mod.lessons.length>0) navigate("module", id);
+  else renderSidebar();
+}
+
+// ── Sidebar toggle (mobile) ───────────────────────────────────────────────────
+let sbOpen = false;
+function toggleSb(){
+  sbOpen = !sbOpen;
+  const sbw = document.getElementById("sbw");
+  const ov = document.getElementById("ov");
+  sbw.classList.toggle("open", sbOpen);
+  ov.style.display = sbOpen?"block":"none";
+}
+function closeSb(){
+  sbOpen = false;
+  document.getElementById("sbw").classList.remove("open");
+  document.getElementById("ov").style.display="none";
+}
+
+// ── AI Modal ──────────────────────────────────────────────────────────────────
+function openAI(){
+  const feats = document.getElementById("ai-feats");
+  if(!feats.innerHTML){
+    const items = ["Covers all modules and lesson content","Points to exact video and timestamp","Explains Pine Script, backtesting, and strategy concepts","Available 24/7"];
+    feats.innerHTML = items.map(f=>`<div class="aim-fi"><div class="aim-dot"></div><span>${f}</span></div>`).join("");
+  }
+  document.getElementById("ai-backdrop").classList.add("open");
+}
+function closeAI(e){
+  if(!e || e.target===document.getElementById("ai-backdrop") || e.currentTarget===document.querySelector(".aim-cls"))
+    document.getElementById("ai-backdrop").classList.remove("open");
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function renderContent(){
+  const el = document.getElementById("content");
+  if(curView==="dash") el.innerHTML = renderDash();
+  else if(curView==="module") el.innerHTML = renderModPage();
+  else if(curView==="lesson") el.innerHTML = renderLessonPage();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function dsSearch(q){
+  dashSearchQ = q;
+  renderContent();
+}
+function clearDsSearch(){
+  dashSearchQ = "";
+  renderContent();
+}
+
+function renderDash(){
+  const s = stats();
+  const nx = nextLesson();
+  const all = allLessons();
+  const filt = dashSearchQ ? all.filter(l=>l.title.toLowerCase().includes(dashSearchQ.toLowerCase())||(l.summary||"").toLowerCase().includes(dashSearchQ.toLowerCase())) : [];
+  return `
+<div class="page" style="max-width:960px">
+  <div class="hero-ey"><span class="ey-badge">byScript Academy</span><span class="ey-lv">${CD.level}</span></div>
+  <h1 class="hero-title">${CD.title}</h1>
+  <p class="hero-desc">${CD.subtitle}</p>
+  <div class="hero-acts">
+    ${nx?`<button class="btn-go" onclick="navigate('lesson','${nx.id}')">${ico.play(14)} ${s.cnt===0?"Start Learning":"Continue Learning"}</button>`:
+        `<div class="btn-go" style="background:var(--bg3);color:var(--ac);border:1px solid var(--acb)">${ico.trophy(14)} Course Complete!</div>`}
+    ${nx&&s.cnt>0?`<span class="hero-res">Resume: ${nx.title}</span>`:""}
+  </div>
+
+  <div class="sbar">
+    <div class="stat"><span class="stat-ic">${ico.bar(16)}</span><div><div class="stat-v">${s.pct}%</div><div class="stat-l">Complete</div></div></div>
+    <div class="sdivd"></div>
+    <div class="stat"><span class="stat-ic">${ico.book(16)}</span><div><div class="stat-v">${s.cnt}/${s.tot}</div><div class="stat-l">Lessons Done</div></div></div>
+    <div class="sdivd"></div>
+    <div class="stat"><span class="stat-ic">${ico.clock(16)}</span><div><div class="stat-v">12+ hrs</div><div class="stat-l">Total Content</div></div></div>
+    <div class="sdivd"></div>
+    <div class="stat"><span class="stat-ic">${ico.trophy(16)}</span><div><div class="stat-v">4</div><div class="stat-l">Modules</div></div></div>
+    <div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:${s.pct}%"></div></div></div>
+  </div>
+
+  <div class="dsearch">
+    <span class="ds-ic">${ico.search(15)}</span>
+    <input type="text" placeholder="Search all lessons..." value="${esc(dashSearchQ)}" oninput="dsSearch(this.value)" id="dsearch-inp"/>
+    ${dashSearchQ?`<button class="ds-clr" onclick="clearDsSearch()">${ico.x(13)}</button>`:""}
+  </div>
+
+  ${dashSearchQ ? renderSearchResults(filt) : renderModCards() + renderOutcomes()}
+</div>`;
+}
+
+function renderSearchResults(filt){
+  if(!filt.length) return `<div class="empty">${ico.search(28)}<p>No lessons match "${esc(dashSearchQ)}"</p></div>`;
+  return `
+    <div class="sec-hdr"><h2 class="sec-title">Search Results <span style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:14px;color:var(--t3)">(${filt.length})</span></h2></div>
+    <div class="sr-list">
+      ${filt.map(l=>`
+        <button class="sr-item" onclick="navigate('lesson','${l.id}')">
+          <span class="sr-id">${l.id}</span>
+          <div style="flex:1;min-width:0;text-align:left">
+            <div class="sr-t">${l.title}</div>
+            <div class="sr-m">${getModById(l.module_id).title} · ${l.dur}</div>
+          </div>
+          ${ico.arrow(14)}
+        </button>`).join("")}
+    </div>`;
+}
+
+function renderModCards(){
+  return `
+    <section style="margin-bottom:32px">
+      <div class="sec-hdr"><h2 class="sec-title">Course Modules</h2><span class="sec-sub">4 modules</span></div>
+      <div class="mcg">
+        ${CD.modules.map((mod,idx)=>{
+          const s = modStats(mod);
+          const lk = mod.lessons.length===0;
+          return `<div class="mc ${lk?"mc-lk":""}" ${lk?"":`onclick="navigate('module','${mod.id}')"`} tabindex="${lk?-1:0}">
+            <div class="mc-hd">
+              <span class="mc-bid">${mod.id}</span>
+              ${lk?`<span class="mc-cs">Coming Soon</span>`:
+                s.completed===s.total&&s.total>0?`<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--ac);background:var(--acd);border-radius:100px;padding:2px 8px">${ico.trophy(11)} Complete</span>`:
+                ""}
+            </div>
+            <div class="mc-ttl">${mod.title}</div>
+            <div class="mc-ov">${mod.overview.slice(0,115)}...</div>
+            <div class="mc-meta">
+              <span class="mc-mt">${ico.clock(11)} ${mod.total_duration}</span>
+              ${!lk?`<span class="mc-mt">${ico.book(11)} ${mod.lessons.length} lessons</span>`:""}
+            </div>
+            ${!lk?`
+              <div class="mc-pb"><div class="mc-pf" style="width:${s.pct}%"></div></div>
+              <div class="mc-pl">${s.completed}/${s.total} lessons · ${s.pct}%</div>
+              <div class="mc-cta"><span>${s.completed===0?"Start Module":"Continue"}</span>${ico.arrow(13)}</div>
+            `:""}
+          </div>`;
+        }).join("")}
+      </div>
+    </section>`;
+}
+
+function renderOutcomes(){
+  const outs = CD.modules.flatMap(m=>m.learning_outcomes).slice(0,8);
+  return `
+    <section>
+      <div class="sec-hdr"><h2 class="sec-title">What You'll Learn</h2></div>
+      <div class="outg">${outs.map(o=>`<div class="out-item"><span class="out-ck">✓</span><span>${o}</span></div>`).join("")}</div>
+    </section>`;
+}
+
+// ── MODULE PAGE ───────────────────────────────────────────────────────────────
+function renderModPage(){
+  const mod = getModById(curId);
+  if(!mod) return "";
+  const s = modStats(mod);
+  return `
+<div class="page">
+  <div class="bc">
+    <button class="bcl" onclick="navigate('dash')">Course Home</button>
+    <span class="bc-sep">${ico.cright(13)}</span>
+    <span class="bcc">${mod.id}</span>
+  </div>
+  <div class="mid-pill">${mod.id}</div>
+  <h1 class="pg-title">${mod.title}</h1>
+  <p class="pg-ov">${mod.overview}</p>
+  <div class="pg-meta">
+    <span class="meta-chip">${ico.clock(12)} ${mod.total_duration}</span>
+    <span class="meta-chip">${ico.book(12)} ${mod.lessons.length} lessons</span>
+    <span class="meta-chip">${ico.check(12)} ${s.completed}/${s.total} done</span>
+  </div>
+  <div class="pb-wrap" style="margin-bottom:0">
+    <div class="pb-bar"><div class="pb-fill" style="width:${s.pct}%"></div></div>
+    <span class="pb-pct">${s.pct}%</span>
+  </div>
+  <div class="out-box">
+    <div class="out-bh">${ico.target()} Learning Outcomes</div>
+    <div class="outl">
+      ${mod.learning_outcomes.map((o,i)=>`<div class="out-row"><div class="out-num">${String(i+1).padStart(2,"0")}</div><p>${o}</p></div>`).join("")}
+    </div>
+  </div>
+  <h2 class="les-sec-title">Lessons</h2>
+  <div class="les-cards">
+    ${mod.lessons.map((l,idx)=>{
+      const d = isDone(l.id);
+      return `<button class="les-card ${d?"done":""}" onclick="navigate('lesson','${l.id}')">
+        <div class="les-num">${String(idx+1).padStart(2,"0")}</div>
+        ${d?`<div class="done-ic">${ico.check(22)}</div>`:`<div class="play-btn">${ico.play(14)}</div>`}
+        <div class="lc-cnt">
+          <div class="lc-id">${l.id}</div>
+          <div class="lc-ttl">${l.title}</div>
+          <div class="lc-sum">${l.summary}</div>
+        </div>
+        <div class="lc-r"><span class="lc-dur">${l.dur}</span>${ico.cright(15)}</div>
+      </button>`;
+    }).join("")}
+  </div>
+</div>`;
+}
+
+// ── LESSON PAGE ───────────────────────────────────────────────────────────────
+function renderLessonPage(){
+  const l = getLessonById(curId);
+  if(!l) return "";
+  const all = allLessons();
+  const idx = all.findIndex(x=>x.id===l.id);
+  const prev = idx>0?all[idx-1]:null;
+  const next = idx<all.length-1?all[idx+1]:null;
+  const d = isDone(l.id);
+  const TABS = [
+    {id:"overview",label:"Overview",icon:ico.file()},
+    {id:"explanation",label:"Deep Dive",icon:ico.book()},
+    {id:"timestamps",label:"Timestamps",icon:ico.clock()},
+  ];
+  return `
+<div class="page">
+  <div class="bc">
+    <button class="bcl" onclick="navigate('dash')">Course Home</button>
+    <span class="bc-sep">${ico.cright(13)}</span>
+    <button class="bcl" onclick="navigate('module','${l.module_id}')">${l.module_id}</button>
+    <span class="bc-sep">${ico.cright(13)}</span>
+    <span class="bcc">${l.id}</span>
+  </div>
+  <div class="les-badges">
+    <span class="badge-mod">${l.module_id}</span>
+    <span class="badge-vid">Video ${l.vn}</span>
+    ${d?`<span class="badge-done">${ico.check(11)} Completed</span>`:""}
+  </div>
+  <h1 class="les-title">${l.title}</h1>
+  <div class="les-meta">
+    <span class="lm-chip">${ico.clock(12)} ${l.dur}</span>
+
+  </div>
+
+  <div class="vid-wrap">
+    <iframe src="https://www.youtube.com/embed/${l.yt_id}?rel=0&modestbranding=1" title="${l.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+
+  <div class="comp-row">
+    <button class="comp-btn ${d?"done":""}" onclick="toggleDone('${l.id}')">
+      ${ico.check(15)} ${d?"Mark as Incomplete":"Mark as Complete"}
+    </button>
+    <div class="nav-btns">
+      ${prev?`<button class="nav-b" onclick="navigate('lesson','${prev.id}')">${ico.cleft(13)} Previous</button>`:""}
+      ${next?`<button class="nav-b nxt" onclick="navigate('lesson','${next.id}')">Next ${ico.cright(13)}</button>`:""}
+    </div>
+  </div>
+
+  <div class="tabs">
+    ${TABS.map(t=>`<button class="tab ${curTab===t.id?"active":""}" onclick="setTab('${t.id}')">${t.icon} ${t.label}</button>`).join("")}
+  </div>
+
+  <div id="tab-body">${renderTabBody(l)}</div>
+
+  <div class="bnav">
+    <div>
+      ${prev?`<button class="bnav-btn" onclick="navigate('lesson','${prev.id}')">${ico.cleft(15)}<div><div class="bnav-lbl">Previous Lesson</div><div class="bnav-ttl">${prev.title}</div></div></button>`:""}
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      ${next?`<button class="bnav-btn nxt" onclick="navigate('lesson','${next.id}')"><div style="text-align:right"><div class="bnav-lbl">Next Lesson</div><div class="bnav-ttl">${next.title}</div></div>${ico.cright(15)}</button>`:
+             `<button class="bnav-btn nxt cmp" onclick="navigate('module','${l.module_id}')"><div style="text-align:right"><div class="bnav-lbl">Module Complete</div><div class="bnav-ttl">Back to Overview</div></div>${ico.check(15)}</button>`}
+    </div>
+  </div>
+</div>`;
+}
+
+function setTab(t){
+  curTab = t;
+  const l = getLessonById(curId);
+  const tb = document.getElementById("tab-body");
+  if(tb && l) tb.innerHTML = renderTabBody(l);
+  document.querySelectorAll(".tab").forEach(el=>{
+    el.classList.toggle("active", el.getAttribute("onclick")===`setTab('${t}')`);
+  });
+}
+
+function renderTabBody(l){
+  if(curTab==="overview") return `
+    <div class="cblock"><div class="cblock-t">${ico.bulb()} Lesson Summary</div><p class="les-sum">${l.summary}</p></div>
+    <div class="cblock"><div class="cblock-t">${ico.file()} About This Lesson</div><p class="les-dsc">${l.desc}</p></div>
+    <div class="cblock"><div class="cblock-t">${ico.list()} Key Takeaways</div>
+      <ul class="tkl">${l.takeaways.map((t,i)=>`<li class="tki"><span class="tkn">${String(i+1).padStart(2,"0")}</span><span>${t}</span></li>`).join("")}</ul>
+    </div>`;
+  if(curTab==="explanation") return `
+    <div class="cblock"><div class="cblock-t">${ico.book()} Comprehensive Explanation</div>
+      <div class="exp-text">${l.explanation.split("\n\n").map(p=>`<p class="exp-p">${p}</p>`).join("")}</div>
+    </div>`;
+  if(curTab==="timestamps") return `
+    <div class="cblock"><div class="cblock-t">${ico.clock()} Video Timestamps</div>
+      <div class="ts-list">${l.timestamps.map(ts=>`
+        <a href="${l.yt_url}&t=${ts.t.replace(":","m")}s" target="_blank" rel="noopener" class="ts-item">
+          <span class="ts-t">${ts.t}</span><span class="ts-l">${ts.l}</span>${ico.ext(11)}
+        </a>`).join("")}
+      </div>
+    </div>`;
+  return "";
+}
+
+function toggleDone(id){
+  if(prog[id]) delete prog[id]; else prog[id]=true;
+  saveProg();
+  renderSidebar();
+  renderContent();
+}
+
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderSidebar();
+renderContent();
+</script>
+</body>
+</html>
