@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>byScript Academy — Dari 0 Sampai Jadi Algo Trader dengan AI</title>
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #060809;
+  color: #e8edf2;
+  font-family: "Open Sans", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(0,230,118,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,230,118,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none; z-index: 0;
+}
+.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(80px); }
+.orb1 { width: 600px; height: 600px; top: -200px; left: -150px; background: radial-gradient(circle, rgba(0,230,118,0.07), transparent 70%); }
+.orb2 { width: 400px; height: 400px; bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(0,180,90,0.05), transparent 70%); }
+.page { position: relative; z-index: 1; }
+.wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+/* NAV */
+.nav { position: sticky; top: 0; z-index: 100; background: rgba(6,8,9,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.07); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo { width: 30px; height: 30px; border-radius: 7px; overflow: hidden; flex-shrink: 0; }
+.nav-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nav-name { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 15px; color: #e8edf2; }
+.nav-sub { font-size: 9px; color: #3d4f63; text-transform: uppercase; letter-spacing: .12em; margin-top: -2px; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-status { font-family: "JetBrains Mono", monospace; font-size: 10px; color: #3d4f63; border: 1px solid rgba(255,255,255,0.07); padding: 4px 10px; border-radius: 4px; }
+.nav-status span { color: #00e676; }
+.btn-nav { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 12px; background: #00e676; color: #000; padding: 8px 18px; border-radius: 6px; text-decoration: none; transition: background .2s; white-space: nowrap; }
+.btn-nav:hover { background: #00ff88; }
+
+/* HERO */
+.hero-wrap { padding: 80px 40px 80px; max-width: 1100px; margin: 0 auto; }
+.hero-grid { display: grid; grid-template-columns: 1fr 440px; gap: 60px; align-items: center; }
+.hero-tag { display: inline-flex; align-items: center; gap: 6px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: #00e676; border: 1px solid rgba(0,230,118,0.25); background: rgba(0,230,118,0.07); padding: 5px 12px; border-radius: 4px; margin-bottom: 24px; }
+.hero-h1 { font-family: "League Spartan", sans-serif; font-size: clamp(40px, 6vw, 78px); font-weight: 900; line-height: 1.0; letter-spacing: -.03em; color: #e8edf2; margin-bottom: 20px; }
+.hero-h1 .outline { -webkit-text-stroke: 1.5px #00e676; color: transparent; display: block; }
+.hero-h1 .ac { color: #00e676; }
+.hero-sub { font-size: 16px; color: #7a8fa8; max-width: 480px; margin-bottom: 36px; line-height: 1.7; }
+.hero-btns { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; font-family: "League Spartan", sans-serif; font-weight: 800; font-size: 15px; background: #00e676; color: #000; padding: 14px 28px; border-radius: 8px; text-decoration: none; transition: background .2s, box-shadow .2s, transform .15s; }
+.btn-primary:hover { background: #00ff88; box-shadow: 0 0 36px rgba(0,230,118,0.3); transform: translateY(-1px); }
+.btn-ghost { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600; color: #7a8fa8; border: 1px solid rgba(255,255,255,0.12); padding: 13px 20px; border-radius: 8px; text-decoration: none; transition: border-color .2s, color .2s; }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.22); color: #e8edf2; }
+.hero-stats { display: flex; }
+.hstat { padding: 0 28px; border-right: 1px solid rgba(255,255,255,0.07); }
+.hstat:first-child { padding-left: 0; }
+.hstat:last-child { border-right: none; }
+.hstat-n { font-family: "JetBrains Mono", monospace; font-size: 26px; font-weight: 700; color: #e8edf2; line-height: 1; }
+.hstat-n span { color: #00e676; }
+.hstat-l { font-size: 11px; color: #3d4f63; margin-top: 3px; text-transform: uppercase; letter-spacing: .06em; }
+
+/* TERMINAL */
+.terminal { background: #0f1318; border: 1px solid rgba(255,255,255,0.11); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.tbar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: #141a22; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.tdot { width: 10px; height: 10px; border-radius: 50%; }
+.td1 { background: #ff5f57; } .td2 { background: #ffbd2e; } .td3 { background: #28c840; }
+.ttitle { font-family: "JetBrains Mono", monospace; font-size: 10px; color: #3d4f63; margin-left: 6px; }
+.tbody { padding: 18px; font-family: "JetBrains Mono", monospace; font-size: 12px; line-height: 2.0; }
+.tline { display: flex; gap: 10px; }
+.tprompt { color: #00e676; flex-shrink: 0; }
+.tcmd { color: #e8edf2; }
+.tout { color: #7a8fa8; padding-left: 18px; }
+.tout.g { color: #00e676; }
+.tout.d { color: #3d4f63; }
+.tcursor { display: inline-block; width: 8px; height: 14px; background: #00e676; animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 2px; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* TICKER */
+.ticker-outer { border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); background: #0a0d0f; overflow: hidden; padding: 10px 0; }
+.ticker-inner { display: flex; animation: tick 32s linear infinite; width: max-content; }
+.ti { font-family: "JetBrains Mono", monospace; font-size: 11px; color: #3d4f63; padding: 0 28px; white-space: nowrap; display: flex; gap: 8px; }
+.ti .up { color: #00e676; } .ti .dn { color: #ff4757; }
+@keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* SECTIONS */
+.sec { padding: 96px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+.slabel { font-family: "JetBrains Mono", monospace; font-size: 10px; color: #00e676; letter-spacing: .14em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.slabel::before { content: "//"; opacity: .5; }
+.sh2 { font-family: "League Spartan", sans-serif; font-size: clamp(26px, 3.2vw, 42px); font-weight: 900; letter-spacing: -.03em; color: #e8edf2; line-height: 1.1; margin-bottom: 12px; }
+.sh2 em { font-style: normal; color: #00e676; }
+.sdesc { font-size: 15px; color: #7a8fa8; max-width: 500px; line-height: 1.7; margin-bottom: 48px; }
+
+/* FOR WHO */
+.fw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.fw-card { background: #0f1318; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 22px; transition: border-color .2s, transform .2s; }
+.fw-card:hover { border-color: rgba(0,230,118,0.25); transform: translateY(-2px); }
+.fw-icon { width: 38px; height: 38px; border-radius: 8px; background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2); display: flex; align-items: center; justify-content: center; color: #00e676; margin-bottom: 14px; }
+.fw-title { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 15px; color: #e8edf2; margin-bottom: 6px; }
+.fw-desc { font-size: 13px; color: #7a8fa8; line-height: 1.6; }
+
+/* CURRICULUM */
+.curr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.ccard { display: flex; gap: 14px; align-items: flex-start; background: #0f1318; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 18px 20px; position: relative; transition: border-color .2s; }
+.ccard.av { border-color: rgba(0,230,118,0.22); background: rgba(0,230,118,0.04); }
+.av-tag { position: absolute; top: 12px; right: 12px; font-family: "JetBrains Mono", monospace; font-size: 9px; font-weight: 700; letter-spacing: .08em; color: #00e676; background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.22); padding: 2px 7px; border-radius: 3px; }
+.cnum { font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700; color: #3d4f63; min-width: 34px; padding-top: 2px; flex-shrink: 0; }
+.ccard.av .cnum { color: #00e676; }
+.ctitle { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 14px; color: #7a8fa8; margin-bottom: 4px; }
+.ccard.av .ctitle { color: #e8edf2; }
+.cmeta { font-family: "JetBrains Mono", monospace; font-size: 11px; color: #3d4f63; display: flex; gap: 12px; }
+.cdesc { font-size: 12.5px; color: #3d4f63; margin-top: 6px; line-height: 1.55; }
+.ccard.av .cdesc { color: #7a8fa8; }
+.curr-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: #0f1318; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 18px 22px; }
+.curr-foot-t { font-size: 13px; color: #7a8fa8; }
+.curr-foot-t strong { color: #e8edf2; font-family: "JetBrains Mono", monospace; }
+.curr-totals { display: flex; gap: 24px; }
+.ctot { text-align: center; }
+.ctot-n { font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 700; color: #00e676; }
+.ctot-l { font-size: 10px; color: #3d4f63; text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+
+/* TESTI */
+.tg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.tcard { background: #0f1318; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 14px; transition: border-color .2s; }
+.tcard:hover { border-color: rgba(255,255,255,0.13); }
+.tstars { color: #ffc107; font-size: 13px; letter-spacing: 2px; }
+.tquote { font-size: 13.5px; color: #7a8fa8; line-height: 1.7; flex: 1; }
+.tquote::before { content: "\201C"; font-family: "League Spartan", sans-serif; font-size: 32px; color: #00e676; display: block; line-height: .6; margin-bottom: 10px; }
+.tauthor { display: flex; align-items: center; gap: 10px; }
+.tav { width: 36px; height: 36px; border-radius: 50%; background: #141a22; border: 1px solid rgba(255,255,255,0.11); display: flex; align-items: center; justify-content: center; font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700; color: #00e676; flex-shrink: 0; }
+.tname { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 14px; color: #e8edf2; }
+.trole { font-size: 11px; color: #3d4f63; }
+
+/* ABOUT */
+.about-grid { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; }
+.acard { background: #0f1318; border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 28px; position: relative; }
+.acard-line { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #00e676, transparent); border-radius: 14px 14px 0 0; }
+.aav { width: 64px; height: 64px; border-radius: 12px; background: #141a22; border: 1px solid rgba(0,230,118,0.2); overflow: hidden; margin-bottom: 16px; }
+.aav img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.aname { font-family: "League Spartan", sans-serif; font-size: 20px; font-weight: 800; color: #e8edf2; margin-bottom: 4px; }
+.arole { font-family: "JetBrains Mono", monospace; font-size: 11px; color: #00e676; margin-bottom: 14px; }
+.abio { font-size: 13px; color: #7a8fa8; line-height: 1.7; margin-bottom: 16px; }
+.atags { display: flex; flex-wrap: wrap; gap: 6px; }
+.atag { font-family: "JetBrains Mono", monospace; font-size: 10px; color: #3d4f63; background: #141a22; border: 1px solid rgba(255,255,255,0.07); padding: 3px 9px; border-radius: 4px; }
+.aright p { font-size: 14px; color: #7a8fa8; line-height: 1.75; margin-bottom: 14px; }
+.aright p strong { color: #e8edf2; }
+.atool-label { font-family: "JetBrains Mono", monospace; font-size: 10px; color: #3d4f63; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; margin-top: 24px; }
+.tool-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.tbadge { display: flex; align-items: center; gap: 6px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: #7a8fa8; background: #141a22; border: 1px solid rgba(255,255,255,0.07); padding: 6px 11px; border-radius: 6px; }
+.tdot2 { width: 6px; height: 6px; border-radius: 50%; background: #00e676; flex-shrink: 0; }
+
+/* FAQ */
+.flist { display: flex; flex-direction: column; gap: 8px; max-width: 720px; }
+.fitem { background: #0f1318; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; transition: border-color .2s; }
+.fitem.open { border-color: rgba(0,230,118,0.25); }
+.fq { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px; cursor: pointer; font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 15px; color: #e8edf2; user-select: none; }
+.fq:hover { color: #00e676; }
+.ficon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 5px; background: #141a22; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #3d4f63; font-size: 16px; line-height: 1; transition: all .2s; font-style: normal; }
+.fitem.open .ficon { background: rgba(0,230,118,0.08); border-color: rgba(0,230,118,0.25); color: #00e676; transform: rotate(45deg); }
+.fans { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+.fitem.open .fans { max-height: 260px; }
+.fans-inner { padding: 0 20px 18px; font-size: 14px; color: #7a8fa8; line-height: 1.7; }
+
+/* CTA */
+.cta-sec { padding: 100px 40px; text-align: center; border-top: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden; }
+.cta-sec::before { content: ""; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 350px; background: radial-gradient(ellipse, rgba(0,230,118,0.07) 0%, transparent 70%); pointer-events: none; }
+.cta-inner { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
+.cta-tag { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 11px; color: #00e676; background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.22); padding: 5px 14px; border-radius: 4px; margin-bottom: 22px; }
+.cta-h2 { font-family: "League Spartan", sans-serif; font-size: clamp(28px, 4vw, 50px); font-weight: 900; letter-spacing: -.03em; color: #e8edf2; line-height: 1.1; margin-bottom: 14px; }
+.cta-h2 em { font-style: normal; color: #00e676; }
+.cta-sub { font-size: 15px; color: #7a8fa8; margin-bottom: 32px; line-height: 1.65; }
+.cta-note { font-family: "JetBrains Mono", monospace; font-size: 11px; color: #3d4f63; margin-top: 14px; }
+.cta-note span { color: #ffc107; }
+
+/* FOOTER */
+footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 24px 40px; }
+.foot-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; max-width: 1100px; margin: 0 auto; font-size: 12px; color: #3d4f63; }
+.foot-brand { display: flex; align-items: center; gap: 8px; }
+.foot-brand img { width: 22px; height: 22px; border-radius: 4px; }
+.foot-brand span { font-family: "League Spartan", sans-serif; font-weight: 700; font-size: 13px; color: #7a8fa8; }
+.foot-links { display: flex; gap: 20px; }
+.foot-links a { color: #3d4f63; text-decoration: none; transition: color .15s; }
+.foot-links a:hover { color: #7a8fa8; }
+
+/* RESPONSIVE */
+/* NAV EARLY BIRD */
+.nav-early-bird { display:flex; align-items:center; gap:8px; background:rgba(0,230,118,0.07); border:1px solid rgba(0,230,118,0.2); padding:5px 12px; border-radius:6px; }
+.neb-dot { width:6px; height:6px; border-radius:50%; background:#00e676; box-shadow:0 0 6px #00e676; animation:pulse 2s infinite; flex-shrink:0; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+.neb-text { font-family:"League Spartan",sans-serif; font-weight:800; font-size:11px; color:#00e676; letter-spacing:.06em; text-transform:uppercase; }
+.neb-sub { font-size:10px; color:#3d4f63; white-space:nowrap; }
+@media (max-width:860px) { .neb-sub { display:none; } }
+@media (max-width:600px) { .nav-early-bird { display:none; } }
+
+/* EARLY BIRD BANNER */
+.eb-banner { display:flex; align-items:center; gap:28px; background:#0a0f0a; border:1px solid rgba(0,230,118,0.25); border-radius:14px; padding:22px 28px; margin-bottom:28px; flex-wrap:wrap; gap:20px; position:relative; overflow:hidden; }
+.eb-banner::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse at left center, rgba(0,230,118,0.06), transparent 60%); pointer-events:none; }
+.eb-stamp { flex-shrink:0; }
+.eb-stamp-inner { border:2.5px solid #00e676; border-radius:6px; padding:6px 10px; transform:rotate(-6deg); background:rgba(0,230,118,0.05); box-shadow:0 0 16px rgba(0,230,118,0.12); }
+.eb-stamp-top { font-family:"League Spartan",sans-serif; font-weight:900; font-size:11px; color:#00e676; letter-spacing:.15em; text-align:center; }
+.eb-stamp-mid { font-family:"League Spartan",sans-serif; font-weight:900; font-size:22px; color:#00e676; letter-spacing:.1em; text-align:center; line-height:1; }
+.eb-stamp-bot { font-family:"League Spartan",sans-serif; font-weight:900; font-size:11px; color:#00e676; letter-spacing:.15em; text-align:center; }
+.eb-content { flex:1; min-width:200px; }
+.eb-title { font-family:"League Spartan",sans-serif; font-weight:800; font-size:18px; color:#e8edf2; margin-bottom:6px; }
+.eb-desc { font-size:13px; color:#7a8fa8; line-height:1.6; }
+.eb-progress { flex-shrink:0; min-width:180px; }
+.eb-prog-label { display:flex; justify-content:space-between; margin-bottom:6px; }
+.eb-prog-track { height:6px; background:rgba(255,255,255,0.07); border-radius:3px; overflow:hidden; }
+.eb-prog-fill { height:100%; background:linear-gradient(90deg,#00e676,#00ff88); border-radius:3px; }
+
+/* PRICING CARDS */
+.pcard { border-radius:16px; overflow:hidden; display:flex; flex-direction:column; transition: transform .25s, box-shadow .25s; }
+.pcard-basic { background:#0f1318; border:1px solid rgba(255,255,255,0.09); }
+.pcard-basic:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.4); border-color:rgba(255,255,255,0.18); }
+.pcard-silver { background:#091310; border:1px solid rgba(0,230,118,0.2); box-shadow:0 0 30px rgba(0,230,118,0.04); }
+.pcard-silver:hover { transform:translateY(-6px); box-shadow:0 16px 48px rgba(0,230,118,0.15); border-color:rgba(0,230,118,0.5); }
+.pcard-gold { background:#0d0e08; border:2px solid rgba(245,158,11,0.3); box-shadow:0 0 30px rgba(245,158,11,0.06); position:relative; }
+.pcard-gold:hover { transform:translateY(-6px); box-shadow:0 16px 48px rgba(245,158,11,0.18); border-color:rgba(245,158,11,0.6); }
+.pcard-badge { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:#f59e0b; color:#000; font-family:'League Spartan',sans-serif; font-weight:800; font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:4px 14px; border-radius:0 0 8px 8px; white-space:nowrap; }
+.pcard-top { padding:28px 28px 24px; }
+.pcard-tier { font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px; }
+.pcard-price { font-family:'League Spartan',sans-serif; font-size:38px; font-weight:900; color:#e8edf2; line-height:1; margin-bottom:4px; }
+.pcard-period { font-size:12px; color:#3d4f63; margin-bottom:20px; }
+.pcard-desc { font-size:13.5px; color:#7a8fa8; line-height:1.6; margin-bottom:24px; }
+.pcard-btn { display:flex; align-items:center; justify-content:center; font-family:'League Spartan',sans-serif; font-weight:700; font-size:14px; padding:13px 20px; border-radius:8px; text-decoration:none; transition:all .2s; }
+.pcard-btn-ghost { background:rgba(255,255,255,0.07); color:#e8edf2; border:1px solid rgba(255,255,255,0.12); }
+.pcard-btn-ghost:hover { background:rgba(255,255,255,0.11); border-color:rgba(255,255,255,0.28); }
+.pcard-btn-silver { background:rgba(0,230,118,0.1); color:#00e676; border:1px solid rgba(0,230,118,0.3); }
+.pcard-btn-silver:hover { background:rgba(0,230,118,0.18); border-color:rgba(0,230,118,0.6); box-shadow:0 0 20px rgba(0,230,118,0.15); }
+.pcard-btn-gold { background:#f59e0b; color:#000; border:none; font-weight:800; font-size:14px; box-shadow:0 0 20px rgba(245,158,11,0.25); }
+.pcard-btn-gold:hover { background:#fbbf24; box-shadow:0 0 36px rgba(245,158,11,0.4); }
+.pcard-features { border-top:1px solid rgba(255,255,255,0.07); padding:24px 28px; flex:1; }
+.pcard-feat-label { font-family:'JetBrains Mono',monospace; font-size:10px; color:#3d4f63; text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; }
+.pcard-feat { display:flex; gap:10px; align-items:flex-start; font-size:13px; color:#7a8fa8; margin-bottom:10px; }
+.pcard-feat-no { color:#3d4f63; }
+.pcard-feat-hi { color:#e8edf2; }
+.pcard-feat-gold { color:#e8edf2; }
+.fc-yes { color:#00e676; flex-shrink:0; margin-top:1px; }
+.fc-no { color:#3d4f63; flex-shrink:0; margin-top:1px; }
+.fc-star { color:#00e676; flex-shrink:0; margin-top:1px; }
+.fc-gold { color:#f59e0b; flex-shrink:0; margin-top:1px; }
+
+/* JOURNEY PHASES */
+.phase-wrap { background:#0f1318; border:1px solid rgba(255,255,255,0.07); border-radius:12px; overflow:hidden; transition:border-color .2s; }
+.phase-wrap:hover { border-color:rgba(255,255,255,0.13); }
+.phase-header { display:flex; align-items:center; gap:20px; padding:20px 24px; cursor:pointer; user-select:none; flex-wrap:wrap; gap:12px; }
+.phase-num { font-family:"JetBrains Mono",monospace; font-size:10px; font-weight:700; letter-spacing:.08em; padding:4px 10px; border-radius:5px; background:rgba(0,230,118,0.08); color:#00e676; border:1px solid rgba(0,230,118,0.2); flex-shrink:0; }
+.phase-title { font-family:"League Spartan",sans-serif; font-weight:800; font-size:17px; color:#e8edf2; }
+.phase-modules { font-size:12px; color:#3d4f63; margin-top:2px; }
+.phase-outcome { display:flex; flex-direction:column; gap:2px; padding:8px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:8px; margin-left:auto; flex-shrink:0; max-width:320px; }
+.phase-outcome-label { font-family:"JetBrains Mono",monospace; font-size:9px; color:#3d4f63; text-transform:uppercase; letter-spacing:.08em; }
+.phase-outcome-text { font-size:12.5px; color:#7a8fa8; line-height:1.4; }
+.phase-arrow { font-size:16px; color:#3d4f63; transition:transform .25s; flex-shrink:0; }
+.phase-body { max-height:0; overflow:hidden; transition:max-height .4s ease; }
+.phase-body.open { max-height:800px; }
+.phase-modules-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:0 20px 20px; }
+@media (max-width:860px) { .phase-modules-grid { grid-template-columns:1fr 1fr; } }
+@media (max-width:580px) { .phase-modules-grid { grid-template-columns:1fr; } .phase-outcome { display:none; } }
+.mcard { background:#141a22; border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px 18px; display:flex; flex-direction:column; gap:6px; }
+.mcard-av { border-color:rgba(0,230,118,0.2); background:rgba(0,230,118,0.03); }
+.mcard-head { display:flex; align-items:center; justify-content:space-between; }
+.mcard-num { font-family:"JetBrains Mono",monospace; font-size:11px; font-weight:700; color:#3d4f63; }
+.mcard-av .mcard-num { color:#00e676; }
+.mcard-badge { font-family:"JetBrains Mono",monospace; font-size:9px; font-weight:700; letter-spacing:.06em; color:#00e676; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.2); padding:2px 7px; border-radius:3px; }
+.mcard-badge-cs { font-family:"JetBrains Mono",monospace; font-size:9px; font-weight:700; letter-spacing:.06em; color:#3d4f63; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:2px 7px; border-radius:3px; }
+.mcard-title { font-family:"League Spartan",sans-serif; font-weight:700; font-size:14px; color:#7a8fa8; line-height:1.3; }
+.mcard-av .mcard-title { color:#e8edf2; }
+.mcard-meta { font-family:"JetBrains Mono",monospace; font-size:10px; color:#3d4f63; }
+.mcard-desc { font-size:12px; color:#3d4f63; line-height:1.55; }
+.mcard-av .mcard-desc { color:#7a8fa8; }
+.mcard-out { font-size:11.5px; color:#3d4f63; margin-top:4px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); }
+.mcard-av .mcard-out { color:#00e676; }
+
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .terminal { display: none; }
+  .fw-grid { grid-template-columns: 1fr 1fr; }
+  .curr-grid { grid-template-columns: 1fr; }
+  .tg { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; gap: 28px; }
+  #pricing .pricing-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 600px) {
+  .nav-inner, footer { padding: 0 16px; }
+  footer { padding: 20px 16px; }
+  .hero-wrap, .cta-sec { padding: 48px 16px 60px; }
+  .wrap { padding: 0 16px; }
+  .sec { padding: 64px 0; }
+  .fw-grid { grid-template-columns: 1fr; }
+  .nav-status { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="page">
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <div class="nav-logo"><img src="https://nktmjihnlmpkznxoxfmz.supabase.co/storage/v1/object/public/byscript-logo.png/favicon.png" alt="byScript"/></div>
+      <div>
+        <div class="nav-name">byScript</div>
+        <div class="nav-sub">Academy</div>
+      </div>
+    </a>
+    <div class="nav-right">
+      <div class="nav-early-bird">
+        <span class="neb-dot"></span>
+        <span class="neb-text">Early Bird</span>
+        <span class="neb-sub">Harga naik seiring value meningkat</span>
+      </div>
+      <a href="checkout-academy.html" class="btn-nav">Daftar Sekarang →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero-wrap">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-tag">v1.0 · Early Bird · 3/9 Modul Tersedia</div>
+      <h1 class="hero-h1">Belajar Bikin<br/><span class="ac">Algo Trading</span><br/>dengan <span class="outline">Pine Script</span> dan <span class="ac">AI</span></h1>
+      <p class="hero-sub">Kursus ini mengajarkan kamu cara build strategy trading yang valid secara statistik, lalu otomasi penuh — bot aktif saat kamu tidur, kerja, atau liburan.</p>
+
+      <!-- OUTCOME PILLS -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.2);padding:6px 12px;border-radius:20px;font-size:12px;color:#e8edf2;"><span style="color:#00e676;">✓</span> Punya strategi yang sudah divalidasi statistik</div>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.2);padding:6px 12px;border-radius:20px;font-size:12px;color:#e8edf2;"><span style="color:#00e676;">✓</span> Bot auto trade aktif di exchange kamu</div>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.2);padding:6px 12px;border-radius:20px;font-size:12px;color:#e8edf2;"><span style="color:#00e676;">✓</span> Bisa bikin & jual Pine Script kustom</div>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.2);padding:6px 12px;border-radius:20px;font-size:12px;color:#e8edf2;"><span style="color:#00e676;">✓</span> Tidak perlu mantengin chart lagi</div>
+      </div>
+
+      <div class="hero-btns">
+        <a href="checkout-academy.html" class="btn-primary">Mulai Sekarang <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        <a href="#curriculum" class="btn-ghost"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Lihat Kurikulum</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-n">9<span> modul</span></div><div class="hstat-l">Kurikulum</div></div>
+        <div class="hstat"><div class="hstat-n">34<span> video</span></div><div class="hstat-l">Total Materi</div></div>
+        <div class="hstat"><div class="hstat-n">~4<span>h</span></div><div class="hstat-l">Durasi Konten</div></div>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="tbar"><div class="tdot td1"></div><div class="tdot td2"></div><div class="tdot td3"></div><span class="ttitle">algo_portfolio.pine — Pine Editor</span></div>
+      <div class="tbody">
+        <div class="tline"><span class="tprompt">$</span><span class="tcmd">pine --backtest --walk-forward</span></div>
+        <div class="tout d">// Multi-TF Breakout + MACD Momentum</div>
+        <div class="tout d">&nbsp;</div>
+        <div class="tout"><span style="color:#00e676">htf</span>  = request.security(syminfo.tickerid,</div>
+        <div class="tout">       <span style="color:#ffc107">"D"</span>, ta.ema(close, 50))</div>
+        <div class="tout"><span style="color:#00e676">atr</span>  = ta.atr(14)</div>
+        <div class="tout"><span style="color:#00e676">macd</span>, sig, _ = ta.macd(close,12,26,9)</div>
+        <div class="tout d">&nbsp;</div>
+        <div class="tout"><span style="color:#00e676">breakout</span> = ta.crossover(high,</div>
+        <div class="tout">          ta.highest(high[1], 20))</div>
+        <div class="tout">         and close &gt; htf</div>
+        <div class="tout">         and macd &gt; sig</div>
+        <div class="tout">         and volume &gt; ta.sma(volume,20)*1.5</div>
+        <div class="tout d">&nbsp;</div>
+        <div class="tline"><span class="tprompt">→</span><span class="tcmd" style="color:#00e676">Walk-Forward (5 windows) complete</span></div>
+        <div class="tout g">✓ WFE: 71.4%  (robust &gt; 50%)</div>
+        <div class="tout g">✓ Profit Factor: 2.31 | DD: -9.8%</div>
+        <div class="tout g">✓ Monte Carlo p(ruin) &lt; 2.1%</div>
+        <div class="tout d">&nbsp;</div>
+        <div class="tline"><span class="tprompt">$</span><span class="tcmd">monte-carlo --sims 1000<span class="tcursor"></span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-outer">
+  <div class="ticker-inner">
+    <div class="ti">BTC/USDT <span class="up">▲ +2.4%</span></div><div class="ti">ETH/USDT <span class="up">▲ +1.8%</span></div><div class="ti">Pine Script <span class="up">MODULE 01–03 ✓</span></div><div class="ti">Backtesting <span class="up">MODUL 06</span></div><div class="ti">Monte Carlo <span class="up">MODUL 07</span></div><div class="ti">Auto Trade <span class="up">MODUL 08</span></div><div class="ti">SOL/USDT <span class="dn">▼ -0.6%</span></div><div class="ti">Win Rate <span class="up">62.3%</span></div><div class="ti">Profit Factor <span class="up">1.87</span></div>
+    <div class="ti">BTC/USDT <span class="up">▲ +2.4%</span></div><div class="ti">ETH/USDT <span class="up">▲ +1.8%</span></div><div class="ti">Pine Script <span class="up">MODULE 01–03 ✓</span></div><div class="ti">Backtesting <span class="up">MODUL 06</span></div><div class="ti">Monte Carlo <span class="up">MODUL 07</span></div><div class="ti">Auto Trade <span class="up">MODUL 08</span></div><div class="ti">SOL/USDT <span class="dn">▼ -0.6%</span></div><div class="ti">Win Rate <span class="up">62.3%</span></div><div class="ti">Profit Factor <span class="up">1.87</span></div>
+  </div>
+</div>
+
+<!-- FOR WHO -->
+<div class="sec" id="for-who">
+  <div class="wrap">
+    <div class="slabel">target_user.identify()</div>
+    <h2 class="sh2">Untuk <em>Siapa</em> Kursus Ini?</h2>
+    <p class="sdesc">Tidak perlu background coding atau pengalaman trading bertahun-tahun. Yang penting kamu mau belajar dengan sistem.</p>
+    <div class="fw-grid">
+      <div class="fw-card">
+        <div class="fw-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg></div>
+        <div class="fw-title">Trader Manual yang Capek Emosi</div>
+        <div class="fw-desc">Cukup FOMO dan revenge trading. Kamu mau sistem yang jalan konsisten tanpa gangguan psikologi.</div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="fw-title">Pemula yang Ingin Mulai Benar</div>
+        <div class="fw-desc">Belum pernah trading atau coding? Justru bagus — kamu tidak perlu unlearn kebiasaan buruk dulu.</div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
+        <div class="fw-title">Yang Ingin Passive dari Trading</div>
+        <div class="fw-desc">Bot jalan 24/7, kamu tidak perlu mantengin chart terus. Kursus ini mengajarkan cara build sistem otomatis.</div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg></div>
+        <div class="fw-title">Pengguna AI yang Mau Produktif</div>
+        <div class="fw-desc">Sudah pakai ChatGPT atau Claude, tapi belum tahu cara gunakan AI untuk generate dan debug trading strategy.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CURRICULUM -->
+<div class="sec" id="curriculum">
+  <div class="wrap">
+    <div class="slabel">curriculum.load()</div>
+    <h2 class="sh2">9 Modul. Satu <em>Perjalanan.</em></h2>
+    <p class="sdesc">Setiap fase punya satu tujuan konkret. Di akhir kursus, kamu bukan hanya "paham" algo trading — kamu sudah punya sistem yang jalan.</p>
+
+    <!-- JOURNEY PHASES -->
+    <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:32px;">
+
+      <!-- PHASE 1 -->
+      <div class="phase-wrap">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div style="display:flex;align-items:center;gap:16px;flex:1;">
+            <div class="phase-num">FASE 1</div>
+            <div>
+              <div class="phase-title">Fondasi & Pine Script</div>
+              <div class="phase-modules">M01 – M03 · <span style="color:#00e676;">✓ Tersedia sekarang</span></div>
+            </div>
+          </div>
+          <div class="phase-outcome">
+            <span class="phase-outcome-label">Kamu akan bisa:</span>
+            <span class="phase-outcome-text">Tulis Pine Script dari nol & backtest strategi pertamamu</span>
+          </div>
+          <div class="phase-arrow">▾</div>
+        </div>
+        <div class="phase-body open">
+          <div class="phase-modules-grid">
+            <div class="mcard mcard-av">
+              <div class="mcard-head"><span class="mcard-num">M01</span><span class="mcard-badge">TERSEDIA</span></div>
+              <div class="mcard-title">Trading Mindset & Foundation</div>
+              <div class="mcard-meta">4 video · 26 menit</div>
+              <div class="mcard-desc">Setup tools, anatomi strategy, dan mindset probabilistik yang membedakan trader sistematis dari gambler.</div>
+              <div class="mcard-out">📌 Output: Setup TradingView + Pine Editor siap pakai</div>
+            </div>
+            <div class="mcard mcard-av">
+              <div class="mcard-head"><span class="mcard-num">M02</span><span class="mcard-badge">TERSEDIA</span></div>
+              <div class="mcard-title">Pine Script Dasar</div>
+              <div class="mcard-meta">5 video · 35 menit</div>
+              <div class="mcard-desc">Struktur script, variabel, conditional logic, series data. Buat MA Crossover indicator fungsional dari nol.</div>
+              <div class="mcard-out">📌 Output: Indicator pertama live di chart kamu</div>
+            </div>
+            <div class="mcard mcard-av">
+              <div class="mcard-head"><span class="mcard-num">M03</span><span class="mcard-badge">TERSEDIA</span></div>
+              <div class="mcard-title">Pine Script Comprehensive</div>
+              <div class="mcard-meta">5 video · 35 menit</div>
+              <div class="mcard-desc">Multi-timeframe, arrays, loops, dashboard. Convert indicator jadi strategy siap di-backtest di Strategy Tester.</div>
+              <div class="mcard-out">📌 Output: Strategy lengkap siap backtest</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase-wrap">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div style="display:flex;align-items:center;gap:16px;flex:1;">
+            <div class="phase-num" style="background:rgba(99,102,241,0.12);color:#818cf8;border-color:rgba(99,102,241,0.25);">FASE 2</div>
+            <div>
+              <div class="phase-title">Build Strategi dengan AI</div>
+              <div class="phase-modules">M04 – M05 · <span style="color:#3d4f63;">Segera hadir</span></div>
+            </div>
+          </div>
+          <div class="phase-outcome">
+            <span class="phase-outcome-label">Kamu akan bisa:</span>
+            <span class="phase-outcome-text">Generate & debug strategi lengkap hanya dengan prompt AI</span>
+          </div>
+          <div class="phase-arrow">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-modules-grid">
+            <div class="mcard">
+              <div class="mcard-head"><span class="mcard-num">M04</span><span class="mcard-badge-cs">SOON</span></div>
+              <div class="mcard-title">Membuat Indikator Custom</div>
+              <div class="mcard-meta">3 video · 22 menit</div>
+              <div class="mcard-desc">Framework desain indikator: trend, momentum, volatility, volume, scoring signal. Buat library indikator sendiri.</div>
+              <div class="mcard-out">📌 Output: Library 3+ indikator custom siap pakai</div>
+            </div>
+            <div class="mcard">
+              <div class="mcard-head"><span class="mcard-num">M05</span><span class="mcard-badge-cs">SOON</span></div>
+              <div class="mcard-title">Membuat Strategy dengan AI</div>
+              <div class="mcard-meta">4 video · 30 menit</div>
+              <div class="mcard-desc">Prompt engineering untuk Pine Script, build 3 strategi live bersama AI, debugging dan cara hindari overfitting.</div>
+              <div class="mcard-out">📌 Output: 3 strategi siap backtest, build pakai AI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div class="phase-wrap">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div style="display:flex;align-items:center;gap:16px;flex:1;">
+            <div class="phase-num" style="background:rgba(245,158,11,0.1);color:#f59e0b;border-color:rgba(245,158,11,0.25);">FASE 3</div>
+            <div>
+              <div class="phase-title">Validasi & Stress Test</div>
+              <div class="phase-modules">M06 – M07 · <span style="color:#3d4f63;">Segera hadir</span></div>
+            </div>
+          </div>
+          <div class="phase-outcome">
+            <span class="phase-outcome-label">Kamu akan bisa:</span>
+            <span class="phase-outcome-text">Tahu apakah strategi kamu benar-benar robust — sebelum pakai uang nyata</span>
+          </div>
+          <div class="phase-arrow">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-modules-grid">
+            <div class="mcard">
+              <div class="mcard-head"><span class="mcard-num">M06</span><span class="mcard-badge-cs">SOON</span></div>
+              <div class="mcard-title">Backtesting Mastery</div>
+              <div class="mcard-meta">4 video · 28 menit</div>
+              <div class="mcard-desc">Bias & overfitting yang tersembunyi, key metrics yang benar (bukan cuma profit), walk-forward analysis.</div>
+              <div class="mcard-out">📌 Output: Bisa baca backtest report seperti pro</div>
+            </div>
+            <div class="mcard">
+              <div class="mcard-head"><span class="mcard-num">M07</span><span class="mcard-badge-cs">SOON</span></div>
+              <div class="mcard-title">Monte Carlo Simulation</div>
+              <div class="mcard-meta">2 video · 14 menit</div>
+              <div class="mcard-desc">Kenapa backtest saja tidak cukup. Hands-on byScript Monte Carlo tool dan decision framework go/no-go live.</div>
+              <div class="mcard-out">📌 Output: Strategi lolos stress test 1000 simulasi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 4 -->
+      <div class="phase-wrap">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <div style="display:flex;align-items:center;gap:16px;flex:1;">
+            <div class="phase-num" style="background:rgba(0,230,118,0.12);color:#00e676;border-color:rgba(0,230,118,0.3);">FASE 4</div>
+            <div>
+              <div class="phase-title">Auto Trade & Portfolio</div>
+              <div class="phase-modules">M08 – M09 · <span style="color:#3d4f63;">Segera hadir</span></div>
+            </div>
+          </div>
+          <div class="phase-outcome" style="border-color:rgba(0,230,118,0.2);background:rgba(0,230,118,0.05);">
+            <span class="phase-outcome-label" style="color:#00e676;">🎯 Final outcome:</span>
+            <span class="phase-outcome-text" style="color:#e8edf2;font-weight:600;">Bot aktif di exchange kamu. Portfolio multi-strategi jalan otomatis.</span>
+          </div>
+          <div class="phase-arrow">▾</div>
+        </div>
+        <div class="phase-body">
+          <div class="phase-modules-grid">
+            <div class="mcard">
+              <div class="mcard-head"><span class="mcard-num">M08</span><span class="mcard-badge-cs">SOON</span></div>
+              <div class="mcard-title">Auto Trading dengan byScript</div>
+              <div class="mcard-meta">4 video · 28 menit</div>
+              <div class="mcard-desc">Setup akun & exchange, webhook TradingView → byScript, create bot, risk settings, cara monitoring harian.</div>
+              <div class="mcard-out">📌 Output: Bot live pertama kamu aktif di exchange</div>
+            </div>
+            <div class="mcard">
+              <div class="mcard-head"><span class="mcard-num">M09</span><span class="mcard-badge-cs">SOON</span></div>
+              <div class="mcard-title">Advanced & Portfolio</div>
+              <div class="mcard-meta">3 video · 22 menit</div>
+              <div class="mcard-desc">Multi-strategy portfolio, alokasi modal optimal, circuit breaker otomatis, Kelly Criterion, improvement bulanan.</div>
+              <div class="mcard-out">📌 Output: Sistem portfolio yang self-improving</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="curr-foot">
+      <div class="curr-foot-t">Saat ini <strong>3 dari 9 modul</strong> sudah tersedia. Modul baru dirilis berkala — akses kamu otomatis terupdate.</div>
+      <div class="curr-totals">
+        <div class="ctot"><div class="ctot-n">34</div><div class="ctot-l">Video</div></div>
+        <div class="ctot"><div class="ctot-n">~4h</div><div class="ctot-l">Durasi</div></div>
+        <div class="ctot"><div class="ctot-n">∞</div><div class="ctot-l">Akses</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="sec" id="testimonials">
+  <div class="wrap">
+    <div class="slabel">user.feedback[]</div>
+    <h2 class="sh2">Kata Mereka yang <em>Sudah Mulai</em></h2>
+    <p class="sdesc">Early adopter yang sudah akses 3 modul pertama dan mulai build strategi mereka sendiri.</p>
+    <div class="tg">
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="tquote">Gue yang sama sekali ga bisa coding akhirnya bisa bikin strategi sendiri dan backtest di TradingView. Materinya to the point, dan bantuan AI bikin prosesnya jauh lebih gampang dari yang gue kira.</div><div class="tauthor"><div class="tav">RA</div><div><div class="tname">Rizky A.</div><div class="trole">Swing Trader · Crypto</div></div></div></div>
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="tquote">Akhirnya ngerti kenapa strategi gue selalu gagal di live trading padahal backtest bagus. Modul backtesting dan Monte Carlo bener-bener eye-opening.</div><div class="tauthor"><div class="tav">SM</div><div><div class="tname">Sari M.</div><div class="trole">Day Trader · Forex</div></div></div></div>
+      <div class="tcard"><div class="tstars">★★★★★</div><div class="tquote">Dari nol coding langsung bisa bikin MA crossover indicator yang fungsional di hari pertama. Cara ngajarin Pine Script-nya sistematis banget, ga overwhelming.</div><div class="tauthor"><div class="tav">DK</div><div><div class="tname">Dicky K.</div><div class="trole">Pemula · Crypto & Saham</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="sec" id="about">
+  <div class="wrap">
+    <div class="slabel">instructor.profile()</div>
+    <h2 class="sh2">Siapa di <em>Balik</em> byScript?</h2>
+    <div class="about-grid">
+      <div>
+        <div class="acard">
+          <div class="acard-line"></div>
+          <div class="aav"><img src="https://nktmjihnlmpkznxoxfmz.supabase.co/storage/v1/object/public/byscript-logo.png/favicon.png" alt="byScript"/></div>
+          <div class="aname">byScript</div>
+          <div class="arole">// algo_trading_educator & tool_builder</div>
+          <div class="abio">byScript adalah platform yang membangun tools dan edukasi untuk algo trader Indonesia. Dari Monte Carlo simulator hingga auto-trade infrastructure — semua didesain agar trader bisa fokus pada strategi, bukan plumbing teknis.</div>
+          <div class="atags"><span class="atag">Pine Script</span><span class="atag">TradingView</span><span class="atag">byScript.io</span><span class="atag">Crypto</span><span class="atag">Forex</span><span class="atag">AI Trading</span></div>
+        </div>
+      </div>
+      <div class="aright">
+        <p>byScript Academy bukan kursus yang ngajarin kamu <strong>"strategi rahasia"</strong> atau sinyal ajaib. Kami ngajarin kamu cara <strong>build, test, dan run</strong> sistem trading kamu sendiri — yang bisa kamu validasi secara statistik sebelum pakai uang nyata.</p>
+        <p>Semua tools yang dipakai di kursus ini adalah tools yang sama yang kami gunakan sendiri: TradingView, byScript.io, dan Monte Carlo simulator kami sendiri.</p>
+        <p>Kurikulum ini dirancang agar setiap konsep terhubung — dari mindset di M01 sampai portfolio management di M09, semuanya satu alur logis.</p>
+        <div class="atool-label">Tools yang Digunakan</div>
+        <div class="tool-list">
+          <div class="tbadge"><span class="tdot2"></span>TradingView</div>
+          <div class="tbadge"><span class="tdot2"></span>byScript.io</div>
+          <div class="tbadge"><span class="tdot2"></span>Pine Script v5</div>
+          <div class="tbadge"><span class="tdot2"></span>ChatGPT / Claude</div>
+          <div class="tbadge"><span class="tdot2"></span>Monte Carlo Tool</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="sec" id="faq">
+  <div class="wrap">
+    <div class="slabel">faq.resolve()</div>
+    <h2 class="sh2">Pertanyaan yang <em>Sering Ditanya</em></h2>
+    <p class="sdesc">Kalau masih ada yang belum terjawab, hubungi kami langsung.</p>
+    <div class="flist">
+      <div class="fitem"><div class="fq" onclick="toggleFaq(this)">Apakah saya perlu bisa coding sebelumnya?<i class="ficon">+</i></div><div class="fans"><div class="fans-inner">Tidak perlu sama sekali. Pine Script adalah bahasa yang didesain khusus untuk TradingView dan lebih mudah dipelajari dibanding Python atau JavaScript. Kursus dimulai dari yang paling dasar, dan dengan bantuan AI kamu bisa generate dan debug kode lebih cepat dari yang kamu bayangkan.</div></div></div>
+      <div class="fitem"><div class="fq" onclick="toggleFaq(this)">Kenapa harga bisa naik nanti?<i class="ficon">+</i></div><div class="fans"><div class="fans-inner">Harga early bird mencerminkan value yang saat ini tersedia — 3 modul. Setiap kali modul baru dirilis, value kursus ini bertambah. Harga akan naik secara bertahap seiring modul bertambah. Kamu yang beli sekarang dapat semua modul termasuk yang belum rilis, dengan harga hari ini.</div></div></div>
+      <div class="fitem"><div class="fq" onclick="toggleFaq(this)">Apakah ini menjamin profit?<i class="ficon">+</i></div><div class="fans"><div class="fans-inner">Tidak ada kursus trading yang bisa menjamin profit — dan kamu harus waspada dengan yang mengklaim bisa. Yang kami jamin adalah kamu akan memahami cara membangun, menguji, dan menjalankan sistem trading yang memiliki edge statistik. Hasilnya bergantung pada strategi yang kamu bangun dan kondisi market.</div></div></div>
+      <div class="fitem"><div class="fq" onclick="toggleFaq(this)">Berapa lama untuk bisa menyelesaikan semua modul?<i class="ficon">+</i></div><div class="fans"><div class="fans-inner">Total durasi video sekitar 4 jam untuk 9 modul penuh. Tapi praktik dan eksperimen yang butuh waktu lebih. Rata-rata student menyelesaikan satu modul dalam 1–2 hari dengan santai. Tidak ada deadline — akses selamanya jadi kamu bisa belajar sesuai pace kamu.</div></div></div>
+      <div class="fitem"><div class="fq" onclick="toggleFaq(this)">Market apa yang bisa ditrading dengan strategi ini?<i class="ficon">+</i></div><div class="fans"><div class="fans-inner">Pine Script dan TradingView mendukung hampir semua market — crypto, forex, saham, komoditas, dan indeks. Contoh di kursus banyak menggunakan crypto dan forex, tapi konsepnya berlaku universal. byScript.io untuk auto-trade saat ini fokus di crypto exchange.</div></div></div>
+      <div class="fitem"><div class="fq" onclick="toggleFaq(this)">Apakah butuh modal besar untuk mulai?<i class="ficon">+</i></div><div class="fans"><div class="fans-inner">Untuk belajar dan backtest: tidak butuh modal sama sekali, TradingView gratis untuk penggunaan dasar. Untuk paper trading dan live auto-trade via byScript: kamu bisa mulai dengan modal kecil untuk testing. Kursus ini justru mengajarkan cara validasi strategi dulu sebelum pakai modal nyata.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="sec" id="pricing">
+  <div class="wrap">
+    <div class="slabel">pricing.config()</div>
+    <h2 class="sh2">Investasi <em>Sekali</em>, Hasilnya Selamanya</h2>
+    <p class="sdesc">Pilih paket yang sesuai. Satu strategi yang profit sudah cukup untuk balik modal berkali-kali lipat.</p>
+
+    <!-- EARLY BIRD BANNER -->
+    <div class="eb-banner">
+      <div class="eb-stamp">
+        <div class="eb-stamp-inner">
+          <div class="eb-stamp-top">EARLY</div>
+          <div class="eb-stamp-mid">BIRD</div>
+          <div class="eb-stamp-bot">PRICE</div>
+        </div>
+      </div>
+      <div class="eb-content">
+        <div class="eb-title">Kamu masuk di harga terbaik.</div>
+        <div class="eb-desc">Harga sekarang adalah harga Early Bird. Setiap kali modul baru rilis dan value platform bertambah, harga akan naik secara bertahap. <strong style="color:#e8edf2;">Yang daftar sekarang, harga terkunci.</strong></div>
+      </div>
+      <div class="eb-progress">
+        <div class="eb-prog-label">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#3d4f63;">modul tersedia</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#00e676;">3 / 9</span>
+        </div>
+        <div class="eb-prog-track">
+          <div class="eb-prog-fill" style="width:33%"></div>
+        </div>
+        <div style="font-size:11px;color:#3d4f63;margin-top:6px;">Harga naik saat modul 4, 7, dan 9 rilis</div>
+      </div>
+    </div>
+
+    <!-- COMPARISON NUDGE -->
+    <div style="background:#0f1318;border:1px solid rgba(0,230,118,0.2);border-radius:10px;padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:10px;max-width:600px;">
+      <span style="font-size:18px;">💡</span>
+      <span style="font-size:13px;color:#7a8fa8;">Gold cuma beda <strong style="color:#e8edf2;">Rp 200K</strong> dari Silver — tapi dapat komunitas + mentor + webinar gratis selama <strong style="color:#e8edf2;">1 tahun penuh</strong>.</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start;">
+
+      <!-- BASIC -->
+      <div class="pcard pcard-basic">
+        <div class="pcard-top">
+          <div class="pcard-tier" style="color:#3d4f63;">Basic</div>
+          <div class="pcard-price">Rp 499K</div>
+          <div class="pcard-period">akses 1 tahun</div>
+          <div class="pcard-desc">Entry point terbaik. Akses semua materi yang ada dan terus bertambah — tanpa perlu bayar lagi saat modul baru rilis.</div>
+          <a href="checkout-basic.html" class="pcard-btn pcard-btn-ghost">Pilih Basic →</a>
+        </div>
+        <div class="pcard-features">
+          <div class="pcard-feat-label">Yang kamu dapat</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Akses seluruh video pembelajaran (9 modul, 34 video)</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Modul baru otomatis tersedia saat dirilis</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Akses platform LMS byScript Academy</div>
+          <div class="pcard-feat pcard-feat-no"><span class="fc-no">✗</span>Komunitas eksklusif</div>
+          <div class="pcard-feat pcard-feat-no"><span class="fc-no">✗</span>Konsultasi dengan mentor</div>
+          <div class="pcard-feat pcard-feat-no"><span class="fc-no">✗</span>Akses webinar mendatang</div>
+        </div>
+      </div>
+
+      <!-- SILVER -->
+      <div class="pcard pcard-silver">
+        <div class="pcard-top">
+          <div class="pcard-tier" style="color:#00e676;">Silver</div>
+          <div class="pcard-price">Rp 799K</div>
+          <div class="pcard-period">akses 1 tahun + mentor 3 bulan</div>
+          <div class="pcard-desc">Belajar tidak sendirian. Dapat komunitas dan mentor selama 3 bulan untuk mastiin kamu benar-benar paham dan bisa praktek.</div>
+          <a href="checkout-silver.html" class="pcard-btn pcard-btn-silver">Pilih Silver →</a>
+        </div>
+        <div class="pcard-features" style="border-top-color:rgba(0,230,118,0.15);">
+          <div class="pcard-feat-label" style="color:#00e676;">Semua di Basic, plus</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Akses seluruh video pembelajaran (9 modul, 34 video)</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Modul baru otomatis tersedia saat dirilis</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Akses platform LMS byScript Academy</div>
+          <div class="pcard-feat pcard-feat-hi"><span class="fc-star">✦</span><span><strong>Komunitas eksklusif</strong> — 3 bulan</span></div>
+          <div class="pcard-feat pcard-feat-hi"><span class="fc-star">✦</span><span><strong>Konsultasi dengan mentor</strong> — 3 bulan</span></div>
+          <div class="pcard-feat pcard-feat-no"><span class="fc-no">✗</span>Akses webinar mendatang</div>
+        </div>
+      </div>
+
+      <!-- GOLD -->
+      <div class="pcard pcard-gold">
+        <div class="pcard-badge">⭐ Best Value</div>
+        <div class="pcard-top" style="padding-top:40px;">
+          <div class="pcard-tier" style="color:#f59e0b;">Gold</div>
+          <div class="pcard-price" style="color:#fcd34d;">Rp 999K</div>
+          <div class="pcard-period">akses 1 tahun + mentor & webinar 1 tahun</div>
+          <div class="pcard-desc">Paket paling lengkap. Selama 1 tahun penuh kamu tidak belajar sendirian — ada komunitas, mentor, dan akses ke semua webinar byScript yang akan datang.</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f59e0b;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);padding:6px 12px;border-radius:5px;margin-bottom:20px;">Cuma +Rp 200K dari Silver — tapi 4× lebih lama</div>
+          <a href="checkout-gold.html" class="pcard-btn pcard-btn-gold">Ambil Gold Sekarang →</a>
+        </div>
+        <div class="pcard-features" style="border-top-color:rgba(245,158,11,0.2);">
+          <div class="pcard-feat-label" style="color:#f59e0b;">Semua di Silver, plus</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Akses seluruh video pembelajaran (9 modul, 34 video)</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Modul baru otomatis tersedia saat dirilis</div>
+          <div class="pcard-feat"><span class="fc-yes">✓</span>Akses platform LMS byScript Academy</div>
+          <div class="pcard-feat pcard-feat-gold"><span class="fc-gold">✦</span><span><strong>Komunitas eksklusif</strong> — <span style="color:#f59e0b;">1 tahun</span></span></div>
+          <div class="pcard-feat pcard-feat-gold"><span class="fc-gold">✦</span><span><strong>Konsultasi dengan mentor</strong> — <span style="color:#f59e0b;">1 tahun</span></span></div>
+          <div class="pcard-feat pcard-feat-gold"><span class="fc-gold">✦</span><span><strong>Akses semua webinar byScript</strong> — <span style="color:#f59e0b;">1 tahun gratis</span></span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div style="margin-top:28px;background:#0f1318;border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:1fr repeat(3,140px);border-bottom:1px solid rgba(255,255,255,0.07);">
+        <div style="padding:14px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#3d4f63;text-transform:uppercase;letter-spacing:.08em;">Fitur</div>
+        <div style="padding:14px 12px;font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;color:#7a8fa8;text-align:center;border-left:1px solid rgba(255,255,255,0.07);">Basic</div>
+        <div style="padding:14px 12px;font-family:'League Spartan',sans-serif;font-weight:700;font-size:13px;color:#00e676;text-align:center;border-left:1px solid rgba(0,230,118,0.15);background:rgba(0,230,118,0.03);">Silver</div>
+        <div style="padding:14px 12px;font-family:'League Spartan',sans-serif;font-weight:800;font-size:13px;color:#f59e0b;text-align:center;border-left:1px solid rgba(245,158,11,0.2);background:rgba(245,158,11,0.04);">Gold ⭐</div>
+      </div>
+      <!-- rows -->
+      <div style="display:grid;grid-template-columns:1fr repeat(3,140px);border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="padding:13px 20px;font-size:13px;color:#7a8fa8;">Video pembelajaran (9 modul)</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(255,255,255,0.05);color:#00e676;font-size:15px;">✓</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(0,230,118,0.1);background:rgba(0,230,118,0.02);color:#00e676;font-size:15px;">✓</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(245,158,11,0.12);background:rgba(245,158,11,0.03);color:#f59e0b;font-size:15px;">✓</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr repeat(3,140px);border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="padding:13px 20px;font-size:13px;color:#7a8fa8;">Update modul otomatis</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(255,255,255,0.05);color:#00e676;font-size:15px;">✓</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(0,230,118,0.1);background:rgba(0,230,118,0.02);color:#00e676;font-size:15px;">✓</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(245,158,11,0.12);background:rgba(245,158,11,0.03);color:#f59e0b;font-size:15px;">✓</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr repeat(3,140px);border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="padding:13px 20px;font-size:13px;color:#7a8fa8;">Komunitas eksklusif</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(255,255,255,0.05);color:#3d4f63;font-size:15px;">✗</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(0,230,118,0.1);background:rgba(0,230,118,0.02);font-family:'JetBrains Mono',monospace;font-size:11px;color:#00e676;">3 bulan</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(245,158,11,0.12);background:rgba(245,158,11,0.03);font-family:'JetBrains Mono',monospace;font-size:11px;color:#f59e0b;font-weight:700;">1 tahun</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr repeat(3,140px);border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="padding:13px 20px;font-size:13px;color:#7a8fa8;">Konsultasi dengan mentor</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(255,255,255,0.05);color:#3d4f63;font-size:15px;">✗</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(0,230,118,0.1);background:rgba(0,230,118,0.02);font-family:'JetBrains Mono',monospace;font-size:11px;color:#00e676;">3 bulan</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(245,158,11,0.12);background:rgba(245,158,11,0.03);font-family:'JetBrains Mono',monospace;font-size:11px;color:#f59e0b;font-weight:700;">1 tahun</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr repeat(3,140px);">
+        <div style="padding:13px 20px;font-size:13px;color:#7a8fa8;">Akses webinar mendatang (gratis)</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(255,255,255,0.05);color:#3d4f63;font-size:15px;">✗</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(0,230,118,0.1);background:rgba(0,230,118,0.02);color:#3d4f63;font-size:15px;">✗</div>
+        <div style="padding:13px 12px;text-align:center;border-left:1px solid rgba(245,158,11,0.12);background:rgba(245,158,11,0.03);font-family:'JetBrains Mono',monospace;font-size:11px;color:#f59e0b;font-weight:700;">1 tahun</div>
+      </div>
+    </div>
+
+    <!-- GUARANTEE -->
+    <div style="margin-top:20px;display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#3d4f63;"><span>🔒</span>Pembayaran aman</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#3d4f63;"><span>⭐</span>Garansi uang kembali 7 hari</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#3d4f63;"><span>📩</span>Akses dikirim instan via email</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-sec">
+  <div class="cta-inner">
+    <div class="cta-tag">// early_bird.status = ACTIVE</div>
+    <h2 class="cta-h2">Mulai Build <em>Strategi</em> Kamu Sekarang</h2>
+    <p class="cta-sub">3 modul sudah tersedia. Modul baru terus ditambahkan. Harga akan naik seiring value yang terdeliver.</p>
+    <a href="checkout-academy.html" class="btn-primary" style="display:inline-flex;font-size:16px;padding:16px 36px;">Daftar Early Bird <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <div class="cta-note">Harga: <span>Early Bird</span> · Akses Selamanya · Modul Baru Otomatis</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div class="foot-brand"><img src="https://nktmjihnlmpkznxoxfmz.supabase.co/storage/v1/object/public/byscript-logo.png/favicon.png" alt="byScript"/><span>byScript Academy</span></div>
+      <span>© 2025</span>
+    </div>
+    <div class="foot-links"><a href="https://byscript.io">byscript.io</a><a href="https://academy.byscript.io">academy</a><a href="checkout-academy.html">Daftar</a></div>
+  </div>
+</footer>
+
+</div>
+<script>
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.fitem').forEach(function(i) { i.classList.remove('open'); });
+  if (!isOpen) item.classList.add('open');
+}
+function togglePhase(headerEl) {
+  var body = headerEl.nextElementSibling;
+  var arrow = headerEl.querySelector('.phase-arrow');
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+// Init: rotate arrows on open phases
+document.querySelectorAll('.phase-body.open').forEach(function(b) {
+  var arrow = b.previousElementSibling.querySelector('.phase-arrow');
+  if (arrow) arrow.style.transform = 'rotate(180deg)';
+});
+</script>
+</body>
+</html>
